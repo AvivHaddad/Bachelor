@@ -1,0 +1,218 @@
+# Building a design matrix
+pheno_full <- as.data.frame(gse@phenoData@data)
+
+pheno <- pheno_full
+pheno$diagnosis <- pheno[["diagnosisbp1:ch1"]]
+pheno$sex       <- pheno[["gender:ch1"]]
+
+pheno$diagnosis <- factor(pheno$diagnosis, levels = c("0","2"))
+pheno$sex       <- factor(pheno$sex,       levels = c("f","m"))
+
+expr_mat <- exprs(gse)
+identical(rownames(pheno), colnames(expr_mat))
+
+design_diag_sex <- model.matrix(~ diagnosis + sex, data = pheno)
+fit_diag_sex <- lmFit(exprs(gse), design_diag_sex)
+fit_diag_sex <- eBayes(fit_diag_sex)
+
+# Making different experiments using topTable
+# Diagnosis - 0VS2
+res_diag <- topTable(fit_diag_sex, coef = "diagnosis2", number = Inf)
+res_diag_CSV <- write.csv(res_diag, "res_diag.csv", row.names = T)
+
+
+# Sex- mVSf
+res_sex <- topTable(fit_diag_sex, coef ="sexm", number = Inf)
+
+all(rownames(res_diag) %in% rownames(res_sex))
+res_sex_ordered_diag<- res_sex[rownames(res_diag),]
+identical(rownames(res_diag), rownames(res_sex_ordered_diag))
+res_sex_CSV <- write.csv(res_sex, "res_sex.csv", row.names = T)
+
+# Designe for both
+design_diag_sex_both <- model.matrix(~diagnosis * sex, data = pheno)
+fit_diag_sex_both <- lmFit(exprs(gse), design_diag_sex_both)
+fit_diag_sex_both <- eBayes(fit_diag_sex_both)
+
+res_both <- topTable(fit_diag_sex_both, coef = "diagnosis2:sexm", number = Inf)
+res_both_ordered_diag <- res_both[rownames(res_diag),]
+res_both_CSV <- write.csv(res_both, "res_both.csv", row.names = T)
+
+# Only female experiments
+idx_female <- pheno$sex == "f"
+
+exprs_f <- exprs(gse)[,idx_female]
+pheno_f <- droplevels(pheno[idx_female,])
+
+design_f <- model.matrix(~diagnosis,data = pheno_f)
+fit_f <- lmFit(exprs_f, design_f)
+fit_f <- eBayes(fit_f)
+
+res_diag_f <- topTable(fit_f, coef = "diagnosis2", number = Inf)
+res_diag_f_ordered_diag <- res_diag_f[rownames(res_diag),]
+res_diag_f_CSV <- write.csv(res_diag_f, "res_diag_f.csv", row.names = T)
+
+# Only male expirements
+idx_male <- pheno$sex == "m"
+
+exprs_m <- exprs(gse)[,idx_male]
+pheno_m <- droplevels(pheno[idx_male,])
+
+design_m <- model.matrix(~diagnosis,data = pheno_m)
+fit_m <- lmFit(exprs_m, design_m)
+fit_m <- eBayes(fit_m)
+
+res_diag_m <- topTable(fit_m, coef  = "diagnosis2", number = Inf)
+res_diag_m_ordered_diag <- res_diag_m[rownames(res_diag),]
+res_diag_m_CSV <- write.csv(res_diag_m, "res_diag_m.csv", row.names = T)
+
+
+#Heatmaps with limma
+#Chossing the top 50 with the highest adj.P.Val to make it visualy easier
+expr_mat <- exprs(gse)
+top_n <- 50
+top_diag <- expr_mat[order(res_diag$adj.P.Val), ] [1:top_n, ]
+
+top_ids <- rownames(top_diag)
+expr_top <- expr_mat[top_ids, ]
+
+sample_groups <- with(pheno, paste0("D", diagnosis, "_", sex))
+names(sample_groups) <- rownames(pheno)
+
+
+coolmap_diag_top50 <- coolmap(expr_top,
+                              cluster.by = "de pattern")
+save.image("coolmap_diag_top50.png")
+
+#Order
+ord_samples <- order(pheno$diagnosis, pheno$sex)
+expr_top_ord <- expr_top[, ord_samples]
+
+coolmap(expr_top_ord,
+        cluster.by = "de pattern",
+        show.dendrogram = "row")
+#--> came out the same
+
+
+expr_df <- as.data.frame(expr_top)
+expr_df$gene <- rownames(expr_df)
+
+#For ggplot2 format
+expr_long <- expr_df |>
+  pivot_longer(
+    cols = -gene,
+    names_to = "sample",
+    values_to = "expression"
+  )
+expr_long$diagnosis <- pheno[as.character(expr_long$sample), "diagnosis"]
+expr_long$sex       <- pheno[as.character(expr_long$sample), "sex"]
+
+ggplot(expr_long, aes(x = sample, y = gene, fill = expression)) +
+  geom_tile() +
+  scale_fill_gradient2(low = "blue", mid = "white", high = "red") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+# Only female
+top_diag_f <- res_diag_f[order(res_diag_f$adj.P.Val), ][1:top_n, ]
+top_ids_f  <- rownames(top_diag_f)
+exprs_f <- exprs(gse)[, idx_female]
+pheno_f <- droplevels(pheno[idx_female, ])
+
+expr_top_f <- exprs_f[top_ids_f, ]
+
+
+expr_df_f <- as.data.frame(expr_top_f)
+expr_df_f$gene <- rownames(expr_df_f)
+
+expr_long_f <- expr_df_f |>
+  pivot_longer(
+    cols = -gene,
+    names_to  = "sample",
+    values_to = "expression"
+  )
+rownames(pheno_f) <- colnames(exprs_f)
+
+expr_long_f <- expr_long_f |>
+  mutate(
+    diagnosis = pheno_f[ sample, "diagnosis" ]
+  )
+# order samples by diagnosis (0, then 2)
+expr_long_f$sample <- factor(
+  expr_long_f$sample,
+  levels = unique(expr_long_f$sample[order(expr_long_f$diagnosis)])
+)
+
+expr_long_f$gene <- factor(
+  expr_long_f$gene,
+  levels = rev(top_ids_f)   # reverse so most significant at top
+)
+
+ggplot(expr_long_f,
+       aes(x = sample, y = gene, fill = expression)) +
+  geom_tile() +
+  scale_fill_gradient2(low = "blue", mid = "white", high = "red") +
+  labs(x = "Female samples", y = "Top diagnosis genes (female only)") +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
+    axis.text.y = element_text(size = 6)
+  )
+
+#More saparation with diagnosis
+expr_long_f$diagnosis <- factor(expr_long_f$diagnosis, levels = c("0", "2"))
+sample_order <- expr_long_f |>
+  distinct(sample, diagnosis) |>
+  arrange(diagnosis) |>
+  pull(sample)
+
+expr_long_f$sample <- factor(expr_long_f$sample, levels = sample_order)
+
+ggplot(expr_long_f,
+       aes(x = sample, y = gene, fill = expression)) +
+  geom_tile() +
+  scale_fill_gradient2(low = "blue", mid = "white", high = "red") +
+  labs(x = "Female samples", y = "Top diagnosis genes (female only)") +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
+    axis.text.y = element_text(size = 6)
+  ) +
+  facet_grid(. ~ diagnosis, scales = "free_x", space = "free_x")
+# --> Basically showed that the top 50 expressed genes are no difference.
+
+# Filter according to statistically significant and large enough in effect
+DE_diag <- subset(res_diag, adj.P.Val < 0.05 & abs(logFC) > 1)
+#--> Empty
+
+#T50 abs(logFC) - differences
+top_diag_diff <- res_diag[order(-abs(res_diag$logFC)), ][1:50, ]
+
+top_ids_diff <- rownames(top_diag_diff)
+idx_diff <-  top_ids_diff == expr_long$gene
+exprs_diff <- exprs(gse)[idx_diff,]
+
+
+expr_top_diff <- expr_top <- expr_mat[top_ids_diff, ]
+
+expr_df_diff <- as.data.frame(expr_top_diff)
+expr_df_diff$gene <- rownames(expr_df_diff)
+
+expr_long_diff <- expr_df_diff |>
+  pivot_longer(
+    cols = -gene,
+    names_to  = "sample",
+    values_to = "expression"
+  )
+ordered <- setorder(expr_long_diff,cols = expression)
+
+ggplot(expr_long_diff,
+       aes(x = sample, y = gene, fill = expression)) +
+  geom_tile() +
+  scale_fill_gradient2(low = "blue", mid = "white", high = "red") +
+  labs(x = "Samples", y = "Most difference in expression") +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
+    axis.text.y = element_text(size = 6)
+  )
+#--> Still in the works. complitly wrong
