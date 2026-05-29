@@ -140,6 +140,80 @@ high_logFC_genes_res_diag_m <- res_diag_m[order(-res_diag_m$logFC), ]
 high_logFC_genes_res_diag_m <- high_logFC_genes_res_diag_m[1:50,]
 write.csv(high_logFC_genes_res_diag_m, "high_logFC_genes_res_diag_m", row.names = T)
 
+#only F+2
+idx_m_2 <- pheno_m$diagnosis == "2"
+exprs_m_2 <- exprs_m[,idx_m_2]
+pheno_m_2 <- droplevels(pheno_m[idx_m_2,])
+
+fit_m_2 <- lmFit(exprs_m_2)
+fit_m_2 <- eBayes(fit_m_2)
+
+res_diag_m_2 <- topTable(fit_m_2, number = Inf)
+res_diag_m_2$ID <- rownames(res_diag_m_2)
+res_diag_m_2_CSV <- write.csv(res_diag_m_2, "res_diag_m_2.csv", row.names = T)
+
+#Only F+0
+idx_m_0 <- pheno_m$diagnosis == "0"
+exprs_m_0 <- exprs_m[,idx_m_0]
+pheno_m_0 <- droplevels(pheno_m[idx_m_0,])
+
+fit_m_0 <- lmFit(exprs_m_0)
+fit_m_0 <- eBayes(fit_m_0)
+
+res_diag_m_0 <- topTable(fit_m_0, number = Inf)
+res_diag_m_0$ID <- rownames(res_diag_m_0)
+res_diag_m_0_CSV <- write.csv(res_diag_m_0, "res_diag_m_0.csv", row.names = T)
+
+#merge
+m_2_sub <- res_diag_m_2[,c("ID","logFC","P.Value","adj.P.Val","B")]
+names(m_2_sub)[2:5] <- paste0(names(m_2_sub)[2:5],"_2")
+m_0_sub <- res_diag_m_0[,c("ID","logFC","P.Value","adj.P.Val","B")]
+names(m_0_sub)[2:5] <- paste0(names(m_0_sub)[2:5],"_0")
+
+res_m_merg<- merge(m_2_sub,m_0_sub,by="ID")
+res_m_merge_CSV <- write.csv(res_m_merg, "res_m_merge.csv", row.names = T)
+
+
+#Only 2 (both genders)
+idx_2 <- pheno$diagnosis == "2"
+exprs_2 <- expr_mat[,idx_2]
+pheno_2 <- droplevels(pheno[idx_2,])
+
+fit_2 <- lmFit(exprs_2)
+fit_2 <- eBayes(fit_2)
+
+res_diag_2 <- topTable(fit_2, number = Inf)
+res_diag_2$ID <- rownames(res_diag_2)
+res_diag_2_CSV <- write.csv(res_diag_2, "res_diag_2.csv", row.names = T)
+
+#Only 0
+idx_0 <- pheno$diagnosis == "0"
+exprs_0 <- expr_mat[,idx_0]
+pheno_0 <- droplevels(pheno[idx_0,])
+
+fit_0 <- lmFit(exprs_0)
+fit_0 <- eBayes(fit_0)
+
+res_diag_0 <- topTable(fit_0, number = Inf)
+res_diag_0$ID <- rownames(res_diag_0)
+res_diag_0_CSV <- write.csv(res_diag_0, "res_diag_0.csv", row.names = T)
+
+#merge
+diag_2_sub <- res_diag_2[,c("ID","logFC","P.Value","adj.P.Val","B")]
+names(diag_2_sub)[2:5] <- paste0(names(mdiag_2_sub)[2:5],"_2")
+diag_0_sub <- res_diag_0[,c("ID","logFC","P.Value","adj.P.Val","B")]
+names(diag_0_sub)[2:5] <- paste0(names(diag_0_sub)[2:5],"_0")
+
+res_diag_merg<- merge(diag_0_sub,diag_2_sub,by="ID")
+res_diag_merge_CSV <- write.csv(res_diag_merg, "res_diag_merge.csv", row.names = T)
+
+
+
+
+
+
+
+
 
 
 
@@ -291,4 +365,4 @@ ggplot(expr_long_diff,
     axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
     axis.text.y = element_text(size = 6)
   )
-#--> Still in the works.
+#--> Still in the works. complitly wrong
