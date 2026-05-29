@@ -2,16 +2,14 @@
 pheno_full <- as.data.frame(gse@phenoData@data)
 
 pheno <- pheno_full
-pheno$diagnosis <- pheno[["diagnosisbp1:ch1"]]
-pheno$sex       <- pheno[["gender:ch1"]]
-
-pheno$diagnosis <- factor(pheno$diagnosis, levels = c("0","2"))
-pheno$sex       <- factor(pheno$sex,       levels = c("f","m"))
+pheno$diagnosis <- factor(pheno$diagnosisbp1, levels = c("0","2"))
+pheno$gender <- factor(pheno$gender, levels = c("f","m"))
 
 expr_mat <- exprs(gse)
 identical(rownames(pheno), colnames(expr_mat))
 
-design_diag_sex <- model.matrix(~ diagnosis + sex, data = pheno)
+#1. Full set - Sex+Diagnosis
+design_diag_sex <- model.matrix(~ diagnosis + gender, data = pheno)
 fit_diag_sex <- lmFit(exprs(gse), design_diag_sex)
 fit_diag_sex <- eBayes(fit_diag_sex)
 
@@ -19,27 +17,55 @@ fit_diag_sex <- eBayes(fit_diag_sex)
 # Diagnosis - 0VS2
 res_diag <- topTable(fit_diag_sex, coef = "diagnosis2", number = Inf)
 res_diag_CSV <- write.csv(res_diag, "res_diag.csv", row.names = T)
+high_B_genes_res_diag <- res_diag[order(-res_diag$B), ]
+high_B_genes_res_diag <- high_B_genes_res_diag[1:50,]
+write.csv(high_B_genes_res_diag, "high_B_genes_res_diag", row.names = T)
+high_logFC_genes_res_diag <- res_diag[order(-res_diag$logFC), ]
+high_logFC_genes_res_diag <- high_logFC_genes_res_diag[1:50,]
+write.csv(high_logFC_genes_res_diag, "high_logFC_genes_res_diag", row.names = T)
 
 
 # Sex- mVSf
-res_sex <- topTable(fit_diag_sex, coef ="sexm", number = Inf)
+res_sex <- topTable(fit_diag_sex, coef ="genderm", number = Inf)
 
 all(rownames(res_diag) %in% rownames(res_sex))
 res_sex_ordered_diag<- res_sex[rownames(res_diag),]
 identical(rownames(res_diag), rownames(res_sex_ordered_diag))
 res_sex_CSV <- write.csv(res_sex, "res_sex.csv", row.names = T)
 
-# Designe for both
-design_diag_sex_both <- model.matrix(~diagnosis * sex, data = pheno)
-fit_diag_sex_both <- lmFit(exprs(gse), design_diag_sex_both)
-fit_diag_sex_both <- eBayes(fit_diag_sex_both)
+high_B_genes_res_sex <- res_sex[order(-res_sex$B), ]
+high_B_genes_res_sex <- high_B_genes_res_sex[1:50,]
+write.csv(high_B_genes_res_sex, "high_B_genes_res_sex", row.names = T)
+high_logFC_genes_res_sex <- res_diag[order(-res_sex$logFC), ]
+high_logFC_genes_res_sex <- high_logFC_genes_res_sex[1:50,]
+write.csv(high_logFC_genes_res_sex, "high_logFC_genes_res_sex", row.names = T)
 
-res_both <- topTable(fit_diag_sex_both, coef = "diagnosis2:sexm", number = Inf)
-res_both_ordered_diag <- res_both[rownames(res_diag),]
+# Designe for both
+res_diag$ID <- rownames(res_diag)
+res_sex$ID <- rownames(res_sex)
+
+diag_sub <- res_diag[,c("ID","logFC","P.Value","adj.P.Val","B")]
+names(diag_sub)[2:5] <- paste0(names(diag_sub)[2:5],"_diag")
+sex_sub <- res_sex[,c("ID","logFC","P.Value","adj.P.Val","B")]
+names(sex_sub)[2:5] <- paste0(names(sex_sub)[2:5],"_sex")
+
+
+res_both_merg<- merge(diag_sub,sex_sub,by="ID")
+res_both_merge_CSV <- write.csv(res_both_merg, "res_both_merge.csv", row.names = T)
+
+res_both <- topTable(fit_diag_sex,number = Inf)
 res_both_CSV <- write.csv(res_both, "res_both.csv", row.names = T)
 
-# Only female experiments
-idx_female <- pheno$sex == "f"
+high_F_genes_res_both <- res_both[order(-res_both$F), ]
+high_F_genes_res_both <- high_F_genes_res_both[1:50,]
+write.csv(high_F_genes_res_both, "high_F_genes_res_Both", row.names = T)
+low_P_genes_res_both <- res_both[order(res_both$P.Value), ]
+low_P_genes_res_both <- low_P_genes_res_both[1:50,]
+write.csv(low_P_genes_res_both, "low_P_genes_res_both", row.names = T)
+
+
+#2. Only female experiments
+idx_female <- pheno$gender == "f"
 
 exprs_f <- exprs(gse)[,idx_female]
 pheno_f <- droplevels(pheno[idx_female,])
@@ -49,11 +75,52 @@ fit_f <- lmFit(exprs_f, design_f)
 fit_f <- eBayes(fit_f)
 
 res_diag_f <- topTable(fit_f, coef = "diagnosis2", number = Inf)
-res_diag_f_ordered_diag <- res_diag_f[rownames(res_diag),]
+res_diag_f$ID <- rownames(res_diag_f)
 res_diag_f_CSV <- write.csv(res_diag_f, "res_diag_f.csv", row.names = T)
 
-# Only male expirements
-idx_male <- pheno$sex == "m"
+high_B_genes_res_diag_f <- res_diag_f[order(-res_diag_f$B), ]
+high_B_genes_res_diag_f <- high_B_genes_res_diag_f[1:50,]
+write.csv(high_B_genes_res_diag_f, "high_B_genes_res_diag_f", row.names = T)
+high_logFC_genes_res_diag_f <- res_diag_f[order(-res_diag_f$logFC), ]
+high_logFC_genes_res_diag_f <- high_logFC_genes_res_diag_f[1:50,]
+write.csv(high_logFC_genes_res_diag_f, "high_logFC_genes_res_diag_f", row.names = T)
+
+#only F+2
+idx_f_2 <- pheno_f$diagnosis == "2"
+exprs_f_2 <- exprs_f[,idx_f_2]
+pheno_f_2 <- droplevels(pheno_f[idx_f_2,])
+
+fit_f_2 <- lmFit(exprs_f_2)
+fit_f_2 <- eBayes(fit_f_2)
+
+res_diag_f_2 <- topTable(fit_f_2, number = Inf)
+res_diag_f_2$ID <- rownames(res_diag_f_2)
+res_diag_f_2_CSV <- write.csv(res_diag_f_2, "res_diag_f_2.csv", row.names = T)
+
+#Only F+0
+idx_f_0 <- pheno_f$diagnosis == "0"
+exprs_f_0 <- exprs_f[,idx_f_0]
+pheno_f_0 <- droplevels(pheno_f[idx_f_0,])
+
+fit_f_0 <- lmFit(exprs_f_0)
+fit_f_0 <- eBayes(fit_f_0)
+
+res_diag_f_0 <- topTable(fit_f_0, number = Inf)
+res_diag_f_0$ID <- rownames(res_diag_f_0)
+res_diag_f_0_CSV <- write.csv(res_diag_f_0, "res_diag_f_0.csv", row.names = T)
+
+#merge
+f_2_sub <- res_diag_f_2[,c("ID","logFC","P.Value","adj.P.Val","B")]
+names(f_2_sub)[2:5] <- paste0(names(f_2_sub)[2:5],"_2")
+f_0_sub <- res_diag_f_0[,c("ID","logFC","P.Value","adj.P.Val","B")]
+names(f_0_sub)[2:5] <- paste0(names(f_0_sub)[2:5],"_0")
+
+res_f_merg<- merge(f_2_sub,f_0_sub,by="ID")
+res_f_merge_CSV <- write.csv(res_f_merg, "res_f_merge.csv", row.names = T)
+
+
+#3. Only male expirements
+idx_male <- pheno$gender == "m"
 
 exprs_m <- exprs(gse)[,idx_male]
 pheno_m <- droplevels(pheno[idx_male,])
@@ -63,8 +130,17 @@ fit_m <- lmFit(exprs_m, design_m)
 fit_m <- eBayes(fit_m)
 
 res_diag_m <- topTable(fit_m, coef  = "diagnosis2", number = Inf)
-res_diag_m_ordered_diag <- res_diag_m[rownames(res_diag),]
+res_diag_m$ID <- rownames(res_diag_m)
 res_diag_m_CSV <- write.csv(res_diag_m, "res_diag_m.csv", row.names = T)
+
+high_B_genes_res_diag_m <- res_diag_m[order(-res_diag_m$B), ]
+high_B_genes_res_diag_m <- high_B_genes_res_diag_m[1:50,]
+write.csv(high_B_genes_res_diag_m, "high_B_genes_res_diag_m", row.names = T)
+high_logFC_genes_res_diag_m <- res_diag_m[order(-res_diag_m$logFC), ]
+high_logFC_genes_res_diag_m <- high_logFC_genes_res_diag_m[1:50,]
+write.csv(high_logFC_genes_res_diag_m, "high_logFC_genes_res_diag_m", row.names = T)
+
+
 
 
 #Heatmaps with limma
@@ -215,4 +291,4 @@ ggplot(expr_long_diff,
     axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
     axis.text.y = element_text(size = 6)
   )
-#--> Still in the works. complitly wrong
+#--> Still in the works.
