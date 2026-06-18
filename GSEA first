@@ -1,0 +1,43 @@
+#Creat a data frame of the genes and their logFC for the GSEA
+res_diag_rank <- res_diag %>%
+  dplyr::select(Gene,logFC) %>%
+  na.omit() %>%
+  distinct() %>%
+  group_by(Gene) %>%
+  summarise(LCF=mean(logFC))
+
+#deframe to a list
+ranks_diag <-  deframe(res_diag_rank)
+
+rank_diag <- ranks_diag[names(ranks_diag) != ""]
+
+#Upload the pathway to the datasets I downloaded from https://www.gsea-msigdb.org/gsea/msigdb/human/collections.jsp#H
+pathway.gene_all = gmtPathways("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/h.all.v2026.1.Hs.symbols.gmt")
+
+#Run the GSEA
+fgseaRes_diag <- fgsea(pathways = pathway.gene_all, stats = rank_diag, nperm = 1000)
+
+#Clean the table
+fgseaRes_diag_clean <- fgseaRes_diag %>%
+  as_tibble() %>%
+  arrange(desc(NES))
+
+fgseaRes_diag_clean %>%
+  dplyr::select(-leadingEdge,-ES,-nMoreExtreme) %>%
+  arrange(padj) %>%
+  DT::datatable()
+
+#Creat a top highest and lowest table
+fgseaRes_diag_top_up <- head(fgseaRes_diag_clean, 20)
+fgseaRes_diag_top_down <- tail(fgseaRes_diag_clean, 20)
+
+fgseaRes_diag_tops <- rbind(fgseaRes_diag_top_up,fgseaRes_diag_top_down)
+
+#Plot to see who is at the top and who in the bottom
+gsea_diag <- ggplot(fgseaRes_diag_tops, aes(reorder(pathway,NES), NES)) +
+  geom_col(aes(fill=padj<0.05)) +
+  coord_flip() +
+  labs(x="pathway", y="Normalized enrichment score", title = "GSEA diag") +
+  theme_minimal()
+
+gsea_diag
