@@ -12,7 +12,7 @@ ranks_diag <-  deframe(res_diag_rank)
 rank_diag <- ranks_diag[names(ranks_diag) != ""]
 
 #Upload the pathway to the datasets I downloaded from https://www.gsea-msigdb.org/gsea/msigdb/human/collections.jsp#H
-pathway.gene_all = gmtPathways("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/h.all.v2026.1.Hs.symbols.gmt")
+pathway.gene_all <- gmtPathways("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/h.all.v2026.1.Hs.symbols.gmt")
 
 #Run the GSEA
 fgseaRes_diag <- fgsea(pathways = pathway.gene_all, stats = rank_diag, nperm = 1000)
@@ -37,7 +37,116 @@ fgseaRes_diag_tops <- rbind(fgseaRes_diag_top_up,fgseaRes_diag_top_down)
 gsea_diag <- ggplot(fgseaRes_diag_tops, aes(reorder(pathway,NES), NES)) +
   geom_col(aes(fill=padj<0.05)) +
   coord_flip() +
-  labs(x="pathway", y="Normalized enrichment score", title = "GSEA diag") +
+  labs(x="pathway", y="Normalized enrichment score", title = "GSEA diag Hallmark") +
   theme_minimal()
 
 gsea_diag
+
+#-----------------------------------------------------------------------#
+#Trying the same with the C2 curated gene set, with 7670 gene sets
+
+#Upload the pathway to the datasets I downloaded from https://www.gsea-msigdb.org/gsea/msigdb/human/collections.jsp#H
+pathway.gene_C2 <- gmtPathways("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/c2.all.v2026.1.Hs.symbols.gmt")
+
+#Run the GSEA
+fgseaRes_diag_C2 <- fgsea(pathways = pathway.gene_C2, stats = rank_diag, nperm = 1000)
+
+#Clean the table
+fgseaRes_diag_C2_clean <- fgseaRes_diag_C2 %>%
+  as_tibble() %>%
+  arrange(desc(NES))
+
+fgseaRes_diag_C2_clean %>%
+  dplyr::select(-leadingEdge,-ES,-nMoreExtreme) %>%
+  arrange(padj) %>%
+  DT::datatable()
+
+#Creat a top highest and lowest table
+fgseaRes_diag_C2_top_up <- head(fgseaRes_diag_C2_clean, 20)
+fgseaRes_diag_C2_top_down <- tail(fgseaRes_diag_C2_clean, 20)
+
+fgseaRes_diag_C2_tops <- rbind(fgseaRes_diag_C2_top_up,fgseaRes_diag_C2_top_down)
+
+#Plot to see who is at the top and who in the bottom
+gsea_diag_C2 <- ggplot(fgseaRes_diag_C2_tops, aes(reorder(pathway,NES), NES)) +
+  geom_col(aes(fill=padj<0.05)) +
+  coord_flip() +
+  labs(x="pathway", y="Normalized enrichment score", title = "GSEA diag C2 data sets") +
+  theme_minimal()
+
+gsea_diag_C2
+
+#-----------------------------------------------------------------------#
+#Trying it with the C2CP (chronical pathways) wich is Gene sets from pathway databases. Usually, these gene sets are canonical representations of a biological process compiled by domain experts. 
+pathway.gene_CP <- gmtPathways("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/c2.cp.v2026.1.Hs.symbols(1).gmt")
+
+#Run the GSEA
+fgseaRes_diag_CP <- fgsea(pathways = pathway.gene_CP, stats = rank_diag, nperm = 1000)
+
+#Clean the table
+fgseaRes_diag_CP_clean <- fgseaRes_diag_CP %>%
+  as_tibble() %>%
+  arrange(desc(NES))
+
+fgseaRes_diag_CP_clean %>%
+  dplyr::select(-leadingEdge,-ES,-nMoreExtreme) %>%
+  arrange(padj) %>%
+  DT::datatable()
+
+#Creat a top highest and lowest table
+fgseaRes_diag_CP_top_up <- head(fgseaRes_diag_CP_clean, 20)
+fgseaRes_diag_CP_top_down <- tail(fgseaRes_diag_CP_clean, 20)
+
+fgseaRes_diag_CP_tops <- rbind(fgseaRes_diag_CP_top_up,fgseaRes_diag_CP_top_down)
+
+#Plot to see who is at the top and who in the bottom
+gsea_diag_CP <- ggplot(fgseaRes_diag_CP_tops, aes(reorder(pathway,NES), NES)) +
+  geom_col(aes(fill=padj<0.05)) +
+  coord_flip() +
+  labs(x="pathway", y="Normalized enrichment score", title = "GSEA diag CP data sets") +
+  theme_minimal()
+
+gsea_diag_CP
+
+#Correllations I could find: Cell-cycle, proliferation, E2F, G2M signal (up regulation)
+#REACTOME_CELL_CYCLE_MITOTIC , REACTOME_MITOTIC_PROMETAPHASE, REACTOME_M_PHASE, REACTOME_MITOTIC_SPINDLE_CHECKPOINT
+#REACTOME_AURKA_ACTIVATION_BY_TPX2, PID_PLK1_PATHWAY
+#KEGG_DNA_REPLICATION, WP_DNA_IRDAMAGE_AND_CELLULAR_RESPONSE_VIA_ATR, REACTOME_CELL_CYCLE_CHECKPOINTS
+#WP_RETINOBLASTOMA_GENE_IN_CANCER
+#KONG_E2F3_TARGETS, ZHOU_CELL_CYCLE_GENES_IN_IR_RESPONSE_6HR
+#ROSTY_CERVICAL_CANCER_PROLIFERATION_CLUSTER
+#HALLMARK_E2F_TARGETS (up F), HALLMARK_G2M_CHECKPOINT (up F), HALLMARK_MITOTIC_SPINDLE (up F), HALLMARK_MYC_TARGETS_V1/V2(up v2 T)
+
+
+#DNA damage / stress / hypoxia / oxidative stress
+#Up regulated:
+#CP: WP_DNA_IRDAMAGE_AND_CELLULAR_RESPONSE_VIA_ATR, REACTOME_CELL_CYCLE_CHECKPOINTS, REACTOME_RESOLUTION_OF_SISTER_CHROMATID_COHESION
+#C2: HOFFMANN_LARGE_TO_SMALL_PRE_BII_LYMPHOCYTE_UP, HALLMARK_DNA_REPAIR
+#Hallmark:HALLMARK_REACTIVE_OXYGEN_SPECIES_PATHWAY
+#Down regulated:
+#CP: REACTOME_RESPONSE_OF_EIF2AK1_HRI_TO_HEME_DEFICIENCY, REACTOME_RESPONSE_TO_METAL_IONS, REACTOME_HSF1_ACTIVATION, WP_TRANSCRIPTIONAL_ACTIVATION_BY_NRF2_IN_RESPONSE_TO_PHYTOCHEMICALS
+#C2:LI_CISPLATIN_RESISTANCE_DN, KAN_RESPONSE_TO_ARSENIC_TRIOXIDE, ZHENG_RESPONSE_TO_ARSENITE_UPLI_CISPLATIN_RESISTANCE_DN, KAN_RESPONSE_TO_ARSENIC_TRIOXIDE, ZHENG_RESPONSE_TO_ARSENITE_UP
+#HAN_JNK_SINGALING_UP, MENSE_HYPOXIA_UP, LEONARD_HYPOXIA,JIANG_MELANOMA_TRM11_CD8
+#Hallmark: HALLMARK_HYPOXIA,HALLMARK_UV_RESPONSE_UP/DN, HALLMARK_P53_PATHWAY
+
+
+#Growth factor / signaling pathways (EGFR, TGF‑β, PI3K/AKT/mTOR, JAK/STAT)
+#Up regulated:
+#CP:PID_ERBB4_PATHWAY, PID_ECADHERIN_KERATINOCYTE_PATHWAY,BIOCARTA_TGFB_PATHWAY
+#C2:KOBAYASHI_EGFR_SIGNALING_24HR_DN, FIGAROL_EGFR_TKI_DRUG_TOLERANT_CELL_DN, CROONQUIST_IL6_DEPRIVATION_DN
+#Hallmark: HALLMARK_TGF_BETA_SIGNALING
+
+#Down regulated:
+#CP: REACTOME_FGFRL1_MODULATION_OF_FGFR1_SIGNALING
+#C2: PACHER_TARGETS_OF_IGF1_AND_IGF2_UP
+#Hallmark: HALLMARK_PI3K_AKT_MTOR_SIGNALING, HALLMARK_MTORC1_SIGNALING, HALLMARK_IL6_JAK_STAT3_SIGNALING, HALLMARK_KRAS_SIGNALING_UP
+
+#Immune / inflammation
+#Up regulated:
+#CP: WP_IL7_SIGNALING
+#Hallmark: HALLMARK_ALLOGRAFT_REJECTION
+
+#Down regulated:
+#CP: WP_UTERINE_NATURAL_KILLER_CELLS_AND_PROGESTERONE_ESTROGEN_AND_CHORIONIC_GONADOTROPIN,REACTOME_DEVELOPMENT_AND_HETEROGENEITY_OF_THE_ILC_FAMILY
+#C2: SHAFFER_IRF4_TARGETS_IN_PLASMA_CELL_VS_MATURE_B_LYMPHOCYTE
+#Hallmark:HALLMARK_INFLAMMATORY_RESPONSE, HALLMARK_INTERFERON_ALPHA_RESPONSE, HALLMARK_INTERFERON_GAMMA_RESPONSE, HALLMARK_COMPLEMENT
