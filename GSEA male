@@ -114,3 +114,52 @@ gsea_diag_m_CP
 #--------------------------------------------------------------------------------------------------------#
 #--------------------------------------------------------------------------------------------------------#
 
+#Saving to files
+saveRDS(fgseares_diag_m_clean, "C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/fgsea_res_diag_m_Hallmark.rds")
+fgseares_diag_m_clean <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/fgsea_res_diag_m_Hallmark.rds")
+
+fgseares_diag_m_clean_CSV <- data.frame(
+  lapply(fgseares_diag_m_clean, function(x) {
+    if (is.list(x)) {
+      sapply(x, function(z) paste(z, collapse = ";"))
+    } else {
+      x
+    }
+  }),
+  check.names = FALSE
+)
+
+write.csv2(fgseares_diag_m_clean_CSV, file = "C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/fgsea_res_diag_m_Hallmark.csv", row.names = FALSE)
+
+saveRDS(fgseares_diag_m_C2_clean, "C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/fgsea_res_diag_m_C2.rds")
+fgseares_diag_m_C2_clean <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/fgsea_res_diag_m_C2.rds")
+
+fgseares_diag_m_C2_clean_CSV <- data.frame(
+  lapply(fgseares_diag_m_C2_clean, function(x) {
+    if (is.list(x)) {
+      sapply(x, function(z) paste(z, collapse = ";"))
+    } else {
+      x
+    }
+  }),
+  check.names = FALSE
+)
+
+write.csv2(fgseares_diag_m_C2_clean_CSV, file = "C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/fgsea_res_diag_m_C2.csv", row.names = FALSE)
+
+saveRDS(fgseares_diag_m_CP_clean, "C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/fgsea_res_diag_m_CP.rds")
+fgseares_diag_m_CP_clean <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/fgsea_res_diag_m_CP.rds")
+
+fgseares_diag_m_CP_clean_CSV <- data.frame(
+  lapply(fgseares_diag_m_CP_clean, function(x) {
+    if (is.list(x)) {
+      sapply(x, function(z) paste(z, collapse = ";"))
+    } else {
+      x
+    }
+  }),
+  check.names = FALSE
+)
+
+write.csv2(fgseares_diag_m_CP_clean_CSV, file = "C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/fgsea_res_diag_m_CP.csv", row.names = FALSE)
+#----------------------------------------------------------------------------------#
