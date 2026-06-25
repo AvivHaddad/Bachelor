@@ -45,6 +45,7 @@ Expression_BPFemale <- exprs(gse)[, BI_Positive_female$BI_GEO_Accession]
 Expression_BNFemale <- exprs(gse)[, BI_Negative_female$BI_GEO_Accession]
 Expression_BPMale <- exprs(gse)[, BI_Positive_male$BI_GEO_Accession]
 Expression_BNMale <- exprs(gse)[, BI_Negative_male$BI_GEO_Accession]
+#Except for this:
 Genes <- gse@featureData@data[["Symbol"]]
 genXID <- data.frame(Genes, prob_IDs)
 
