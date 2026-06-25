@@ -26,6 +26,10 @@ high_logFC_genes_res_diag <- res_diag[order(-res_diag$logFC), ]
 high_logFC_genes_res_diag <- high_logFC_genes_res_diag[1:50,]
 write.csv(high_logFC_genes_res_diag, "../high_logFC_genes_res_diag", row.names = T)
 
+res_sig_up <- filter(res_diag,
+                     res_diag$adj.P.Val < 0.05 & res_diag$logFC> 1)
+res_sig_down <- filter(res_diag,
+res_diag$adj.P.Val > 0.05 & res_diag$logFC < -1)
 
 # Sex- mVSf
 res_sex <- topTable(fit_diag_sex, coef ="genderm", number = Inf)
@@ -46,6 +50,8 @@ write.csv(high_logFC_genes_res_sex, "../high_logFC_genes_res_sex", row.names = T
 res_diag$ID <- rownames(res_diag)
 res_sex$ID <- rownames(res_sex)
 
+colnames(genXID) <- c("Gene", "ID")
+res_diag$Gene <- genXID$Gene[match(res_diag$ID,genXID$ID)]
 diag_sub <- res_diag[,c("ID","logFC","P.Value","adj.P.Val","B")]
 names(diag_sub)[2:5] <- paste0(names(diag_sub)[2:5],"_diag")
 sex_sub <- res_sex[,c("ID","logFC","P.Value","adj.P.Val","B")]
@@ -64,6 +70,8 @@ write.csv(high_F_genes_res_both, "../high_F_genes_res_Both", row.names = T)
 low_P_genes_res_both <- res_both[order(res_both$P.Value), ]
 low_P_genes_res_both <- low_P_genes_res_both[1:50,]
 write.csv(low_P_genes_res_both, "../low_P_genes_res_both", row.names = T)
+
+
 
 #---------------------------------------------------------------------#
 
@@ -99,6 +107,11 @@ fit_f_2 <- eBayes(fit_f_2)
 res_diag_f_2 <- topTable(fit_f_2, number = Inf)
 res_diag_f_2$ID <- rownames(res_diag_f_2)
 res_diag_f_2_CSV <- write.csv(res_diag_f_2, "../res_diag_f_2.csv", row.names = T)
+
+res_sig_up_f_2 <- filter(res_diag_f_2,
+                     res_diag_f_2$adj.P.Val < 0.05 & res_diag_f_2$logFC > 2)
+res_sig_down_f_2 <- filter(res_diag_f_2,
+res_diag_f_2$adj.P.Val > 0.05 & res_diag_f_2$logFC < -2)
 
 #Only F+0
 idx_f_0 <- pheno_f$diagnosis == "0"
@@ -260,7 +273,7 @@ names(sample_groups_diag) <- rownames(pheno)
 
 coolmap_diag_top_n_adj.P.Val <- coolmap(expr_top,
                               cluster.by = "de pattern")
-save.image("../coolmap_diag_top20_adg.P.Val.png")
+#save.image("../coolmap_diag_top20_adg.P.Val.png")
 
 #Order
 ord_samples <- order(pheno$diagnosis, pheno$gender)
@@ -289,7 +302,7 @@ ggplot(expr_long, aes(x = sample, y = gene, fill = expression)) +
   scale_fill_gradient2(low = "blue", mid = "white", high = "red") +
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
   ggtitle(paste0("Top ", top_n, " by adj.P.Value"))
-save.image("../Heatmap_diag_top20_adg.P.Val.png")
+#save.image("../Heatmap_diag_top20_adg.P.Val.png")
 
 #Top n abs(logFC) - logFCerences
 top_diag_logFC <- res_diag[order(-abs(res_diag$logFC)), ][1:top_n, ]
@@ -331,7 +344,7 @@ ggplot(expr_diag_long_logFC,
   facet_grid(. ~ diagnosis, scales = "free_x", space = "free_x") +
   ggtitle(paste0("Top ", top_n, " by logCF "))
 
-save.image("../Heatmap_diag_top20_logFC.png")
+#save.image("../Heatmap_diag_top20_logFC.png")
 #---------------------------------------------------------------------#
 # Only female
 top_diag_f <- res_diag_f[order(res_diag_f$adj.P.Val), ][1:top_n, ]
@@ -367,7 +380,8 @@ ggplot(expr_long_f,
   )+
 facet_grid(. ~ diagnosis, scales = "free_x", space = "free_x") +
   ggtitle(paste0("Top ", top_n, " by adj.P.Value - Females"))
-save.image("../Heatmap_diag_top20_adg.P.Val_Female.png")
+#save.image("../Heatmap_diag_top20_adg.P.Val_Female.png")
+
 
 
 
