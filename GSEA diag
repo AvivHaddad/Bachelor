@@ -150,3 +150,35 @@ gsea_diag_CP
 #CP: WP_UTERINE_NATURAL_KILLER_CELLS_AND_PROGESTERONE_ESTROGEN_AND_CHORIONIC_GONADOTROPIN,REACTOME_DEVELOPMENT_AND_HETEROGENEITY_OF_THE_ILC_FAMILY
 #C2: SHAFFER_IRF4_TARGETS_IN_PLASMA_CELL_VS_MATURE_B_LYMPHOCYTE
 #Hallmark:HALLMARK_INFLAMMATORY_RESPONSE, HALLMARK_INTERFERON_ALPHA_RESPONSE, HALLMARK_INTERFERON_GAMMA_RESPONSE, HALLMARK_COMPLEMENT
+
+#----------------------------------------------------------------------------------------------------------------------------------#
+#Upload the pathway to the datasets I downloaded from https://github.com/hagenaue/Brain_GMT#
+pathway.gene_Brain_GMT <- gmtPathways("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/BrainGMTv2_HumanOrthologs.gmt.txt")
+
+#Run the GSEA
+fgseares_diag_Brain <- fgsea(pathways = pathway.gene_Brain_GMT, stats = rank_diag_m, nperm = 1000)
+
+#Clean the table
+fgseares_diag_Brain_clean <- fgseares_diag_Brain %>%
+  as_tibble() %>%
+  arrange(desc(NES))
+
+fgseares_diag_Brain_clean %>%
+  dplyr::select(-leadingEdge,-ES,-nMoreExtreme) %>%
+  arrange(padj) %>%
+  DT::datatable()
+
+#Creat a top highest and lowest table
+fgseares_diag_Brain_top_up <- head(fgseares_diag_Brain_clean, 20)
+fgseares_diag_Brain_top_down <- tail(fgseares_diag_Brain_clean, 20)
+
+fgseares_diag_Brain_tops <- rbind(fgseares_diag_Brain_top_up,fgseares_diag_Brain_top_down)
+
+#Plot to see who is at the top and who in the bottom
+gsea_diag_Brain <- ggplot(fgseares_diag_Brain_tops, aes(reorder(pathway,NES), NES)) +
+  geom_col(aes(fill=padj<0.05)) +
+  coord_flip() +
+  labs(x="pathway", y="Normalized enrichment score", title = "GSEA diag Brain") +
+  theme_minimal()
+
+gsea_diag_Brain
