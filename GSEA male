@@ -9,9 +9,11 @@ res_diag_m_rank <- res_diag_m %>%
   summarise(LCF=mean(logFC))
 
 #deframe to a list
-ranks_diag_m<-  deframe(res_diag_m_rank)
+ranks_diag_m <-  deframe(res_diag_m_rank)
 
 rank_diag_m <- ranks_diag_m[names(ranks_diag_m) != ""]
+saveRDS(rank_diag_m,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/renk_diag_m")
+rank_diag_m <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/renk_diag_m")
 
 #Upload the pathway to the datasets I downloaded from https://www.gsea-msigdb.org/gsea/msigdb/human/collections.jsp#H
 pathway.gene_all <- gmtPathways("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/h.all.v2026.1.Hs.symbols.gmt")
@@ -163,3 +165,34 @@ fgseares_diag_m_CP_clean_CSV <- data.frame(
 
 write.csv2(fgseares_diag_m_CP_clean_CSV, file = "C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/fgsea_res_diag_m_CP.csv", row.names = FALSE)
 #----------------------------------------------------------------------------------#
+
+#Upload the pathway to the datasets I downloaded from https://github.com/hagenaue/Brain_GMT#
+pathway.gene_Brain_GMT <- gmtPathways("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/BrainGMTv2_HumanOrthologs.gmt.txt")
+
+#Run the GSEA
+fgseares_diag_m_Brain <- fgsea(pathways = pathway.gene_Brain_GMT, stats = rank_diag_m, nperm = 1000)
+
+#Clean the table
+fgseares_diag_m_Brain_clean <- fgseares_diag_m_Brain %>%
+  as_tibble() %>%
+  arrange(desc(NES))
+
+fgseares_diag_m_Brain_clean %>%
+  dplyr::select(-leadingEdge,-ES,-nMoreExtreme) %>%
+  arrange(padj) %>%
+  DT::datatable()
+
+#Creat a top highest and lowest table
+fgseares_diag_m_Brain_top_up <- head(fgseares_diag_m_Brain_clean, 20)
+fgseares_diag_m_Brain_top_down <- tail(fgseares_diag_m_Brain_clean, 20)
+
+fgseares_diag_m_Brain_tops <- rbind(fgseares_diag_m_Brain_top_up,fgseares_diag_m_Brain_top_down)
+
+#Plot to see who is at the top and who in the bottom
+gsea_diag_m_Brain <- ggplot(fgseares_diag_m_Brain_tops, aes(reorder(pathway,NES), NES)) +
+  geom_col(aes(fill=padj<0.05)) +
+  coord_flip() +
+  labs(x="pathway", y="Normalized enrichment score", title = "GSEA diag male Brain") +
+  theme_minimal()
+
+gsea_diag_m_Brain
