@@ -26,13 +26,13 @@ Then I normalize the data row by row.
   - both gender and diagnosis (A bit of a different result)
 Only female experiments
   - All
-  -  Only F+2
-  -  Only F+0
+  - Only F+2
+  - Only F+0
 --> The ones with only sick or only undiagnosed do run the same experiment as with coefficients. But I wanted to see if there are differences anyway.
 Only male experiments
-  -  All
-  -  Only M+2
-  -  Only M+0
+  - All
+  - Only M+2
+  - Only M+0
 --> The ones with only sick or only undiagnosed do run the same experiment as with coefficients. But I wanted to see if there are differences anyway.
 
 5) I save all the resolutes separately and in merged matrices.
