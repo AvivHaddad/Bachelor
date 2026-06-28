@@ -1,4 +1,5 @@
 #Creat a data frame of the genes and their logFC for the GSEA
+res_diag <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/res_diag")
 res_diag_rank <- res_diag %>%
   dplyr::select(Gene,logFC) %>%
   na.omit() %>%
@@ -15,23 +16,28 @@ rank_diag <- ranks_diag[names(ranks_diag) != ""]
 pathway.gene_all <- gmtPathways("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/h.all.v2026.1.Hs.symbols.gmt")
 
 #Run the GSEA
-fgseaRes_diag <- fgsea(pathways = pathway.gene_all, stats = rank_diag, nperm = 1000)
+#fgseaRes_diag <- fgsea(pathways = pathway.gene_all, stats = rank_diag, nperm = 1000)
 
 #Clean the table
-fgseaRes_diag_clean <- fgseaRes_diag %>%
-  as_tibble() %>%
-  arrange(desc(NES))
+#fgseaRes_diag_clean <- fgseaRes_diag %>%
+#  as_tibble() %>%
+ # arrange(desc(NES))
 
-fgseaRes_diag_clean %>%
-  dplyr::select(-leadingEdge,-ES,-nMoreExtreme) %>%
-  arrange(padj) %>%
-  DT::datatable()
+#fgseaRes_diag_clean %>%
+#  dplyr::select(-leadingEdge,-ES,-nMoreExtreme) %>%
+#  arrange(padj) %>%
+#  DT::datatable()
+
+#saveRDS(fgseaRes_diag_clean,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseaRes_diag_clean")
+fgseaRes_diag_clean <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseaRes_diag_clean")
 
 #Creat a top highest and lowest table
-fgseaRes_diag_top_up <- head(fgseaRes_diag_clean, 20)
-fgseaRes_diag_top_down <- tail(fgseaRes_diag_clean, 20)
+f#gseaRes_diag_top_up <- head(fgseaRes_diag_clean, 30)
+#fgseaRes_diag_top_down <- tail(fgseaRes_diag_clean, 30)
 
-fgseaRes_diag_tops <- rbind(fgseaRes_diag_top_up,fgseaRes_diag_top_down)
+#fgseaRes_diag_tops <- rbind(fgseaRes_diag_top_up,fgseaRes_diag_top_down)
+#saveRDS(fgseaRes_diag_tops ,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseaRes_diag_tops ")
+fgseaRes_diag_tops  <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseaRes_diag_tops ")
 
 #Plot to see who is at the top and who in the bottom
 gsea_diag <- ggplot(fgseaRes_diag_tops, aes(reorder(pathway,NES), NES)) +
@@ -49,23 +55,29 @@ gsea_diag
 pathway.gene_C2 <- gmtPathways("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/c2.all.v2026.1.Hs.symbols.gmt")
 
 #Run the GSEA
-fgseaRes_diag_C2 <- fgsea(pathways = pathway.gene_C2, stats = rank_diag, nperm = 1000)
+#fgseaRes_diag_C2 <- fgsea(pathways = pathway.gene_C2, stats = rank_diag, nperm = 1000)
 
 #Clean the table
-fgseaRes_diag_C2_clean <- fgseaRes_diag_C2 %>%
-  as_tibble() %>%
-  arrange(desc(NES))
+#fgseaRes_diag_C2_clean <- fgseaRes_diag_C2 %>%
+#  as_tibble() %>%
+#  arrange(desc(NES))
 
-fgseaRes_diag_C2_clean %>%
-  dplyr::select(-leadingEdge,-ES,-nMoreExtreme) %>%
-  arrange(padj) %>%
-  DT::datatable()
+#fgseaRes_diag_C2_clean %>%
+#  dplyr::select(-leadingEdge,-ES,-nMoreExtreme) %>%
+#  arrange(padj) %>%
+#  DT::datatable()
+
+#saveRDS(fgseaRes_diag_C2_clean ,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseaRes_diag_C2_clean ")
+fgseaRes_diag_C2_clean <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseaRes_diag_C2_clean ")
 
 #Creat a top highest and lowest table
-fgseaRes_diag_C2_top_up <- head(fgseaRes_diag_C2_clean, 20)
-fgseaRes_diag_C2_top_down <- tail(fgseaRes_diag_C2_clean, 20)
+#fgseaRes_diag_C2_top_up <- head(fgseaRes_diag_C2_clean, 30)
+#fgseaRes_diag_C2_top_down <- tail(fgseaRes_diag_C2_clean, 30)
 
-fgseaRes_diag_C2_tops <- rbind(fgseaRes_diag_C2_top_up,fgseaRes_diag_C2_top_down)
+#fgseaRes_diag_C2_tops <- rbind(fgseaRes_diag_C2_top_up,fgseaRes_diag_C2_top_down)
+
+#saveRDS(fgseaRes_diag_C2_tops ,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseaRes_diag_C2_tops ")
+fgseaRes_diag_C2_tops <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseaRes_diag_C2_tops ")
 
 #Plot to see who is at the top and who in the bottom
 gsea_diag_C2 <- ggplot(fgseaRes_diag_C2_tops, aes(reorder(pathway,NES), NES)) +
@@ -81,23 +93,29 @@ gsea_diag_C2
 pathway.gene_CP <- gmtPathways("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/c2.cp.v2026.1.Hs.symbols(1).gmt")
 
 #Run the GSEA
-fgseaRes_diag_CP <- fgsea(pathways = pathway.gene_CP, stats = rank_diag, nperm = 1000)
+#fgseaRes_diag_CP <- fgsea(pathways = pathway.gene_CP, stats = rank_diag, nperm = 1000)
 
 #Clean the table
-fgseaRes_diag_CP_clean <- fgseaRes_diag_CP %>%
-  as_tibble() %>%
-  arrange(desc(NES))
+#fgseaRes_diag_CP_clean <- fgseaRes_diag_CP %>%
+#  as_tibble() %>%
+#  arrange(desc(NES))
 
-fgseaRes_diag_CP_clean %>%
-  dplyr::select(-leadingEdge,-ES,-nMoreExtreme) %>%
-  arrange(padj) %>%
-  DT::datatable()
+#fgseaRes_diag_CP_clean %>%
+#  dplyr::select(-leadingEdge,-ES,-nMoreExtreme) %>%
+#  arrange(padj) %>%
+#  DT::datatable()
+
+#saveRDS(fgseaRes_diag_CP_clean ,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseaRes_diag_CP_clean ")
+fgseaRes_diag_CP_clean <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseaRes_diag_CP_clean ")
 
 #Creat a top highest and lowest table
-fgseaRes_diag_CP_top_up <- head(fgseaRes_diag_CP_clean, 20)
-fgseaRes_diag_CP_top_down <- tail(fgseaRes_diag_CP_clean, 20)
+#fgseaRes_diag_CP_top_up <- head(fgseaRes_diag_CP_clean, 30)
+#fgseaRes_diag_CP_top_down <- tail(fgseaRes_diag_CP_clean, 30)
 
-fgseaRes_diag_CP_tops <- rbind(fgseaRes_diag_CP_top_up,fgseaRes_diag_CP_top_down)
+#fgseaRes_diag_CP_tops <- rbind(fgseaRes_diag_CP_top_up,fgseaRes_diag_CP_top_down)
+#saveRDS(fgseaRes_diag_CP_tops ,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseaRes_diag_CP_tops ")
+fgseaRes_diag_CP_tops <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseaRes_diag_CP_tops ")
+
 
 #Plot to see who is at the top and who in the bottom
 gsea_diag_CP <- ggplot(fgseaRes_diag_CP_tops, aes(reorder(pathway,NES), NES)) +
@@ -156,23 +174,27 @@ gsea_diag_CP
 pathway.gene_Brain_GMT <- gmtPathways("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/BrainGMTv2_HumanOrthologs.gmt.txt")
 
 #Run the GSEA
-fgseares_diag_Brain <- fgsea(pathways = pathway.gene_Brain_GMT, stats = rank_diag_m, nperm = 1000)
+#fgseares_diag_Brain <- fgsea(pathways = pathway.gene_Brain_GMT, stats = rank_diag, nperm = 1000)
 
 #Clean the table
-fgseares_diag_Brain_clean <- fgseares_diag_Brain %>%
-  as_tibble() %>%
-  arrange(desc(NES))
+#fgseares_diag_Brain_clean <- fgseares_diag_Brain %>%
+#  as_tibble() %>%
+#  arrange(desc(NES))
 
-fgseares_diag_Brain_clean %>%
-  dplyr::select(-leadingEdge,-ES,-nMoreExtreme) %>%
-  arrange(padj) %>%
-  DT::datatable()
+#fgseares_diag_Brain_clean %>%
+ # dplyr::select(-leadingEdge,-ES,-nMoreExtreme) %>%
+#  arrange(padj) %>%
+#  DT::datatable()
 
+#saveRDS(fgseares_diag_Brain_clean,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseares_diag_Brain_clean")
+fgseares_diag_Brain_clean <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseares_diag_Brain_clean")
 #Creat a top highest and lowest table
-fgseares_diag_Brain_top_up <- head(fgseares_diag_Brain_clean, 20)
-fgseares_diag_Brain_top_down <- tail(fgseares_diag_Brain_clean, 20)
+fgseares_diag_Brain_top_up <- head(fgseares_diag_Brain_clean, 30)
+fgseares_diag_Brain_top_down <- tail(fgseares_diag_Brain_clean, 30)
 
-fgseares_diag_Brain_tops <- rbind(fgseares_diag_Brain_top_up,fgseares_diag_Brain_top_down)
+#fgseares_diag_Brain_tops <- rbind(fgseares_diag_Brain_top_up,fgseares_diag_Brain_top_down)
+#saveRDS(fgseares_diag_Brain_tops,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseares_diag_Brain_tops")
+fgseares_diag_Brain_tops <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseares_diag_Brain_tops")
 
 #Plot to see who is at the top and who in the bottom
 gsea_diag_Brain <- ggplot(fgseares_diag_Brain_tops, aes(reorder(pathway,NES), NES)) +
