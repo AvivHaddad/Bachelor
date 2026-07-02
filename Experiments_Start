@@ -34,15 +34,15 @@ Expression_BNG_scaled <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/
 
 #---------------------------------------------------------------------#
 
-#1. Full set - Sex+Diagnosis
-design_diag_sex <- model.matrix(~ diagnosis + gender, data = pheno)
-fit_diag_sex <- lmFit(BI_Expression_data_scaled, design_diag_sex)
-fit_diag_sex <- eBayes(fit_diag_sex)
+#1. Full set - gender+Diagnosis
+design_diag_gender <- model.matrix(~ diagnosis + gender, data = pheno)
+fit_diag_gender <- lmFit(BI_Expression_data_scaled, design_diag_gender)
+fit_diag_gender <- eBayes(fit_diag_gender)
 
 
 # Making logFCerent experiments using topTable
 # Diagnosis - 0VS2
-#res_diag <- topTable(fit_diag_sex, coef = "diagnosis2", number = Inf)
+#res_diag <- topTable(fit_diag_gender, coef = "diagnosis2", number = Inf)
 #res_diag$ID <- rownames(res_diag)
 #colnames(genXID) <- c("Gene", "ID")
 #res_diag$Gene <- genXID$Gene[match(res_diag$ID,genXID$ID)]
@@ -60,33 +60,36 @@ write.csv(high_logFC_genes_res_diag, "../high_logFC_genes_res_diag", row.names =
 
 
 
-# Sex- mVSf
-res_sex <- topTable(fit_diag_sex, coef ="genderm", number = Inf)
+# gender- mVSf
+#res_gender <- topTable(fit_diag_gender, coef ="genderm", number = Inf)
+#all(rownames(res_diag) %in% rownames(res_gender))
+#res_gender_ordered_diag<- res_gender[rownames(res_diag),]
+#identical(rownames(res_diag), rownames(res_gender_ordered_diag))
+#res_gender$ID <- rownames(res_gender)
+#colnames(genXID) <- c("Gene", "ID")
+#res_gender$Gene <- genXID$Gene[match(res_gender$ID,genXID$ID)]
+#res_gender_CSV <- write.csv(res_gender, "../res_gender.csv", row.names = T)
+#saveRDS(res_gender, "C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/res_gender")
+res_gender <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/res_gender")
 
-all(rownames(res_diag) %in% rownames(res_sex))
-res_sex_ordered_diag<- res_sex[rownames(res_diag),]
-identical(rownames(res_diag), rownames(res_sex_ordered_diag))
-res_sex$ID <- rownames(res_sex)
-res_sex_CSV <- write.csv(res_sex, "../res_sex.csv", row.names = T)
-
-high_B_genes_res_sex <- res_sex[order(-res_sex$B), ]
-high_B_genes_res_sex <- high_B_genes_res_sex[1:50,]
-write.csv(high_B_genes_res_sex, "../high_B_genes_res_sex", row.names = T)
-high_logFC_genes_res_sex <- res_diag[order(-res_sex$logFC), ]
-high_logFC_genes_res_sex <- high_logFC_genes_res_sex[1:50,]
-write.csv(high_logFC_genes_res_sex, "../high_logFC_genes_res_sex", row.names = T)
+high_B_genes_res_gender <- res_gender[order(-res_gender$B), ]
+high_B_genes_res_gender <- high_B_genes_res_gender[1:50,]
+write.csv(high_B_genes_res_gender, "../high_B_genes_res_gender", row.names = T)
+high_logFC_genes_res_gender <- res_diag[order(-res_gender$logFC), ]
+high_logFC_genes_res_gender <- high_logFC_genes_res_gender[1:50,]
+write.csv(high_logFC_genes_res_gender, "../high_logFC_genes_res_gender", row.names = T)
 
 
 diag_sub <- res_diag[,c("ID","logFC","P.Value","adj.P.Val","B")]
 names(diag_sub)[2:5] <- paste0(names(diag_sub)[2:5],"_diag")
-sex_sub <- res_sex[,c("ID","logFC","P.Value","adj.P.Val","B")]
-names(sex_sub)[2:5] <- paste0(names(sex_sub)[2:5],"_sex")
+gender_sub <- res_gender[,c("ID","logFC","P.Value","adj.P.Val","B")]
+names(gender_sub)[2:5] <- paste0(names(gender_sub)[2:5],"_gender")
 
 
-res_both_merg<- merge(diag_sub,sex_sub,by="ID")
+res_both_merg<- merge(diag_sub,gender_sub,by="ID")
 res_both_merge_CSV <- write.csv(res_both_merg, "../res_both_merge.csv", row.names = T)
 
-res_both <- topTable(fit_diag_sex,number = Inf)
+res_both <- topTable(fit_diag_gender,number = Inf)
 res_both_CSV <- write.csv(res_both, "../res_both.csv", row.names = T)
 
 high_F_genes_res_both <- res_both[order(-res_both$F), ]
@@ -123,43 +126,7 @@ high_logFC_genes_res_diag_f <- res_diag_f[order(-res_diag_f$logFC), ]
 high_logFC_genes_res_diag_f <- high_logFC_genes_res_diag_f[1:50,]
 write.csv(high_logFC_genes_res_diag_f, "../high_logFC_genes_res_diag_f", row.names = T)
 
-#only F+2
-idx_f_2 <- pheno_f$diagnosis == "2"
-exprs_f_2 <- exprs_f[,idx_f_2]
-pheno_f_2 <- droplevels(pheno_f[idx_f_2,])
 
-fit_f_2 <- lmFit(exprs_f_2)
-fit_f_2 <- eBayes(fit_f_2)
-
-res_diag_f_2 <- topTable(fit_f_2, number = Inf)
-res_diag_f_2$ID <- rownames(res_diag_f_2)
-res_diag_f_2_CSV <- write.csv(res_diag_f_2, "../res_diag_f_2.csv", row.names = T)
-
-res_sig_up_f_2 <- filter(res_diag_f_2,
-                     res_diag_f_2$adj.P.Val < 0.05 & res_diag_f_2$logFC > 2)
-res_sig_down_f_2 <- filter(res_diag_f_2,
-res_diag_f_2$adj.P.Val > 0.05 & res_diag_f_2$logFC < -2)
-
-#Only F+0
-idx_f_0 <- pheno_f$diagnosis == "0"
-exprs_f_0 <- exprs_f[,idx_f_0]
-pheno_f_0 <- droplevels(pheno_f[idx_f_0,])
-
-fit_f_0 <- lmFit(exprs_f_0)
-fit_f_0 <- eBayes(fit_f_0)
-
-res_diag_f_0 <- topTable(fit_f_0, number = Inf)
-res_diag_f_0$ID <- rownames(res_diag_f_0)
-res_diag_f_0_CSV <- write.csv(res_diag_f_0, "../res_diag_f_0.csv", row.names = T)
-
-#merge
-f_2_sub <- res_diag_f_2[,c("ID","logFC","P.Value","adj.P.Val","B")]
-names(f_2_sub)[2:5] <- paste0(names(f_2_sub)[2:5],"_2")
-f_0_sub <- res_diag_f_0[,c("ID","logFC","P.Value","adj.P.Val","B")]
-names(f_0_sub)[2:5] <- paste0(names(f_0_sub)[2:5],"_0")
-
-res_f_merg<- merge(f_2_sub,f_0_sub,by="ID")
-res_f_merge_CSV <- write.csv(res_f_merg, "../res_f_merge.csv", row.names = T)
 
 #---------------------------------------------------------------------#
 
@@ -186,104 +153,39 @@ high_logFC_genes_res_diag_m <- res_diag_m[order(-res_diag_m$logFC), ]
 high_logFC_genes_res_diag_m <- high_logFC_genes_res_diag_m[1:50,]
 write.csv(high_logFC_genes_res_diag_m, "../high_logFC_genes_res_diag_m", row.names = T)
 
-#only M+2
-idx_m_2 <- pheno_m$diagnosis == "2"
-exprs_m_2 <- exprs_m[,idx_m_2]
-pheno_m_2 <- droplevels(pheno_m[idx_m_2,])
-
-fit_m_2 <- lmFit(exprs_m_2)
-fit_m_2 <- eBayes(fit_m_2)
-
-res_diag_m_2 <- topTable(fit_m_2, number = Inf)
-res_diag_m_2$ID <- rownames(res_diag_m_2)
-res_diag_m_2_CSV <- write.csv(res_diag_m_2, "../res_diag_m_2.csv", row.names = T)
-
-#Only M+0
-idx_m_0 <- pheno_m$diagnosis == "0"
-exprs_m_0 <- exprs_m[,idx_m_0]
-pheno_m_0 <- droplevels(pheno_m[idx_m_0,])
-
-fit_m_0 <- lmFit(exprs_m_0)
-fit_m_0 <- eBayes(fit_m_0)
-
-res_diag_m_0 <- topTable(fit_m_0, number = Inf)
-res_diag_m_0$ID <- rownames(res_diag_m_0)
-res_diag_m_0_CSV <- write.csv(res_diag_m_0, "../res_diag_m_0.csv", row.names = T)
-
-#merge
-m_2_sub <- res_diag_m_2[,c("ID","logFC","P.Value","adj.P.Val","B")]
-names(m_2_sub)[2:5] <- paste0(names(m_2_sub)[2:5],"_2")
-m_0_sub <- res_diag_m_0[,c("ID","logFC","P.Value","adj.P.Val","B")]
-names(m_0_sub)[2:5] <- paste0(names(m_0_sub)[2:5],"_0")
-
-res_m_merg<- merge(m_2_sub,m_0_sub,by="ID")
-res_m_merge_CSV <- write.csv(res_m_merg, "../res_m_merge.csv", row.names = T)
 
 #---------------------------------------------------------------------#
 
-#Only 2 (both genders) no design
+#Only 2 (both genders)
 idx_2 <- pheno$`diagnosisbp1:ch1` == "2"
 pheno_2 <- droplevels(pheno[idx_2,])
 
-fit_2 <- lmFit(Expression_BPG_scaled, coef ="genderm", number = Inf)
-fit_2 <- eBayes(fit_2)
+#design_2 <- model.matrix(~gender,data = pheno_2)
+#fit_2 <- lmFit(Expression_BPG_scaled, design = design_2)
+#fit_2 <- eBayes(fit_2)
 
 #res_diag_2 <- topTable(fit_2, number = Inf)
 #res_diag_2$ID <- rownames(res_diag_2)
+
 #res_diag_2_CSV <- write.csv(res_diag_2, "../res_diag_2.csv", row.names = T)
 #saveRDS(res_diag_2, "C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/res_diag_2")
 res_diag_2 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/res_diag_2")
 
-#Only 0 no design
+#Only 0
 idx_0 <- pheno$diagnosis == "0"
 pheno_0 <- droplevels(pheno[idx_0,])
 
-fit_0 <- lmFit(Expression_BNG_scaled )
-fit_0 <- eBayes(fit_0)
+#design_0 <- model.matrix(~gender,data = pheno_0)
+#fit_0 <- lmFit(Expression_BNG_scaled, design = design_0)
+#fit_0 <- eBayes(fit_0)
 
 #res_diag_0 <- topTable(fit_0, number = Inf)
 #res_diag_0$ID <- rownames(res_diag_0)
+
 #res_diag_0_CSV <- write.csv(res_diag_0, "../res_diag_0.csv", row.names = T)
 #saveRDS(res_diag_0, "C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/res_diag_0")
 res_diag_0 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/res_diag_0")
-#merge
-#diag_2_sub <- res_diag_2[,c("ID","logFC","P.Value","adj.P.Val","B")]
-#names(diag_2_sub)[2:5] <- paste0(names(diag_2_sub)[2:5],"_2")
-#diag_0_sub <- res_diag_0[,c("ID","logFC","P.Value","adj.P.Val","B")]
-#names(diag_0_sub)[2:5] <- paste0(names(diag_0_sub)[2:5],"_0")
 
-#res_diag_merg<- merge(diag_0_sub,diag_2_sub,by="ID")
-#res_diag_merge_CSV <- write.csv(res_diag_merg, "res_diag_merge.csv", row.names = T)
-
-#---------------------------------------------------------------------#
-
-# Only 2 with design
-#design_2_sex <- model.matrix(~ gender, data = pheno_2)
-#fit_2_sex <- lmFit(Expression_BPG, design_2_sex)
-#fit_2_sex <- eBayes(fit_diag_sex)
-
-#res_2_sex <- topTable(fit_2_sex,coef = "genderm", number = Inf)
-#res_2_sex$ID <- rownames(res_2_sex)
-#res_2_sex_CSV <- write.csv(res_2_sex, "../res_2_sex.csv", row.names = T)
-
-#Only 0 with design
-#design_0_sex <- model.matrix(~ gender, data = pheno_0)
-#fit_0_sex <- lmFit(Expression_BNG_scaled , design_0_sex)
-#fit_0_sex <- eBayes(fit_0_sex)
-
-#res_0_sex <- topTable(fit_0_sex,coef = "genderm", number = Inf)
-#res_0_sex$ID <- rownames(res_0_sex)
-#res_0_sex_CSV <- write.csv(res_0_sex, "../res_0_sex.csv", row.names = T)
-
-
-#merge
-#designed_2_sub <- res_2_sex[,c("ID","logFC","P.Value","adj.P.Val","B")]
-#names(designed_2_sub)[2:5] <- paste0(names(designed_2_sub)[2:5],"_2")
-#designed_0_sub <- res_0_sex[,c("ID","logFC","P.Value","adj.P.Val","B")]
-#names(designed_0_sub)[2:5] <- paste0(names(designed_0_sub)[2:5],"_0")
-
-#res_designed_2_0_merg<- merge(designed_2_sub,designed_0_sub ,by="ID")
-#res_designed_2_0_merg_CSV <- write.csv(res_designed_2_0_merg, "../res_designed_2_0_merg.csv", row.names = T)
 
 #---------------------------------------------------------------------#
 #---------------------------------------------------------------------#
@@ -300,22 +202,6 @@ expr_top <- BI_Expression_data_scaled[top_ids, ]
 sample_groups_diag <- with(pheno, paste0("D", diagnosis, "_", gender))
 names(sample_groups_diag) <- rownames(pheno)
 
-
-coolmap_diag_top_n_adj.P.Val <- coolmap(expr_top,
-                              cluster.by = "de pattern")
-#save.image("../coolmap_diag_top20_adg.P.Val.png")
-
-#Order
-ord_samples <- order(pheno$diagnosis, pheno$gender)
-expr_top_ord <- expr_top[, ord_samples]
-
-coolmap(expr_top_ord,
-        show.dendrogram = "row")
-#--> came out the same
-
-
-expr_df <- as.data.frame(expr_top)
-expr_df$gene <- rownames(expr_df)
 #---------------------------------------------------------------------#
 #ggplot2 format
 expr_long <- expr_df |>
@@ -522,435 +408,3 @@ ggplot(expr_long_0,
 #------------------------------------------------------------------------------------------------------------#
 
 
-# Building a design matrix
-pheno <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/pheno")
-pheno$diagnosis <- factor(pheno$diagnosisbp1, levels = c("0","2"))
-pheno$gender <- factor(pheno$gender, levels = c("f","m"))
-
-
-BI_Expression_data <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/BI_Expression_data")
-identical(rownames(pheno), colnames(BI_Expression_data))
-
-# row-wise z-score scaling: for each gene, subtract that gene’s mean across samples and divide by its standard deviation.
-BI_Expression_data <- as.matrix(BI_Expression_data)
-BI_Expression_data_scaled <- t(scale(t(BI_Expression_data)))
-rownames(BI_Expression_data_scaled) <- rownames(BI_Expression_data)
-colnames(BI_Expression_data_scaled) <- colnames(BI_Expression_data)
-saveRDS(BI_Expression_data_scaled, "C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/BI_Expression_data_scaled ")
-BI_Expression_data_scaled <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/BI_Expression_data_scaled ")
-
-#---------------------------------------------------------------------#
-
-#1. Full set - Sex+Diagnosis
-design_diag_sex <- model.matrix(~ diagnosis + gender, data = pheno)
-fit_diag_sex <- lmFit(BI_Expression_data_scaled, design_diag_sex)
-fit_diag_sex <- eBayes(fit_diag_sex)
-
-
-# Making logFCerent experiments using topTable
-# Diagnosis - 0VS2
-#res_diag <- topTable(fit_diag_sex, coef = "diagnosis2", number = Inf)
-#res_diag$ID <- rownames(res_diag)
-#colnames(genXID) <- c("Gene", "ID")
-#res_diag$Gene <- genXID$Gene[match(res_diag$ID,genXID$ID)]
-#saveRDS(res_diag, "C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/res_diag")
-res_diag <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/res_diag")
-#res_diag_CSV <- write.csv(res_diag, "../res_diag.csv", row.names = T)
-
-high_B_genes_res_diag <- res_diag[order(-res_diag$B), ]
-high_B_genes_res_diag <- high_B_genes_res_diag[1:50,]
-write.csv(high_B_genes_res_diag, "../high_B_genes_res_diag", row.names = T)
-
-high_logFC_genes_res_diag <- res_diag[order(-res_diag$logFC), ]
-high_logFC_genes_res_diag <- high_logFC_genes_res_diag[1:50,]
-write.csv(high_logFC_genes_res_diag, "../high_logFC_genes_res_diag", row.names = T)
-
-
-
-# Sex- mVSf
-res_sex <- topTable(fit_diag_sex, coef ="genderm", number = Inf)
-
-all(rownames(res_diag) %in% rownames(res_sex))
-res_sex_ordered_diag<- res_sex[rownames(res_diag),]
-identical(rownames(res_diag), rownames(res_sex_ordered_diag))
-res_sex$ID <- rownames(res_sex)
-res_sex_CSV <- write.csv(res_sex, "../res_sex.csv", row.names = T)
-
-high_B_genes_res_sex <- res_sex[order(-res_sex$B), ]
-high_B_genes_res_sex <- high_B_genes_res_sex[1:50,]
-write.csv(high_B_genes_res_sex, "../high_B_genes_res_sex", row.names = T)
-high_logFC_genes_res_sex <- res_diag[order(-res_sex$logFC), ]
-high_logFC_genes_res_sex <- high_logFC_genes_res_sex[1:50,]
-write.csv(high_logFC_genes_res_sex, "../high_logFC_genes_res_sex", row.names = T)
-
-
-diag_sub <- res_diag[,c("ID","logFC","P.Value","adj.P.Val","B")]
-names(diag_sub)[2:5] <- paste0(names(diag_sub)[2:5],"_diag")
-sex_sub <- res_sex[,c("ID","logFC","P.Value","adj.P.Val","B")]
-names(sex_sub)[2:5] <- paste0(names(sex_sub)[2:5],"_sex")
-
-
-res_both_merg<- merge(diag_sub,sex_sub,by="ID")
-res_both_merge_CSV <- write.csv(res_both_merg, "../res_both_merge.csv", row.names = T)
-
-res_both <- topTable(fit_diag_sex,number = Inf)
-res_both_CSV <- write.csv(res_both, "../res_both.csv", row.names = T)
-
-high_F_genes_res_both <- res_both[order(-res_both$F), ]
-high_F_genes_res_both <- high_F_genes_res_both[1:50,]
-write.csv(high_F_genes_res_both, "../high_F_genes_res_Both", row.names = T)
-low_P_genes_res_both <- res_both[order(res_both$P.Value), ]
-low_P_genes_res_both <- low_P_genes_res_both[1:50,]
-write.csv(low_P_genes_res_both, "../low_P_genes_res_both", row.names = T)
-
-
-
-#---------------------------------------------------------------------#
-
-#2. Only female experiments
-idx_female <- pheno$gender == "f"
-
-exprs_f <- BI_Expression_data_scaled[,idx_female]
-pheno_f <- droplevels(pheno[idx_female,])
-
-#design_f <- model.matrix(~diagnosis,data = pheno_f)
-#fit_f <- lmFit(exprs_f, design_f)
-#fit_f <- eBayes(fit_f)
-
-#res_diag_f <- topTable(fit_f, coef = "diagnosis2", number = Inf)
-#res_diag_f$ID <- rownames(res_diag_f)
-#res_diag_f_CSV <- write.csv(res_diag_f, "../res_diag_f.csv", row.names = T)
-#saveRDS(res_diag_f, "C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/res_diag_f")
-res_diag_f <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/res_diag_f")
-
-high_B_genes_res_diag_f <- res_diag_f[order(-res_diag_f$B), ]
-high_B_genes_res_diag_f <- high_B_genes_res_diag_f[1:50,]
-write.csv(high_B_genes_res_diag_f, "../high_B_genes_res_diag_f", row.names = T)
-high_logFC_genes_res_diag_f <- res_diag_f[order(-res_diag_f$logFC), ]
-high_logFC_genes_res_diag_f <- high_logFC_genes_res_diag_f[1:50,]
-write.csv(high_logFC_genes_res_diag_f, "../high_logFC_genes_res_diag_f", row.names = T)
-
-#only F+2
-idx_f_2 <- pheno_f$diagnosis == "2"
-exprs_f_2 <- exprs_f[,idx_f_2]
-pheno_f_2 <- droplevels(pheno_f[idx_f_2,])
-
-fit_f_2 <- lmFit(exprs_f_2)
-fit_f_2 <- eBayes(fit_f_2)
-
-res_diag_f_2 <- topTable(fit_f_2, number = Inf)
-res_diag_f_2$ID <- rownames(res_diag_f_2)
-res_diag_f_2_CSV <- write.csv(res_diag_f_2, "../res_diag_f_2.csv", row.names = T)
-
-res_sig_up_f_2 <- filter(res_diag_f_2,
-                     res_diag_f_2$adj.P.Val < 0.05 & res_diag_f_2$logFC > 2)
-res_sig_down_f_2 <- filter(res_diag_f_2,
-res_diag_f_2$adj.P.Val > 0.05 & res_diag_f_2$logFC < -2)
-
-#Only F+0
-idx_f_0 <- pheno_f$diagnosis == "0"
-exprs_f_0 <- exprs_f[,idx_f_0]
-pheno_f_0 <- droplevels(pheno_f[idx_f_0,])
-
-fit_f_0 <- lmFit(exprs_f_0)
-fit_f_0 <- eBayes(fit_f_0)
-
-res_diag_f_0 <- topTable(fit_f_0, number = Inf)
-res_diag_f_0$ID <- rownames(res_diag_f_0)
-res_diag_f_0_CSV <- write.csv(res_diag_f_0, "../res_diag_f_0.csv", row.names = T)
-
-#merge
-f_2_sub <- res_diag_f_2[,c("ID","logFC","P.Value","adj.P.Val","B")]
-names(f_2_sub)[2:5] <- paste0(names(f_2_sub)[2:5],"_2")
-f_0_sub <- res_diag_f_0[,c("ID","logFC","P.Value","adj.P.Val","B")]
-names(f_0_sub)[2:5] <- paste0(names(f_0_sub)[2:5],"_0")
-
-res_f_merg<- merge(f_2_sub,f_0_sub,by="ID")
-res_f_merge_CSV <- write.csv(res_f_merg, "../res_f_merge.csv", row.names = T)
-
-#---------------------------------------------------------------------#
-
-#3. Only male expirements
-idx_male <- pheno$gender == "m"
-
-exprs_m <- BI_Expression_data_scaled[,idx_male]
-pheno_m <- droplevels(pheno[idx_male,])
-
-#design_m <- model.matrix(~diagnosis,data = pheno_m)
-#fit_m <- lmFit(exprs_m, design_m)
-#fit_m <- eBayes(fit_m)
-
-#res_diag_m <- topTable(fit_m, coef  = "diagnosis2", number = Inf)
-#res_diag_m$ID <- rownames(res_diag_m)
-#res_diag_m_CSV <- write.csv(res_diag_m, "../res_diag_m.csv", row.names = T)
-#saveRDS(res_diag_m, "C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/res_diag_m")
-res_diag_m <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/res_diag_m")
-
-high_B_genes_res_diag_m <- res_diag_m[order(-res_diag_m$B), ]
-high_B_genes_res_diag_m <- high_B_genes_res_diag_m[1:50,]
-write.csv(high_B_genes_res_diag_m, "../high_B_genes_res_diag_m", row.names = T)
-high_logFC_genes_res_diag_m <- res_diag_m[order(-res_diag_m$logFC), ]
-high_logFC_genes_res_diag_m <- high_logFC_genes_res_diag_m[1:50,]
-write.csv(high_logFC_genes_res_diag_m, "../high_logFC_genes_res_diag_m", row.names = T)
-
-#only M+2
-idx_m_2 <- pheno_m$diagnosis == "2"
-exprs_m_2 <- exprs_m[,idx_m_2]
-pheno_m_2 <- droplevels(pheno_m[idx_m_2,])
-
-fit_m_2 <- lmFit(exprs_m_2)
-fit_m_2 <- eBayes(fit_m_2)
-
-res_diag_m_2 <- topTable(fit_m_2, number = Inf)
-res_diag_m_2$ID <- rownames(res_diag_m_2)
-res_diag_m_2_CSV <- write.csv(res_diag_m_2, "../res_diag_m_2.csv", row.names = T)
-
-#Only M+0
-idx_m_0 <- pheno_m$diagnosis == "0"
-exprs_m_0 <- exprs_m[,idx_m_0]
-pheno_m_0 <- droplevels(pheno_m[idx_m_0,])
-
-fit_m_0 <- lmFit(exprs_m_0)
-fit_m_0 <- eBayes(fit_m_0)
-
-res_diag_m_0 <- topTable(fit_m_0, number = Inf)
-res_diag_m_0$ID <- rownames(res_diag_m_0)
-res_diag_m_0_CSV <- write.csv(res_diag_m_0, "../res_diag_m_0.csv", row.names = T)
-
-#merge
-m_2_sub <- res_diag_m_2[,c("ID","logFC","P.Value","adj.P.Val","B")]
-names(m_2_sub)[2:5] <- paste0(names(m_2_sub)[2:5],"_2")
-m_0_sub <- res_diag_m_0[,c("ID","logFC","P.Value","adj.P.Val","B")]
-names(m_0_sub)[2:5] <- paste0(names(m_0_sub)[2:5],"_0")
-
-res_m_merg<- merge(m_2_sub,m_0_sub,by="ID")
-res_m_merge_CSV <- write.csv(res_m_merg, "../res_m_merge.csv", row.names = T)
-
-#---------------------------------------------------------------------#
-
-#Only 2 (both genders) no design
-idx_2 <- pheno$diagnosis == "2"
-exprs_2 <- BI_Expression_data_scaled[,idx_2]
-pheno_2 <- droplevels(pheno[idx_2,])
-
-fit_2 <- lmFit(exprs_2)
-fit_2 <- eBayes(fit_2)
-
-res_diag_2 <- topTable(fit_2, number = Inf)
-res_diag_2$ID <- rownames(res_diag_2)
-res_diag_2_CSV <- write.csv(res_diag_2, "../res_diag_2.csv", row.names = T)
-
-#Only 0 no design
-idx_0 <- pheno$diagnosis == "0"
-exprs_0 <- BI_Expression_data_scaled[idx_0]
-pheno_0 <- droplevels(pheno[idx_0,])
-
-fit_0 <- lmFit(exprs_0)
-fit_0 <- eBayes(fit_0)
-
-res_diag_0 <- topTable(fit_0, number = Inf)
-res_diag_0$ID <- rownames(res_diag_0)
-res_diag_0_CSV <- write.csv(res_diag_0, "../res_diag_0.csv", row.names = T)
-
-#merge
-diag_2_sub <- res_diag_2[,c("ID","logFC","P.Value","adj.P.Val","B")]
-names(diag_2_sub)[2:5] <- paste0(names(diag_2_sub)[2:5],"_2")
-diag_0_sub <- res_diag_0[,c("ID","logFC","P.Value","adj.P.Val","B")]
-names(diag_0_sub)[2:5] <- paste0(names(diag_0_sub)[2:5],"_0")
-
-res_diag_merg<- merge(diag_0_sub,diag_2_sub,by="ID")
-res_diag_merge_CSV <- write.csv(res_diag_merg, "res_diag_merge.csv", row.names = T)
-
-#---------------------------------------------------------------------#
-
-# Only 2 with design
-design_2_sex <- model.matrix(~ gender, data = pheno_2)
-fit_2_sex <- lmFit(exprs_2, design_2_sex)
-fit_2_sex <- eBayes(fit_diag_sex)
-
-res_2_sex <- topTable(fit_2_sex,coef = "genderm", number = Inf)
-res_2_sex$ID <- rownames(res_2_sex)
-res_2_sex_CSV <- write.csv(res_2_sex, "../res_2_sex.csv", row.names = T)
-
-#Only 0 with design
-#design_0_sex <- model.matrix(~ gender, data = pheno_0)
-#fit_0_sex <- lmFit(exprs_0, design_0_sex)
-#fit_0_sex <- eBayes(fit_0_sex)
-
-#res_0_sex <- topTable(fit_0_sex,coef = "genderm", number = Inf)
-#res_0_sex$ID <- rownames(res_0_sex)
-#res_0_sex_CSV <- write.csv(res_0_sex, "../res_0_sex.csv", row.names = T)
-
-
-#merge
-#designed_2_sub <- res_2_sex[,c("ID","logFC","P.Value","adj.P.Val","B")]
-#names(designed_2_sub)[2:5] <- paste0(names(designed_2_sub)[2:5],"_2")
-#designed_0_sub <- res_0_sex[,c("ID","logFC","P.Value","adj.P.Val","B")]
-#names(designed_0_sub)[2:5] <- paste0(names(designed_0_sub)[2:5],"_0")
-
-#res_designed_2_0_merg<- merge(designed_2_sub,designed_0_sub ,by="ID")
-#res_designed_2_0_merg_CSV <- write.csv(res_designed_2_0_merg, "../res_designed_2_0_merg.csv", row.names = T)
-
-#---------------------------------------------------------------------#
-#---------------------------------------------------------------------#
-
-#Heatmaps with limma
-# From full expression table
-#Chossing the top n with the highest adj.P.Val in diag to make it visualy easier
-top_n <- 20
-top_diag <- BI_Expression_data_scaled[order(res_diag$adj.P.Val), ] [1:top_n, ]
-
-top_ids <- rownames(top_diag)
-expr_top <- BI_Expression_data_scaled[top_ids, ]
-
-sample_groups_diag <- with(pheno, paste0("D", diagnosis, "_", gender))
-names(sample_groups_diag) <- rownames(pheno)
-
-
-coolmap_diag_top_n_adj.P.Val <- coolmap(expr_top,
-                              cluster.by = "de pattern")
-#save.image("../coolmap_diag_top20_adg.P.Val.png")
-
-#Order
-ord_samples <- order(pheno$diagnosis, pheno$gender)
-expr_top_ord <- expr_top[, ord_samples]
-
-coolmap(expr_top_ord,
-        show.dendrogram = "row")
-#--> came out the same
-
-
-expr_df <- as.data.frame(expr_top)
-expr_df$gene <- rownames(expr_df)
-#---------------------------------------------------------------------#
-#ggplot2 format
-expr_long <- expr_df |>
-  pivot_longer(
-    cols = -gene,
-    names_to = "sample",
-    values_to = "expression"
-  )
-expr_long$diagnosis <- pheno[as.character(expr_long$sample), "diagnosis"]
-expr_long$gender <- pheno[as.character(expr_long$sample), "gender"]
-
-ggplot(expr_long, aes(x = sample, y = gene, fill = expression)) +
-  geom_tile() +
-  scale_fill_gradient2(low = "blue", mid = "white", high = "red") +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-  ggtitle(paste0("Top ", top_n, " by adj.P.Value"))
-#save.image("../Heatmap_diag_top20_adg.P.Val.png")
-
-#Top n abs(logFC) - logFCerences
-top_diag_logFC <- res_diag[order(-abs(res_diag$logFC)), ][1:top_n, ]
-
-top_diag_ids_logFC <- rownames(top_diag_logFC)
-idx_diag_logFC <-  top_diag_ids_logFC == expr_long$gene
-exprs_diag_logFC <- BI_Expression_data_scaled[idx_diag_logFC,]
-
-
-expr_top_diag_logFC <- expr_top <- BI_Expression_data_scaled[top_diag_ids_logFC, ]
-
-expr_diag_df_logFC <- as.data.frame(expr_top_diag_logFC)
-expr_diag_df_logFC$gene <- rownames(expr_diag_df_logFC)
-
-expr_diag_long_logFC <- expr_diag_df_logFC |>
-  pivot_longer(
-    cols = -gene,
-    names_to  = "sample",
-    values_to = "expression"
-  )
-expr_diag_long_logFC <- expr_diag_long_logFC|>
-  mutate(
-    diagnosis = pheno[ sample, "diagnosis" ]
-  )
-ordered <- setorder(expr_diag_long_logFC,cols = expression)
-gather(expr_diag_df_logFC)
-
-
-ggplot(expr_diag_long_logFC,
-       aes(x = sample, y = gene, fill = expression)) +
-  geom_tile() +
-  scale_fill_gradient2(low = "blue", high = "red") +
-  labs(x = "Samples", y = "Most logFCerence in expression") +
-  theme_minimal() +
-  theme(
-    axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
-    axis.text.y = element_text(size = 6)
-  ) +
-  facet_grid(. ~ diagnosis, scales = "free_x", space = "free_x") +
-  ggtitle(paste0("Top ", top_n, " by logCF "))
-
-#save.image("../Heatmap_diag_top20_logFC.png")
-#---------------------------------------------------------------------#
-# Only female
-top_diag_f <- res_diag_f[order(res_diag_f$adj.P.Val), ][1:top_n, ]
-top_ids_f  <- rownames(top_diag_f)
-expr_top_f <- exprs_f[top_ids_f, ]
-
-expr_df_f <- as.data.frame(expr_top_f)
-expr_df_f$gene <- rownames(expr_df_f)
-
-expr_long_f <- expr_df_f |>
-  pivot_longer(
-    cols = -gene,
-    names_to  = "sample",
-    values_to = "expression"
-  )
-
-
-expr_long_f <- expr_long_f |>
-  mutate(
-    diagnosis = pheno_f[ sample, "diagnosis" ]
-  )
-
-
-ggplot(expr_long_f,
-       aes(x = sample, y = gene, fill = expression, group_by("diagnosis"))) +
-  geom_tile() +
-  scale_fill_gradient2(low = "blue", mid = "white", high = "red") +
-  labs(x = "Female samples", y = "Top diagnosis genes (female only)") +
-  theme_minimal() +
-  theme(
-    axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
-    axis.text.y = element_text(size = 6)
-  )+
-facet_grid(. ~ diagnosis, scales = "free_x", space = "free_x") +
-  ggtitle(paste0("Top ", top_n, " by adj.P.Value - Female"))
-#save.image("../Heatmap_diag_top20_adg.P.Val_Female.png")
-
-# Only Male
-top_diag_m <- res_diag_m[order(res_diag_m$adj.P.Val), ][1:top_n, ]
-top_ids_m  <- rownames(top_diag_m)
-expr_top_m <- exprs_m[top_ids_m, ]
-
-expr_df_m <- as.data.frame(expr_top_m)
-expr_df_m$gene <- rownames(expr_df_m)
-
-expr_long_m <- expr_df_m |>
-  pivot_longer(
-    cols = -gene,
-    names_to  = "sample",
-    values_to = "expression"
-  )
-
-
-expr_long_m <- expr_long_m |>
-  mutate(
-    diagnosis = pheno_m[ sample, "diagnosis" ]
-  )
-
-
-ggplot(expr_long_m,
-       aes(x = sample, y = gene, fill = expression, group_by("diagnosis"))) +
-  geom_tile() +
-  scale_fill_gradient2(low = "blue", mid = "white", high = "red") +
-  labs(x = "Male samples", y = "Top diagnosis genes (male only)") +
-  theme_minimal() +
-  theme(
-    axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
-    axis.text.y = element_text(size = 6)
-  )+
-  facet_grid(. ~ diagnosis, scales = "free_x", space = "free_x") +
-  ggtitle(paste0("Top ", top_n, " by adj.P.Value - Male"))
-
-#------------------------------------------------------------------------------------------------------------#
