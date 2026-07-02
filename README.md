@@ -31,15 +31,16 @@ Then I normalize the data row by row.
   - All
   - Only F+2
   - Only F+0
-    
+
 -->The ones with only sick or only undiagnosed do run the same experiment as with coefficients. But I wanted to see if there are differences anyway.
 
 -> Only male experiments
   - All
   - Only M+2
   - Only M+0
-    
+
   -->The ones with only sick or only undiagnosed do run the same experiment as with coefficients. But I wanted to see if there are differences anyway.
+  In the end I've deleted that part of the code.
 
 5) I save all the resolutes separately and in merged matrices.
 
@@ -47,7 +48,7 @@ Then I normalize the data row by row.
 
 7) To group genes and decide which genes should be included in the rest of the experiments (the full gene list is too computationally heavy),
 I use the enrichment function of GSEA using the package fgsea.
-I run it on the full data set, the only female and only male groups.
+I run it on the full data set, the only female and only male groups, the only patients with positive diagnosis of Bi Polar and the control.
 I used the data sets from https://www.gsea-msigdb.org/gsea/msigdb/human/collections.jsp#H and https://github.com/hagenaue/Brain_GMT.
 
 -> I chose to run it on multiple data sets to achieve broader information.
