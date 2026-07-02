@@ -1,0 +1,132 @@
+##Creat a data frame of the genes and their logFC for the GSEA
+## I have a problem of many of the genes gettin equal rating and it can creat unpredictible resualts.
+## I've tried changing to t-values, but it didn't matter
+res_diag_2<- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/res_diag_2")
+res_diag_2$Gene <- genXID$Gene[match(res_diag_2$ID,genXID$ID)]
+
+res_diag_2_rank <- res_diag_2 %>%
+  dplyr::select(Gene,logFC) %>%
+  na.omit() %>%
+  distinct() %>%
+  group_by(Gene) %>%
+  summarise(LCF=mean(logFC))
+
+##deframe to a list
+ranks_diag_2 <-  deframe(res_diag_2_rank)
+
+rank_diag_2 <- ranks_diag_2[names(ranks_diag_2) != ""]
+
+##Upload the pathway to the datasets I downloaded from https://www.gsea-msigdb.org/gsea/msigdb/human/collections.jsp#H
+pathway.gene_all <- gmtPathways("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/h.all.v2026.1.Hs.symbols.gmt")
+
+##Run the GSEA
+fgseaRes_diag_2 <- fgsea(pathways = pathway.gene_all, stats = rank_diag_2)
+
+##Clean the table
+fgseaRes_diag_2_clean <- fgseaRes_diag_2 %>%
+  as_tibble() %>%
+ arrange(desc(NES))
+
+fgseaRes_diag_2_clean %>%
+  dplyr::select(-leadingEdge,-ES) %>%
+  arrange(padj) %>%
+  DT::datatable()
+
+saveRDS(fgseaRes_diag_2_clean,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseaRes_diag_2_clean")
+fgseaRes_diag_2_clean <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseaRes_diag_2_clean")
+
+##Creat a top highest and lowest table
+fgseaRes_diag_2_top_up <- head(fgseaRes_diag_2_clean, 30)
+fgseaRes_diag_2_top_down <- tail(fgseaRes_diag_2_clean, 30)
+
+fgseaRes_diag_2_tops <- rbind(fgseaRes_diag_2_top_up,fgseaRes_diag_2_top_down)
+saveRDS(fgseaRes_diag_2_tops ,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseaRes_diag_2_tops ")
+fgseaRes_diag_2_tops  <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseaRes_diag_2_tops ")
+
+##Plot to see who is at the top and who in the bottom
+gsea_diag_2 <- ggplot(fgseaRes_diag_2_tops, aes(reorder(pathway,NES), NES)) +
+  geom_col(aes(fill=padj<0.05)) +
+  coord_flip() +
+  labs(x="pathway", y="Normalized enrichment score", title = "GSEA BI Polar Patients Hallmark") +
+  theme_minimal()
+
+gsea_diag_2
+
+#-----------------------------------------------------------------------#
+##Trying the same with the C2 curated gene set, with 7672 gene sets
+
+##Upload the pathway to the datasets I downloaded from https://www.gsea-msigdb.org/gsea/msigdb/human/collections.jsp#H
+pathway.gene_C2 <- gmtPathways("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/c2.all.v2026.1.Hs.symbols.gmt")
+
+##Run the GSEA
+fgseaRes_diag_2_C2 <- fgsea(pathways = pathway.gene_C2, stats = rank_diag_2)
+
+##Clean the table
+fgseaRes_diag_2_C2_clean <- fgseaRes_diag_2_C2 %>%
+  as_tibble() %>%
+ arrange(desc(NES))
+
+fgseaRes_diag_2_C2_clean %>%
+  dplyr::select(-leadingEdge,-ES) %>%
+  arrange(padj) %>%
+  DT::datatable()
+
+saveRDS(fgseaRes_diag_2_C2_clean ,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseaRes_diag_2_C2_clean ")
+fgseaRes_diag_2_C2_clean <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseaRes_diag_2_C2_clean ")
+
+##Creat a top highest and lowest table
+fgseaRes_diag_2_C2_top_up <- head(fgseaRes_diag_2_C2_clean, 30)
+fgseaRes_diag_2_C2_top_down <- tail(fgseaRes_diag_2_C2_clean, 30)
+
+fgseaRes_diag_2_C2_tops <- rbind(fgseaRes_diag_2_C2_top_up,fgseaRes_diag_2_C2_top_down)
+
+saveRDS(fgseaRes_diag_2_C2_tops ,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseaRes_diag_2_C2_tops ")
+fgseaRes_diag_2_C2_tops <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseaRes_diag_2_C2_tops ")
+
+##Plot to see who is at the top and who in the bottom
+gsea_diag_2_C2 <- ggplot(fgseaRes_diag_2_C2_tops, aes(reorder(pathway,NES), NES)) +
+  geom_col(aes(fill=padj<0.05)) +
+  coord_flip() +
+  labs(x="pathway", y="Normalized enrichment score", title = "GSEA BI Polar Patients  C2 data sets") +
+  theme_minimal()
+
+gsea_diag_2_C2
+
+#-----------------------------------------------------------------------#
+##I've decided to not use the CP data set
+
+##Upload the pathway to the datasets I downloaded from https://github.com/hagenaue/Brain_GMT#
+pathway.gene_Brain_GMT <- gmtPathways("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/BrainGMTv2_HumanOrthologs.gmt.txt")
+
+##Run the GSEA
+fgseares_diag_2_Brain <- fgsea(pathways = pathway.gene_Brain_GMT, stats = rank_diag_2)
+
+##Clean the table
+fgseares_diag_2_Brain_clean <- fgseares_diag_2_Brain %>%
+  as_tibble() %>%
+  arrange(desc(NES))
+
+fgseares_diag_2_Brain_clean %>%
+ dplyr::select(-leadingEdge,-ES,-nMoreExtreme) %>%
+  arrange(padj) %>%
+ DT::datatable()
+
+saveRDS(fgseares_diag_2_Brain_clean,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseares_diag_2_Brain_clean")
+fgseares_diag_2_Brain_clean <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseares_diag_2_Brain_clean")
+
+##Creat a top highest and lowest table
+fgseares_diag_2_Brain_top_up <- head(fgseares_diag_2_Brain_clean, 30)
+fgseares_diag_2_Brain_top_down <- tail(fgseares_diag_2_Brain_clean, 30)
+
+fgseares_diag_2_Brain_tops <- rbind(fgseares_diag_2_Brain_top_up,fgseares_diag_2_Brain_top_down)
+saveRDS(fgseares_diag_2_Brain_tops,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseares_diag_2_Brain_tops")
+fgseares_diag_2_Brain_tops <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseares_diag_2_Brain_tops")
+
+##Plot to see who is at the top and who in the bottom
+gsea_diag_2_Brain <- ggplot(fgseares_diag_2_Brain_tops, aes(reorder(pathway,NES), NES)) +
+  geom_col(aes(fill=padj<0.05)) +
+  coord_flip() +
+  labs(x="pathway", y="Normalized enrichment score", title = "GSEA BI Polar Patients  Brain") +
+  theme_minimal()
+
+gsea_diag_2_Brain
