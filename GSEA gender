@@ -16,27 +16,27 @@ rank_gender <- ranks_gender[names(ranks_gender) != ""]
 pathway.gene_all <- gmtPathways("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/h.all.v2026.1.Hs.symbols.gmt")
 
 #Run the GSEA
-#fgseaRes_gender <- fgsea(pathways = pathway.gene_all, stats = rank_gender, nperm = 1000)
+fgseaRes_gender <- fgsea(pathways = pathway.gene_all, stats = rank_gender)
 
 #Clean the table
-#fgseaRes_gender_clean <- fgseaRes_gender %>%
-#  as_tibble() %>%
-# arrange(desc(NES))
+fgseaRes_gender_clean <- fgseaRes_gender %>%
+  as_tibble() %>%
+ arrange(desc(NES))
 
-#fgseaRes_gender_clean %>%
-#  dplyr::select(-leadingEdge,-ES,-nMoreExtreme) %>%
-#  arrange(padj) %>%
-#  DT::datatable()
+fgseaRes_gender_clean %>%
+  dplyr::select(-leadingEdge,-ES) %>%
+  arrange(padj) %>%
+  DT::datatable()
 
 #saveRDS(fgseaRes_gender_clean,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseaRes_gender_clean")
 fgseaRes_gender_clean <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseaRes_gender_clean")
 
 #Creat a top highest and lowest table
-#fgseaRes_gender_top_up <- head(fgseaRes_gender_clean, 30)
-#fgseaRes_gender_top_down <- tail(fgseaRes_gender_clean, 30)
+fgseaRes_gender_top_up <- head(fgseaRes_gender_clean, 30)
+fgseaRes_gender_top_down <- tail(fgseaRes_gender_clean, 30)
 
-#fgseaRes_gender_tops <- rbind(fgseaRes_gender_top_up,fgseaRes_gender_top_down)
-#saveRDS(fgseaRes_gender_tops ,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseaRes_gender_tops ")
+fgseaRes_gender_tops <- rbind(fgseaRes_gender_top_up,fgseaRes_gender_top_down)
+saveRDS(fgseaRes_gender_tops ,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseaRes_gender_tops ")
 fgseaRes_gender_tops  <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseaRes_gender_tops ")
 
 #Plot to see who is at the top and who in the bottom
@@ -55,28 +55,28 @@ gsea_gender
 pathway.gene_C2 <- gmtPathways("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/c2.all.v2026.1.Hs.symbols.gmt")
 
 #Run the GSEA
-#fgseaRes_gender_C2 <- fgsea(pathways = pathway.gene_C2, stats = rank_gender, nperm = 1000)
+fgseaRes_gender_C2 <- fgsea(pathways = pathway.gene_C2, stats = rank_gender)
 
 #Clean the table
-#fgseaRes_gender_C2_clean <- fgseaRes_gender_C2 %>%
-#  as_tibble() %>%
-# arrange(desc(NES))
+fgseaRes_gender_C2_clean <- fgseaRes_gender_C2 %>%
+  as_tibble() %>%
+ arrange(desc(NES))
 
-#fgseaRes_gender_C2_clean %>%
-#  dplyr::select(-leadingEdge,-ES,-nMoreExtreme) %>%
-#  arrange(padj) %>%
-#  DT::datatable()
+fgseaRes_gender_C2_clean %>%
+  dplyr::select(-leadingEdge,-ES) %>%
+  arrange(padj) %>%
+  DT::datatable()
 
-#saveRDS(fgseaRes_gender_C2_clean ,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseaRes_gender_C2_clean ")
+saveRDS(fgseaRes_gender_C2_clean ,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseaRes_gender_C2_clean ")
 fgseaRes_gender_C2_clean <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseaRes_gender_C2_clean ")
 
 #Creat a top highest and lowest table
-#fgseaRes_gender_C2_top_up <- head(fgseaRes_gender_C2_clean, 30)
-#fgseaRes_gender_C2_top_down <- tail(fgseaRes_gender_C2_clean, 30)
+fgseaRes_gender_C2_top_up <- head(fgseaRes_gender_C2_clean, 30)
+fgseaRes_gender_C2_top_down <- tail(fgseaRes_gender_C2_clean, 30)
 
-#fgseaRes_gender_C2_tops <- rbind(fgseaRes_gender_C2_top_up,fgseaRes_gender_C2_top_down)
+fgseaRes_gender_C2_tops <- rbind(fgseaRes_gender_C2_top_up,fgseaRes_gender_C2_top_down)
 
-#saveRDS(fgseaRes_gender_C2_tops ,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseaRes_gender_C2_tops ")
+saveRDS(fgseaRes_gender_C2_tops ,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseaRes_gender_C2_tops ")
 fgseaRes_gender_C2_tops <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseaRes_gender_C2_tops ")
 
 #Plot to see who is at the top and who in the bottom
@@ -95,26 +95,27 @@ gsea_gender_C2
 pathway.gene_Brain_GMT <- gmtPathways("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/BrainGMTv2_HumanOrthologs.gmt.txt")
 
 #Run the GSEA
-#fgseares_gender_Brain <- fgsea(pathways = pathway.gene_Brain_GMT, stats = rank_gender, nperm = 1000)
+fgseares_gender_Brain <- fgsea(pathways = pathway.gene_Brain_GMT, stats = rank_gender)
 
 #Clean the table
-#fgseares_gender_Brain_clean <- fgseares_gender_Brain %>%
-#  as_tibble() %>%
-#  arrange(desc(NES))
+fgseares_gender_Brain_clean <- fgseares_gender_Brain %>%
+  as_tibble() %>%
+  arrange(desc(NES))
 
-#fgseares_gender_Brain_clean %>%
-# dplyr::select(-leadingEdge,-ES,-nMoreExtreme) %>%
-#  arrange(padj) %>%
-# DT::datatable()
+fgseares_gender_Brain_clean %>%
+ dplyr::select(-leadingEdge,-ES) %>%
+  arrange(padj) %>%
+ DT::datatable()
 
-#saveRDS(fgseares_gender_Brain_clean,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseares_gender_Brain_clean")
+saveRDS(fgseares_gender_Brain_clean,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseares_gender_Brain_clean")
 fgseares_gender_Brain_clean <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseares_gender_Brain_clean")
-#Creat a top highest and lowest table
-#fgseares_gender_Brain_top_up <- head(fgseares_gender_Brain_clean, 30)
-#fgseares_gender_Brain_top_down <- tail(fgseares_gender_Brain_clean, 30)
 
-#fgseares_gender_Brain_tops <- rbind(fgseares_gender_Brain_top_up,fgseares_gender_Brain_top_down)
-#saveRDS(fgseares_gender_Brain_tops,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseares_gender_Brain_tops")
+#Creat a top highest and lowest table
+fgseares_gender_Brain_top_up <- head(fgseares_gender_Brain_clean, 30)
+fgseares_gender_Brain_top_down <- tail(fgseares_gender_Brain_clean, 30)
+
+fgseares_gender_Brain_tops <- rbind(fgseares_gender_Brain_top_up,fgseares_gender_Brain_top_down)
+saveRDS(fgseares_gender_Brain_tops,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseares_gender_Brain_tops")
 fgseares_gender_Brain_tops <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseares_gender_Brain_tops")
 
 #Plot to see who is at the top and who in the bottom
