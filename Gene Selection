@@ -1,0 +1,167 @@
+fgseares_diag_tops  <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseares_diag_tops ")
+fgseares_diag_C2_tops <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseares_diag_C2_tops ")
+fgseares_diag_Brain_tops <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseares_diag_Brain_tops")
+fgseares_diag_0_tops  <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseares_diag_0_tops ")
+fgseares_diag_0_C2_tops <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseares_diag_0_C2_tops ")
+fgseares_diag_0_Brain_tops <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseares_diag_0_Brain_tops")
+fgseares_diag_f_Brain_tops <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseares_diag_f_Brain_tops")
+fgseares_diag_f_tops <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseares_diag_f_tops")
+fgseares_diag_f_C2_tops <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseares_diag_f_C2_tops")
+fgseares_diag_m_Brain_tops <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseares_diag_m_Brain_tops")
+fgseares_diag_m_C2_tops <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseares_diag_m_C2_tops")
+fgseares_diag_m_tops <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseares_diag_m_tops")
+fgseares_diag_2_tops  <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseares_diag_2_tops ")
+fgseares_diag_2_C2_tops <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseares_diag_2_C2_tops ")
+fgseares_diag_2_Brain_tops <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseares_diag_2_Brain_tops")
+fgseares_gender_Brain_tops <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseares_gender_Brain_tops")
+fgseares_gender_C2_tops <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseares_gender_C2_tops ")
+fgseares_gender_tops  <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/fgseares_gender_tops ")
+
+pathwayTableCleaning <- function(x) {
+  x %>%
+    dplyr::select(pathway, padj, NES, leadingEdge, size) %>%
+    dplyr::arrange(padj)
+}
+
+#Creat a big matrix with all of the GSEA resualts
+table_list <- list(
+  pathsways_diag = fgseares_diag_tops,
+  pathsways_diag_C2 = fgseares_diag_C2_tops,
+  pathsways_diag_Brain = fgseares_diag_Brain_tops,
+  pathsways_diag_0 = fgseares_diag_0_tops,
+  pathsways_diag_0_C2 = fgseares_diag_0_C2_tops,
+  pathsways_diag_0_Brain = fgseares_diag_0_Brain_tops,
+  pathsways_diag_2 = fgseares_diag_2_tops,
+  pathsways_diag_2_C2 = fgseares_diag_2_C2_tops,
+  pathsways_diag_2_Brain = fgseares_diag_2_Brain_tops,
+  pathsways_diag_f = fgseares_diag_f_tops,
+  pathsways_diag_f_C2 = fgseares_diag_f_C2_tops,
+  pathsways_diag_f_Brain = fgseares_diag_f_Brain_tops,
+  pathsways_diag_m = fgseares_diag_m_tops,
+  pathsways_diag_m_C2 = fgseares_diag_m_C2_tops,
+  pathsways_diag_m_Brain = fgseares_diag_m_Brain_tops,
+  pathsways_gender = fgseares_gender_tops,
+  pathsways_gender_C2 = fgseares_gender_C2_tops,
+  pathsways_gender_Brain = fgseares_gender_Brain_tops
+)
+
+big_table <- imap_dfr(table_list, ~
+  pathwayTableCleaning(.x) %>%
+    mutate(comparison = .y)
+)
+#Creat scoring
+big_table <- big_table %>%
+  mutate(
+    absNES = abs(NES),
+    score = -log10(padj) * absNES
+  )
+#remove 0 adj. P values
+big_table <- big_table %>%
+  mutate(padj = ifelse(padj == 0, 1e-300, padj))
+
+to_filter_out_pathways <- c("RUNNE_GENDER_EFFECT_UP","DISTECHE_ESCAPED_FROM_X_INACTIVATION","Park_2011_Coexpression_Hippocampus_Mouse_lightyellow")
+big_table_filtered <- big_table[!big_table$pathway %in% to_filter_out_pathways, ]
+
+#Which comes up the most
+pathway_summary <- big_table_filtered %>%
+  group_by(pathway) %>%
+  summarise(
+    n_comp = n(),
+    best_padj = min(padj, na.rm = TRUE),
+    max_absNES = max(absNES, na.rm = TRUE),
+    best_score = max(score, na.rm = TRUE),
+    comparisons = paste(unique(comparison), collapse = "; "),
+    .groups = "drop"
+  ) %>%
+  arrange(best_padj, desc(max_absNES))
+
+top_pathways_general <- head(pathway_summary,20)
+
+#Give the Brain data set more weight
+big_table_weighted_brain <- big_table_filtered %>%
+  mutate(weight = case_when(
+    grepl("Brain", comparison, ignore.case = TRUE) ~ 2,
+    TRUE ~ 1
+  )) %>%
+  mutate(weighted_score = score * weight)
+pathway_summary_weighted_brain <- big_table_weighted_brain %>%
+  group_by(pathway) %>%
+  summarise(
+    total_weighted_score = sum(weighted_score, na.rm = TRUE),
+    n_comp = n(),
+    best_padj = min(padj, na.rm = TRUE),
+    max_absNES = max(absNES, na.rm = TRUE),
+    comparisons = paste(unique(comparison), collapse = "; "),
+    .groups = "drop"
+  ) %>%
+  arrange(desc(total_weighted_score), best_padj)
+
+#Brain weighted Pathways
+top_brain_weighed_pathwayes <- head(pathway_summary_weighted_brain,60)
+
+#Giving diagnosed (2) more weight
+big_table_weighted_2 <- big_table_filtered %>%
+  mutate(weight = case_when(
+    grepl("2", comparison, ignore.case = TRUE) ~ 2,
+    TRUE ~ 1
+  )) %>%
+  mutate(weighted_score = score * weight)
+pathway_summary_weighted_2 <- big_table_weighted_2 %>%
+  group_by(pathway) %>%
+  summarise(
+    total_weighted_score = sum(weighted_score, na.rm = TRUE),
+    n_comp = n(),
+    best_padj = min(padj, na.rm = TRUE),
+    max_absNES = max(absNES, na.rm = TRUE),
+    comparisons = paste(unique(comparison), collapse = "; "),
+    .groups = "drop"
+  ) %>%
+  arrange(desc(total_weighted_score), best_padj)
+
+#Brain weighted Pathways
+top_2_weighed_pathwayes <- head(pathway_summary_weighted_2,60)
+
+top_paths <- unique(c(top_2_weighed_pathwayes$pathway, top_brain_weighed_pathwayes$pathway))
+top_big_table <- big_table_filtered[big_table_filtered$pathway %in% top_paths, ]
+#Extract the genes from the pathways
+leading_gene_table <- do.call(rbind, lapply(seq_len(nrow(top_big_table)), function(i) {
+  data.frame(
+    comparison = top_big_table$comparison[i],
+    pathway = top_big_table$pathway[i],
+    NES = top_big_table$NES[i],
+    padj = top_big_table$padj[i],
+    gene = unlist(top_big_table$leadingEdge[i]),
+    stringsAsFactors = FALSE
+  )
+}))
+leading_gene_table <- unique(leading_gene_table)
+gene_rank_table <- aggregate(
+  pathway ~ gene,
+  data = leading_gene_table,
+  FUN = length
+)
+
+colnames(gene_rank_table)[2] <- "n_pathways"
+
+#Getting the genes I will use in the rest of the experiments
+gene_summary <- leading_gene_table %>%
+  group_by(gene) %>%
+  summarise(
+    n_pathways = n_distinct(pathway),
+    comparisons = paste(unique(comparison), collapse = "; "),
+    best_padj = min(padj, na.rm = TRUE),
+    best_absNES = max(abs(NES), na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  arrange(desc(n_pathways), best_padj)
+
+#Making my expression data set with the choosen genes
+BI_Expression_data_scaled <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/BI_Expression_data_scaled ")
+BI_Expression_data_filtered <- BI_Expression_data_scaled
+expr_df_genes <- as.data.frame(BI_Expression_data_filtered)
+expr_df_genes$gene_id <- rownames(expr_df_genes)
+expr_df_genes$gene_name <- genXID$Gene[match(expr_df_genes$gene_id, genXID$ID)]
+
+expr_df_genes <- expr_df_genes[expr_df_genes$gene_name %in% gene_summary$gene, ]
+saveRDS(expr_df_genes,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/expr_df_genes")
+
