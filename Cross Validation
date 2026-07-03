@@ -1,0 +1,35 @@
+#Creating the matrix for the 10x10 fold validation
+BI_dge_3 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/BI_dge_3")
+expr_mat <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/expr_df_genes")
+mat_goups <- BI_dge_3$samples
+expr_mat_t <- t(expr_mat)
+group_vec <- mat_goups$group[match(rownames(expr_mat_t), mat_goups$SampleID)]
+
+
+
+train_df <- data.frame(
+  group = group_vec,
+  expr_mat_t,
+  check.names = FALSE
+)
+
+#Making the groups into easy labeles factor
+train_df$group <- as.factor(train_df$group)
+train_df$group <- factor(train_df$group,
+                         levels = c("gender: f diagnosisbp1: 0",
+                                    "gender: f diagnosisbp1: 2",
+                                    "gender: m diagnosisbp1: 0",
+                                    "gender: m diagnosisbp1: 2"),
+                         labels = c("f_0", "f_2", "m_0", "m_2"))
+
+
+# Starting the 10x10 cross validation
+
+fit_control <- trainControl(method = "repeatedcv",
+                            number = 10,
+                            repeats = 10)
+set.seed(825)
+gene_fit_A <- train(group ~., data = train_df,
+                    method = "gbm",
+                    trControl = fit_control,
+                    verbose = F)
