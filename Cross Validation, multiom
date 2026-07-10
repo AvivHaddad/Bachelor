@@ -1,0 +1,97 @@
+#Creating the matrix for the 10x10 fold validation
+BI_dge_3 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/BI_dge_3")
+expr_mat <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/expr_df_genes")
+mat_goups <- BI_dge_3$samples
+expr_mat_t <- t(expr_mat)
+group_vec <- mat_goups$group[match(rownames(expr_mat_t), mat_goups$SampleID)]
+
+
+train_df <- data.frame(
+  group = group_vec,
+  expr_mat_t,
+  check.names = FALSE
+)
+
+
+
+#Making the groups into easy labeles factor
+train_df$group <- as.factor(train_df$group)
+train_df$group <- factor(train_df$group,
+                         levels = c("gender: f diagnosisbp1: 0",
+                                    "gender: f diagnosisbp1: 2",
+                                    "gender: m diagnosisbp1: 0",
+                                    "gender: m diagnosisbp1: 2"),
+                         labels = c("f_0", "f_2", "m_0", "m_2"))
+
+saveRDS(train_df,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/train_df")
+train_df <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/train_df")
+
+
+train_df_small <- train_df[1:5]
+
+
+
+
+cross.validation <- function(data, x, seed = 123) {
+  dir <- "C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files"
+  gene_cols <- names(data)[!names(data) %in% "group"]
+  error_list <- list()
+
+  for (i in 1:x) {
+    set.seed(seed + i)
+
+    train.indices <- createDataPartition(
+      data$group,
+      p = 0.8,
+      list = FALSE
+    )
+    train.data <- data[train.indices, ]
+    test.data  <- data[-train.indices, ]
+    clean_numeric <- function(x) {
+      # Replace common placeholders with NA before conversion
+      x <- ifelse(x == "." | x == "NA" | x == "?" | x == "", NA, x)
+      suppressWarnings(as.numeric(x))
+    }
+    train.data[, gene_cols]  <- lapply(train.data[, gene_cols], clean_numeric)
+    test.data[, gene_cols]  <- lapply(test.data[, gene_cols], clean_numeric)
+
+    train.data<- train.data[rownames(train.data) != "gene_id",]
+    train.data<- train.data[rownames(train.data) != "gene_name",]
+
+
+    train.data[, gene_cols] <- lapply(train.data[, gene_cols], as.numeric)
+    test.data[, gene_cols]  <- lapply(test.data[, gene_cols], as.numeric)
+
+    formula_str <- paste("group ~ ", paste(gene_cols, collapse = " + "))
+
+
+    model <- multinom(
+      as.formula(formula_str),
+      data = train.data,
+      trace = FALSE,
+      MaxNWts = 50000
+    )
+
+    predictions <- predict(model, newdata = test.data)
+    pred_path <- paste0(dir, "/predictions_", i)
+    saveRDS(predictions, file = pred_path)
+
+    compare <- data.frame(actual = test.data$group, predicted = predictions)
+    comp_path <- paste0(dir, "/comparison_", i)
+    saveRDS(compare, file = comp_path)
+
+    acc <- mean(compare$actual == compare$predicted)
+    error_list[[i]] <- acc
+  }
+
+  saveRDS(error_list, file = paste0(dir, "/error_list"))
+}
+
+
+
+cross.validation(train_df_small,7,56565665)
+
+readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/error_list")
+
+cross.validation(train_df,10)
+
