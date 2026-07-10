@@ -59,8 +59,14 @@ big_table <- big_table %>%
 big_table <- big_table %>%
   mutate(padj = ifelse(padj == 0, 1e-300, padj))
 
+saveRDS(big_table,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/big_table")
+big_table <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/big_table")
+
+
+
 to_filter_out_pathways <- c("RUNNE_GENDER_EFFECT_UP","DISTECHE_ESCAPED_FROM_X_INACTIVATION","Park_2011_Coexpression_Hippocampus_Mouse_lightyellow")
 big_table_filtered <- big_table[!big_table$pathway %in% to_filter_out_pathways, ]
+saveRDS(big_table_filtered,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/big_table_filtered")
 
 #Which comes up the most
 pathway_summary <- big_table_filtered %>%
@@ -75,7 +81,12 @@ pathway_summary <- big_table_filtered %>%
   ) %>%
   arrange(best_padj, desc(max_absNES))
 
+saveRDS(pathway_summary,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/pathway_summary")
+pathway_summary <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/pathway_summary")
+
 top_pathways_general <- head(pathway_summary,20)
+saveRDS(top_pathways_general,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/top_pathways_general")
+top_pathways_general <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/top_pathways_general")
 
 #Give the Brain data set more weight
 big_table_weighted_brain <- big_table_filtered %>%
@@ -84,6 +95,9 @@ big_table_weighted_brain <- big_table_filtered %>%
     TRUE ~ 1
   )) %>%
   mutate(weighted_score = score * weight)
+saveRDS(big_table_weighted_brain,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/big_table_weighted_brain")
+big_table_weighted_brain <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/big_table_weighted_brain")
+
 pathway_summary_weighted_brain <- big_table_weighted_brain %>%
   group_by(pathway) %>%
   summarise(
@@ -96,8 +110,13 @@ pathway_summary_weighted_brain <- big_table_weighted_brain %>%
   ) %>%
   arrange(desc(total_weighted_score), best_padj)
 
+saveRDS(pathway_summary_weighted_brain,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/pathway_summery_weighted_brain")
+pathway_summary_weighted_brain <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/pathway_summery_weighted_brain")
+
 #Brain weighted Pathways
 top_brain_weighed_pathwayes <- head(pathway_summary_weighted_brain,60)
+saveRDS(top_brain_weighed_pathwayes,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/top_brain_weighed_pathwayes")
+top_brain_weighed_pathwayes <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/top_brain_weighed_pathwayes")
 
 #Giving diagnosed (2) more weight
 big_table_weighted_2 <- big_table_filtered %>%
@@ -106,6 +125,10 @@ big_table_weighted_2 <- big_table_filtered %>%
     TRUE ~ 1
   )) %>%
   mutate(weighted_score = score * weight)
+
+saveRDS(big_table_weighted_2,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/big_table_weighted_2")
+big_table_weighted_2 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/big_table_weighted_2")
+
 pathway_summary_weighted_2 <- big_table_weighted_2 %>%
   group_by(pathway) %>%
   summarise(
@@ -118,11 +141,21 @@ pathway_summary_weighted_2 <- big_table_weighted_2 %>%
   ) %>%
   arrange(desc(total_weighted_score), best_padj)
 
+saveRDS(pathway_summary_weighted_2,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/pathway_summery_weighted_2")
+pathway_summary_weighted_2 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/pathway_summery_weighted_2")
+
 #Brain weighted Pathways
 top_2_weighed_pathwayes <- head(pathway_summary_weighted_2,60)
+saveRDS(top_2_weighed_pathwayes,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/top_2_weighed_pathwayes")
+top_2_weighed_pathwayes <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/top_2_weighed_pathwayes")
 
 top_paths <- unique(c(top_2_weighed_pathwayes$pathway, top_brain_weighed_pathwayes$pathway))
+saveRDS(top_paths,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/top_paths")
+top_paths <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/top_paths")
+
 top_big_table <- big_table_filtered[big_table_filtered$pathway %in% top_paths, ]
+saveRDS(top_big_table,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/top_big_table")
+
 #Extract the genes from the pathways
 leading_gene_table <- do.call(rbind, lapply(seq_len(nrow(top_big_table)), function(i) {
   data.frame(
@@ -143,6 +176,9 @@ gene_rank_table <- aggregate(
 
 colnames(gene_rank_table)[2] <- "n_pathways"
 
+saveRDS(leading_gene_table,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/leading_gene_table")
+leading_gene_table <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/leading_gene_table")
+
 #Getting the genes I will use in the rest of the experiments
 gene_summary <- leading_gene_table %>%
   group_by(gene) %>%
@@ -154,6 +190,9 @@ gene_summary <- leading_gene_table %>%
     .groups = "drop"
   ) %>%
   arrange(desc(n_pathways), best_padj)
+
+saveRDS(gene_summary,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/gene_summery")
+gene_summary <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/gene_summery")
 
 #Making my expression data set with the choosen genes
 BI_Expression_data_scaled <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/BI_Expression_data_scaled ")
