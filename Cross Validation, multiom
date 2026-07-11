@@ -61,6 +61,8 @@ cross.validation <- function(data, x, seed = 123) {
 
     train.data[, gene_cols] <- lapply(train.data[, gene_cols], as.numeric)
     test.data[, gene_cols]  <- lapply(test.data[, gene_cols], as.numeric)
+    saveRDS(train.data,file = paste0(dir,"/training_data_",i))
+    saveRDS(test.data,file = paste0(dir,"/test_data_",i))
 
     formula_str <- paste("group ~ ", paste(gene_cols, collapse = " + "))
 
@@ -94,4 +96,8 @@ cross.validation(train_df_small,7,56565665)
 readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/error_list")
 
 cross.validation(train_df,10)
+
+prediction_10 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/predictions_10")
+error_list <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/error_list")
+comparison_10 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/comparison_10")
 
