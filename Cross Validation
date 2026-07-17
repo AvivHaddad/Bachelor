@@ -1,0 +1,43 @@
+#Creating the matrix for the 10x10 fold validation
+train_df <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/train_df")
+
+bdclean_numeric <- function(x) {
+  # Replace common placeholders with NA before conversion
+  x <- ifelse(x == "." | x == "NA" | x == "?" | x == "", NA, x)
+  suppressWarnings(as.numeric(x))
+}
+
+cross.validation <- function (data,x,seed){
+  acc_list <- list()
+  path <- "C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm"
+  gene_cols <- names(data)[!names(data) %in% "group"]
+  training_data <- data[
+    rownames(data) != "gene_id" & rownames(data) != "gene_name",]
+  training_data$group <- as.factor(training_data$group)
+
+  set.seed(seed = seed)
+
+  folds <- createFolds(training_data$group,
+                       k = x, list = TRUE,
+                       returnTrain = TRUE)
+
+  for (i in 1:x){
+    train_idx <- training_data_list[[i]]
+    test_idx <- setdiff(seq_len(nrow(train_data)),train_idx)
+    training <- training_data[train_idx,]
+    test <- training_data[test_idx,]
+
+    fitControl <- trainControl(
+      method = "repeatedcv",
+      number = x
+    )
+    gbmFit <- train(group ~ .,
+                    data = training,
+                    method = "gbm",
+                    trControl = fitControl,
+                    verbose = FALSE)
+    gbmFit
+    saveRDS(gbmFit,file = paste0(path,"/gbm_",i))
+  }
+
+}
