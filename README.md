@@ -63,5 +63,43 @@ It has 918 gene sets.
 8) I created graphs to show the most statistically significant gene pathways.
 In the graphs, I marked in blue the ones that have an adjusted P level smaller than 0.05.
 
-9) From the results, I created comparisons to extract which og the genes should be concentrated on and which processes are seemingly important.
+9) In the gene selection I created a big table, which is including all of the GSEA resualts. I rearrange it according to the absolute NES.
+score everything to be positive numbers using log10(padj)*absNES) and removing any padl = 0.
+Then I filter out pathways I believe should not be included, such as "RUNNE_GENDER_EFFECT_UP","DISTECHE_ESCAPED_FROM_X_INACTIVATION","Park_2011_Coexpression_Hippocampus_Mouse_lightyellow",
+because they are either not homogenises or are known gender based genes, that should not cloud the resualts.
+
+10) From this big table I made a summery of the pathways. The summery groups the genes (as they appear multiple times in the table), it writes down the
+amount of times each gene was in the table, it's minimum padj, maximum absNES, maximum score and in which tables of pathways comparisons it appears in.
+From this summery I took the top 60 genes after arranging it by desc(total_weighted_score), best_padj.
+
+11) As some pathways would be more relevant then others, I decided to give the pathways tables derived from the BrainGMT and the ones with BI-Polar positive patients
+a boost in scoring, using weights. Then those received their own summaries.
+
+12) From the weighted tables I tool the pathways and made sure each is only appearing once.
+Then I used those pathways to filter the big full table and receive only the genes that are relevant to me.
+
+13) I made a leading gene table with the relevant genes, which includes the comparison, pathway, NES, padj and the gene name.
+I also saved a unique version of it. Then I made a gene ranking table measuring the number of times that gene appear in my leading table.
+In the end I also make a summery of this gene table.
+
+14) Those chosen genes were used to creat my relevant gene expressions table, to be used in the next steps. I also added a column of the gene IDs and a column of gene names.
+
+15) In the bootstrapping section I used one of the dge lists I've made in the grouping section, as it includes a matrix of the counts, a table of the samples and their full data and a table of the genes with their names and IDs.
+I also import the expression table I've made and transpose it. I creat from it a group vector through matching the row names with the samples IDs in the original table to get the correct group.
+
+16) I create a data frame for the training with the transposed table and the grouping vector.
+Then to make things easier I make the group names shorter.
+
+17)Then I created the bootstrapping function.
+A function that receives a data matrix, number of folds and an original seed. It will run in a loop for the number of folds.
+In the loop the data will be partitioned to 90% training data and 10% testing.
+The data sets will be cleaned from NA and unnecessary rows and columns. The only data left will be the numerical expressions.
+This will be saved.
+The model uses the multinom function with a formula to group the data according to the groups in the column group.
+the predictions are saved as well.
+Then there is a data frame built with the predictions and the actual group to use for comparison.
+The accuracy is calculated and saved in the error list.
+Therefor in the end there are 10 testing data files, 10 training data files, 10 comparison files, 10 prediction files and one error list saved.
+
+18) I run this function with my training data frame.
 
