@@ -74,7 +74,7 @@ From this summery I took the top 60 gene pathwas after arranging it by desc(tota
 11) As some pathways would be more relevant then others, I decided to give the pathways tables derived from the BrainGMT and the ones with BI-Polar positive patients
 a boost in scoring, using weights. Then those received their own summaries.
 
-12) From the weighted tables I tool the pathways and made sure each is only appearing once.
+12) From the weighted tables I took the pathways and made sure each is only appearing once.
 Then I used those pathways to filter the big full table and receive only the genes that are relevant to me.
 
 13) I made a leading gene table with the relevant genes, which includes the comparison, pathway, NES, padj and the gene name.
