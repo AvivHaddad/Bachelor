@@ -63,14 +63,13 @@ It has 918 gene sets.
 8) I created graphs to show the most statistically significant gene pathways.
 In the graphs, I marked in blue the ones that have an adjusted P level smaller than 0.05.
 
-9) In the gene selection I created a big table, which is including all of the GSEA resualts. I rearrange it according to the absolute NES.
-score everything to be positive numbers using log10(padj)*absNES) and removing any padl = 0.
+9) In the gene selection I created a big table, which is including all of the GSEA resualts. I rearrange it according to the absolute NES and scored everything to be positive numbers using log10(padj)*absNES) and then removing any padj = 0.
 Then I filter out pathways I believe should not be included, such as "RUNNE_GENDER_EFFECT_UP","DISTECHE_ESCAPED_FROM_X_INACTIVATION","Park_2011_Coexpression_Hippocampus_Mouse_lightyellow",
 because they are either not homogenises or are known gender based genes, that should not cloud the resualts.
 
 10) From this big table I made a summery of the pathways. The summery groups the genes (as they appear multiple times in the table), it writes down the
 amount of times each gene was in the table, it's minimum padj, maximum absNES, maximum score and in which tables of pathways comparisons it appears in.
-From this summery I took the top 60 genes after arranging it by desc(total_weighted_score), best_padj.
+From this summery I took the top 60 gene pathwas after arranging it by desc(total_weighted_score), best_padj.
 
 11) As some pathways would be more relevant then others, I decided to give the pathways tables derived from the BrainGMT and the ones with BI-Polar positive patients
 a boost in scoring, using weights. Then those received their own summaries.
