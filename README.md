@@ -68,6 +68,110 @@ Then I filter out pathways I believe should not be included, such as "RUNNE_GEND
 because they are either not homogenises or are known gender based genes, that should not cloud the resualts.
 
 10) From this big table I made a summery of the pathways. The summery groups the genes (as they appear multiple times in the table), it writes down the
+amount of times each gene was in the table, it's minimum padj, maximum absNES, sum of the score and in which tables of pathways comparisons it appears in.
+From this summery I took the top 60 gene pathwas after arranging it by desc(total_weighted_score), best_padj.
+
+11) As some pathways would be more relevant then others, I decided to give the pathways tables derived from the BrainGMT and the ones with BI-Polar positive patients
+a boost in scoring, using weights. Then those received their own summaries.
+
+12) From the weighted tables I tool the pathways and made sure each is only appearing once.
+Then I used those pathways to filter the big full table and receive only the genes that are relevant to me.
+
+13) I made a leading gene table with the relevant genes, which includes the comparison, pathway, NES, padj and the gene name.
+I also saved a unique version of it. Then I made a gene ranking table measuring the number of times that gene appear in my leading table.
+In the end I also make a summery of this gene table.
+
+14) Those chosen genes were used to creat my relevant gene expressions table, to be used in the next steps. I also added a column of the gene IDs and a column of gene names.
+
+15) In the bootstrapping section I used one of the dge lists I've made in the grouping section, as it includes a matrix of the counts, a table of the samples and their full data and a table of the genes with their names and IDs.
+I also import the expression table I've made and transpose it. I creat from it a group vector through matching the row names with the samples IDs in the original table to get the correct group.
+
+16) I create a data frame for the training with the transposed table and the grouping vector.
+Then to make things easier I make the group names shorter.
+
+17)Then I created the bootstrapping function.
+A function that receives a data matrix, number of folds and an original seed. It will run in a loop for the number of folds.
+In the loop the data will be partitioned to 90% training data and 10% testing.
+The data sets will be cleaned from NA and unnecessary rows and columns. The only data left will be the numerical expressions.
+This will be saved.
+The model uses the multinom function with a formula to group the data according to the groups in the column group.
+the predictions are saved as well.
+Then there is a data frame built with the predictions and the actual group to use for comparison.
+The accuracy is calculated and saved in the error list.
+Therefor in the end there are 10 testing data files, 10 training data files, 10 comparison files, 10 prediction files and one error list saved.
+
+18) I run this function with my training data frame.
+
+# Bachlor
+A description of the processes in this project and train of thought.
+
+1) Using the get function from GEOquery to download the data base Series GSE82042 from GEO.
+This data base has:
+- Expression profiling by array
+- 47,013  Genes
+- 786 Samples
+- 193 Bi-Polar positive
+- 112 female Bi-Polar positive
+
+2) Out of the expression set I take only the main data (gse <- gse[[1]])
+And I save the expressions (BI_Expression_data <- exprs(gse)).
+I also save the gender, diagnosis and genes in separated vectors.
+
+I save the full data for later use, then I save separately the groups of female, male, and positive diagnosis and negative diagnosis.
+
+3) To start with the experiments, I first creat a design matrix.
+Then I normalize the data row by row.
+-> row-wise z-score scaling: for each gene, subtract that gene’s mean across samples and divide by its standard deviation.
+
+4) I start running the limma experiments on all the groups.
+-> Making logFCerent experiments using topTable.
+- Diagnosis - 0VS2
+- Sex- mVSf
+*both gender and diagnosis (A bit of a different result)
+- Only with a positive diagnosis (2), with gender as a coefficient
+- Only with a negative diagnosis (0), with gender as a coefficient
+
+-> Only female experiments
+  - All
+  - Only F+2
+  - Only F+0
+
+-->The ones with only sick or only undiagnosed do run the same experiment as with coefficients. But I wanted to see if there are differences anyway.
+
+-> Only male experiments
+  - All
+  - Only M+2
+  - Only M+0
+
+  -->The ones with only sick or only undiagnosed do run the same experiment as with coefficients. But I wanted to see if there are differences anyway.
+  In the end I've deleted that part of the code.
+
+5) I save all the resolutes separately and in merged matrices.
+
+6) I created heatmaps using ggplot2 to see the top 60 most statistically significant genes across the samples.
+
+7) To group genes and decide which genes should be included in the rest of the experiments (the full gene list is too computationally heavy),
+I use the enrichment function of GSEA using the package fgsea.
+I run it on the full data set, the only female and only male groups, the only patients with positive diagnosis of Bi Polar and the control.
+I used the data sets from https://www.gsea-msigdb.org/gsea/msigdb/human/collections.jsp#H and https://github.com/hagenaue/Brain_GMT.
+
+-> I chose to run it on multiple data sets to achieve broader information.
+- The Hallmark data set: "summarize and represent specific well-defined biological states or processes and display coherent expression. These gene sets were generated by a computational methodology based on identifying overlaps between gene sets in other MSigDB collections and retaining genes that display coordinated expression."
+It has 50 gene sets
+- The C2 data set: curated from various sources, including online pathway databases and the biomedical literature. Many sets are also contributed by individual domain experts. The gene set page for each gene set lists its source. The C2 collection is divided into the following two subcollections: Chemical and genetic perturbations (CGP) and Canonical pathways (CP).
+It has 7670 gene sets.
+- CP (might be deleted)
+- The Brain data set is a compiled, curated database of 918 gene sets related to nervous system function, tissue, and cell types.
+It has 918 gene sets.
+
+8) I created graphs to show the most statistically significant gene pathways.
+In the graphs, I marked in blue the ones that have an adjusted P level smaller than 0.05.
+
+9) In the gene selection I created a big table, which is including all of the GSEA resualts. I rearrange it according to the absolute NES and scored everything to be positive numbers using log10(padj)*absNES) and then removing any padj = 0.
+Then I filter out pathways I believe should not be included, such as "RUNNE_GENDER_EFFECT_UP","DISTECHE_ESCAPED_FROM_X_INACTIVATION","Park_2011_Coexpression_Hippocampus_Mouse_lightyellow",
+because they are either not homogenises or are known gender based genes, that should not cloud the resualts.
+
+10) From this big table I made a summery of the pathways. The summery groups the genes (as they appear multiple times in the table), it writes down the
 amount of times each gene was in the table, it's minimum padj, maximum absNES, maximum score and in which tables of pathways comparisons it appears in.
 From this summery I took the top 60 gene pathwas after arranging it by desc(total_weighted_score), best_padj.
 
