@@ -2,7 +2,8 @@
 pheno <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/pheno")
 pheno$diagnosis <- factor(pheno$diagnosisbp1, levels = c("0","2"))
 pheno$gender <- factor(pheno$gender, levels = c("f","m"))
-
+saveRDS(pheno, "C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/pheno")
+pheno <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/pheno")
 BI_Expression_data <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/BI_Expression_data")
 identical(rownames(pheno), colnames(BI_Expression_data))
 BI_Positive_General <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/BI_Positive_General")
@@ -50,13 +51,13 @@ fit_diag_gender <- eBayes(fit_diag_gender)
 res_diag <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/res_diag")
 #res_diag_CSV <- write.csv(res_diag, "../res_diag.csv", row.names = T)
 
-high_B_genes_res_diag <- res_diag[order(-res_diag$B), ]
-high_B_genes_res_diag <- high_B_genes_res_diag[1:50,]
-write.csv(high_B_genes_res_diag, "../high_B_genes_res_diag", row.names = T)
+#high_B_genes_res_diag <- res_diag[order(-res_diag$B), ]
+#high_B_genes_res_diag <- high_B_genes_res_diag[1:50,]
+#write.csv(high_B_genes_res_diag, "../high_B_genes_res_diag", row.names = T)
 
-high_logFC_genes_res_diag <- res_diag[order(-res_diag$logFC), ]
-high_logFC_genes_res_diag <- high_logFC_genes_res_diag[1:50,]
-write.csv(high_logFC_genes_res_diag, "../high_logFC_genes_res_diag", row.names = T)
+#high_logFC_genes_res_diag <- res_diag[order(-res_diag$logFC), ]
+#high_logFC_genes_res_diag <- high_logFC_genes_res_diag[1:50,]
+#write.csv(high_logFC_genes_res_diag, "../high_logFC_genes_res_diag", row.names = T)
 
 
 
@@ -72,12 +73,12 @@ write.csv(high_logFC_genes_res_diag, "../high_logFC_genes_res_diag", row.names =
 #saveRDS(res_gender, "C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/res_gender")
 res_gender <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/res_gender")
 
-high_B_genes_res_gender <- res_gender[order(-res_gender$B), ]
-high_B_genes_res_gender <- high_B_genes_res_gender[1:50,]
-write.csv(high_B_genes_res_gender, "../high_B_genes_res_gender", row.names = T)
-high_logFC_genes_res_gender <- res_diag[order(-res_gender$logFC), ]
-high_logFC_genes_res_gender <- high_logFC_genes_res_gender[1:50,]
-write.csv(high_logFC_genes_res_gender, "../high_logFC_genes_res_gender", row.names = T)
+#high_B_genes_res_gender <- res_gender[order(-res_gender$B), ]
+#high_B_genes_res_gender <- high_B_genes_res_gender[1:50,]
+#write.csv(high_B_genes_res_gender, "../high_B_genes_res_gender", row.names = T)
+#high_logFC_genes_res_gender <- res_diag[order(-res_gender$logFC), ]
+#high_logFC_genes_res_gender <- high_logFC_genes_res_gender[1:50,]
+#write.csv(high_logFC_genes_res_gender, "../high_logFC_genes_res_gender", row.names = T)
 
 
 diag_sub <- res_diag[,c("ID","logFC","P.Value","adj.P.Val","B")]
@@ -107,7 +108,7 @@ write.csv(low_P_genes_res_both, "../low_P_genes_res_both", row.names = T)
 idx_female <- pheno$gender == "f"
 
 exprs_f <- BI_Expression_data_scaled[,idx_female]
-pheno_f <- droplevels(pheno[idx_female,])
+pheno_f <- pheno[idx_female,]
 
 #design_f <- model.matrix(~diagnosis,data = pheno_f)
 #fit_f <- lmFit(exprs_f, design_f)
@@ -134,7 +135,7 @@ write.csv(high_logFC_genes_res_diag_f, "../high_logFC_genes_res_diag_f", row.nam
 idx_male <- pheno$gender == "m"
 
 exprs_m <- BI_Expression_data_scaled[,idx_male]
-pheno_m <- droplevels(pheno[idx_male,])
+pheno_m <- pheno[idx_male,]
 
 #design_m <- model.matrix(~diagnosis,data = pheno_m)
 #fit_m <- lmFit(exprs_m, design_m)
@@ -156,9 +157,9 @@ write.csv(high_logFC_genes_res_diag_m, "../high_logFC_genes_res_diag_m", row.nam
 
 #---------------------------------------------------------------------#
 
-#Only 2 (both genders)
+#4. Only 2 (both genders)
 idx_2 <- pheno$`diagnosisbp1:ch1` == "2"
-pheno_2 <- droplevels(pheno[idx_2,])
+pheno_2 <- pheno[idx_2,]
 
 #design_2 <- model.matrix(~gender,data = pheno_2)
 #fit_2 <- lmFit(Expression_BPG_scaled, design = design_2)
@@ -171,9 +172,10 @@ pheno_2 <- droplevels(pheno[idx_2,])
 #saveRDS(res_diag_2, "C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/res_diag_2")
 res_diag_2 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/res_diag_2")
 
-#Only 0
+#5. Only 0
 idx_0 <- pheno$diagnosis == "0"
-pheno_0 <- droplevels(pheno[idx_0,])
+pheno_0 <- pheno[idx_0,]
+
 
 #design_0 <- model.matrix(~gender,data = pheno_0)
 #fit_0 <- lmFit(Expression_BNG_scaled, design = design_0)
@@ -201,10 +203,12 @@ expr_top <- BI_Expression_data_scaled[top_ids, ]
 
 sample_groups_diag <- with(pheno, paste0("D", diagnosis, "_", gender))
 names(sample_groups_diag) <- rownames(pheno)
-
+expr_top_df <- as.data.frame(expr_top)
+expr_top_df$gene <- rownames(expr_top_df)
 #---------------------------------------------------------------------#
 #ggplot2 format
-expr_long <- expr_df |>
+
+expr_long <- expr_top_df |>
   pivot_longer(
     cols = -gene,
     names_to = "sample",
