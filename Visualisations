@@ -1,0 +1,217 @@
+expr_gene_df <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/expr_df_genes")
+pheno <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/pheno")
+
+# Heatmap of the top selected genes, general
+expr_gene_df <- subset(expr_gene_df,select = - gene_name)
+top_n <- 20
+top_diag <- expr_gene_df[order(res_diag$adj.P.Val), ] [1:top_n, ]
+top_ids <- rownames(top_diag)
+expr_top <- expr_gene_df[top_ids, ]
+
+expr_long <- expr_top |>
+  pivot_longer(
+    cols = -gene_id,
+    names_to = "sample",
+    values_to = "expression"
+  )
+expr_long$diagnosis <- pheno[as.character(expr_long$sample), "diagnosis"]
+expr_long$gender <- pheno[as.character(expr_long$sample), "gender"]
+
+top_chosen_padj_all <- ggplot(expr_long, aes(x = sample, y = gene_id, fill = expression)) +
+  geom_tile() +
+  scale_fill_gradient2(low = "blue", mid = "white", high = "red") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  ggtitle(paste0("Top ", top_n, " selected genes by adj.P.Value"))
+#save.image("../Heatmap_diag_top20_adg.P.Val.png")
+
+
+#---------------------------------------------------------------------#
+# Only female selected genes
+res_diag_f <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/res_diag_f")
+idx_female <- pheno$gender == "f"
+pheno_f_chosen <- pheno[idx_female,]
+res_diag_f_chosen <- filter(res_diag_f,res_diag_f$ID %in% expr_gene_df$gene_id)
+res_top_f_chosen <- res_diag_f_chosen[order(res_diag_f_chosen$adj.P.Val), ][1:top_n, ]
+top_idx_f <- rownames(res_top_f_chosen)
+expr_f_chosen <- expr_gene_df[top_idx_f,]
+expr_f_chosen <- expr_f_chosen[,idx_female]
+
+expr_df_f_chosen <- as.data.frame(expr_f_chosen)
+
+
+expr_long_f_chosen <- expr_df_f_chosen |>
+  pivot_longer(
+    cols = -gene_id,
+    names_to  = "sample",
+    values_to = "expression"
+  )
+
+
+expr_long_f_chosen <- expr_long_f_chosen |>
+  mutate(
+    diagnosis = pheno_f_chosen[ sample, "diagnosis" ]
+  )
+
+
+top_chosen_padj_female <- ggplot(expr_long_f_chosen,
+       aes(x = sample, y = gene_id, fill = expression, group_by("diagnosis"))) +
+  geom_tile() +
+  scale_fill_gradient2(low = "blue", mid = "white", high = "red") +
+  labs(x = "Female samples", y = "Top diagnosis chosen genes") +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
+    axis.text.y = element_text(size = 6)
+  )+
+  facet_grid(. ~ diagnosis, scales = "free_x", space = "free_x")
+#save.image("../Heatmap_diag_top20_adg.P.Val_Female.png")
+
+# Only Male
+res_diag_m <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/res_diag_m")
+idx_male <- pheno$gender == "m"
+pheno_m_chosen <- pheno[idx_male,]
+res_diag_m_chosen <- filter(res_diag_m,res_diag_m$ID %in% expr_gene_df$gene_id)
+res_top_m_chosen <- res_diag_m_chosen[order(res_diag_m_chosen$adj.P.Val), ][1:top_n, ]
+top_idx_m <- rownames(res_top_m_chosen)
+expr_m_chosen <- expr_gene_df[top_idx_m,]
+expr_m_chosen <- expr_m_chosen[,idx_male]
+
+expr_df_m_chosen <- as.data.frame(expr_m_chosen)
+expr_df_m_chosen$gene_id <- rownames(expr_df_m_chosen)
+
+
+expr_long_m_chosen <- expr_df_m_chosen |>
+  pivot_longer(
+    cols = -gene_id,
+    names_to  = "sample",
+    values_to = "expression"
+  )
+
+
+expr_long_m_chosen <- expr_long_m_chosen |>
+  mutate(
+    diagnosis = pheno_m_chosen[ sample, "diagnosis" ]
+  )
+
+top_chosen_padj_male <- ggplot(expr_long_m_chosen,
+       aes(x = sample, y = gene_id, fill = expression, group_by("diagnosis"))) +
+  geom_tile() +
+  scale_fill_gradient2(low = "blue", mid = "white", high = "red") +
+  labs(x = "Male samples", y = "Top diagnosis genes") +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
+    axis.text.y = element_text(size = 6)
+  )+
+  facet_grid(. ~ diagnosis, scales = "free_x", space = "free_x")
+
+
+#Only 2
+res_diag_2 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/res_diag_2")
+idx_2 <- pheno$`diagnosisbp1:ch1` == "2"
+pheno_2_chosen <- pheno[idx_2,]
+res_diag_2_chosen <- filter(res_diag_2,res_diag_2$ID %in% expr_gene_df$gene_id)
+res_top_2_chosen <- res_diag_2_chosen[order(res_diag_2_chosen$adj.P.Val), ][1:top_n, ]
+top_idx_2 <- rownames(res_top_2_chosen)
+expr_2_chosen <- expr_gene_df[top_idx_2,]
+expr_2_chosen <- expr_2_chosen[,idx_2]
+
+expr_df_2_chosen <- as.data.frame(expr_2_chosen)
+expr_df_2_chosen$gene_id <- rownames(expr_df_2_chosen)
+
+pheno_2_df_chosen <- pheno_2_chosen %>%
+  rownames_to_column("sample")
+expr_long_2_chosen <- expr_df_2_chosen %>%
+  pivot_longer(
+    cols = -gene_id,
+    names_to = "sample",
+    values_to = "expression"
+  )
+expr_long_2_chosen <- expr_long_2_chosen %>%
+  left_join(
+    pheno_2_df_chosen %>% dplyr::select(sample, gender = `gender:ch1`),
+    by = "sample"
+  )
+
+
+top_chosen_padj_2 <- ggplot(expr_long_2_chosen,
+       aes(x = sample, y = gene_id, fill = expression, group_by("gender"))) +
+  geom_tile() +
+  scale_fill_gradient2(low = "blue", mid = "white", high = "red") +
+  labs(x = "Patients Samples", y = "Top chosen genes") +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
+    axis.text.y = element_text(size = 6)
+  )+
+  facet_grid(. ~ gender, scales = "free_x", space = "free_x")
+
+
+#Only 0
+res_diag_0 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/res_diag_0")
+idx_0 <- pheno$`diagnosisbp1:ch1` == "0"
+pheno_0_chosen <- pheno[idx_0,]
+res_diag_0_chosen <- filter(res_diag_0,res_diag_0$ID %in% expr_gene_df$gene_id)
+res_top_0_chosen <- res_diag_0_chosen[order(res_diag_0_chosen$adj.P.Val), ][1:top_n, ]
+top_idx_0 <- rownames(res_top_0_chosen)
+expr_0_chosen <- expr_gene_df[top_idx_0,]
+expr_0_chosen <- expr_0_chosen[,idx_0]
+
+expr_df_0_chosen <- as.data.frame(expr_0_chosen)
+expr_df_0_chosen$gene_id <- rownames(expr_df_0_chosen)
+
+pheno_0_df_chosen <- pheno_0_chosen %>%
+  rownames_to_column("sample")
+expr_long_0_chosen <- expr_df_0_chosen %>%
+  pivot_longer(
+    cols = -gene_id,
+    names_to = "sample",
+    values_to = "expression"
+  )
+expr_long_0_chosen <- expr_long_0_chosen %>%
+  left_join(
+    pheno_0_df_chosen %>% dplyr::select(sample, gender = `gender:ch1`),
+    by = "sample"
+  )
+
+
+top_chosen_padj_0 <- ggplot(expr_long_0_chosen,
+       aes(x = sample, y = gene_id, fill = expression, group_by("gender"))) +
+  geom_tile() +
+  scale_fill_gradient2(low = "blue", mid = "white", high = "red") +
+  labs(x = "Control Samples", y = "Top chosen genes") +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
+    axis.text.y = element_text(size = 6)
+  )+
+  facet_grid(. ~ gender, scales = "free_x", space = "free_x")
+
+
+ggsave("C:/Users/avive/Documents/Thesis/THI-LaTeX-thesis-template-main/Bachelor/images/top_chosen_padj_all.pdf", top_chosen_padj_all, width = 5, height = 4)
+ggsave("C:/Users/avive/Documents/Thesis/THI-LaTeX-thesis-template-main/Bachelor/images/top_chosen_padj_female.pdf", top_chosen_padj_female, width = 5, height = 4)
+ggsave("C:/Users/avive/Documents/Thesis/THI-LaTeX-thesis-template-main/Bachelor/images/top_chosen_padj_male.pdf", top_chosen_padj_male, width = 5, height = 4)
+ggsave("C:/Users/avive/Documents/Thesis/THI-LaTeX-thesis-template-main/Bachelor/images/top_chosen_padj_2.pdf", top_chosen_padj_2, width = 5, height = 4)
+ggsave("C:/Users/avive/Documents/Thesis/THI-LaTeX-thesis-template-main/Bachelor/images/top_chosen_padj_0.pdf", top_chosen_padj_0, width = 5, height = 4)
+
+#---------------------------------------------------GSEA----------------------------------------------------#
+leading_gene_table_unique <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/leading_gene_table_unique")
+top_big_table <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/top_big_table")
+pathways <- unique(leading_gene_table_unique$pathway)
+visual_GSEA_table <- top_big_table %>%
+  filter(pathway %in% pathways) %>%
+  distinct(pathway, .keep_all = TRUE)
+
+visual_GSEA_table <- visual_GSEA_table %>%
+  as_tibble() %>%
+  arrange(desc(NES)) %>%
+  arrange(padj) %>%
+  slice_head(n = 40)
+
+gsea_chosen_path <- ggplot(visual_GSEA_table, aes(reorder(pathway,NES), NES)) +
+  geom_col(aes(fill=padj<0.05)) +
+  coord_flip() +
+  labs(x="pathway", y="Normalized enrichment score", title = "GSEA chosen pathways")
+
+gsea_chosen_path
+ggsave("C:/Users/avive/Documents/Thesis/THI-LaTeX-thesis-template-main/Bachelor/images/gsea_chosen_path.pdf", gsea_chosen_path, width = 10, height = 8)
