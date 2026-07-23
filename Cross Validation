@@ -1,6 +1,14 @@
 #Creating the matrix for the 10x10 fold validation
 train_df <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/train_df")
-
+gene_cols <- names(train_df)[names(train_df) != "group"]
+train_df <- train_df %>%
+  mutate(across(all_of(gene_cols), ~ {
+    # Trim whitespace
+    x <- trimws(.x)
+    # Convert to numeric, NA for invalid values
+    as.numeric(x)
+  }))
+#sapply(train_df[gene_cols], function(x) any(!is.na(x) & !grepl("^-?//d+//.?//d*([eE][+-]?//d+)?$", x)))
 
 cross.validation <- function (data,x,seed){
   acc_list <- list()
@@ -45,7 +53,22 @@ cross.validation <- function (data,x,seed){
     acc <- mean(compare$actual == compare$predicted)
     acc_list[[i]] <- acc
   }
+  saveRDS(acc_list, "C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/acc_list")
 
 }
 
-try_with_2 <- cross.validation(train_df,2,12)
+cross.validation(train_df,10,123)
+
+#df_clean <- train_df %>% filter(!is.na(group))
+#small_df <- df_clean %>%
+#  group_by(group) %>%
+ # sample_n(25) %>%
+  #ungroup()
+
+#small_df <- small_df[sample(nrow(small_df)), ]
+
+#try_with_2 <- cross.validation(small_df,4,123)
+
+print(readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/gbm_1"))
+print(readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/acc_list"))
+print(readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/gbm_2"))
