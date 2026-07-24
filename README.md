@@ -94,8 +94,7 @@ A function that receives a data matrix, number of folds and an original seed. It
 In the loop the data will be partitioned to 90% training data and 10% testing.
 The data sets will be cleaned from NA and unnecessary rows and columns. The only data left will be the numerical expressions.
 This will be saved.
-The model uses the multinom function with a formula to group the data according to the groups in the column group.
-the predictions are saved as well.
+The model uses the `multinom` function, which fits multinomial log-linear models using neural networks, and the predictions are stored. Finally, for comparison, a data frame is created that contains the predictions and the actual group membership.
 Then there is a data frame built with the predictions and the actual group to use for comparison.
 The accuracy is calculated and saved in the error list.
 Therefor in the end there are 10 testing data files, 10 training data files, 10 comparison files, 10 prediction files and one error list saved.
