@@ -94,13 +94,25 @@ A function that receives a data matrix, number of folds and an original seed. It
 In the loop the data will be partitioned to 90% training data and 10% testing.
 The data sets will be cleaned from NA and unnecessary rows and columns. The only data left will be the numerical expressions.
 This will be saved.
-The model uses the `multinom` function, which fits multinomial log-linear models using neural networks, and the predictions are stored. Finally, for comparison, a data frame is created that contains the predictions and the actual group membership.
+The model uses the `multinom` function, which fits multinomial log-linear models using neural networks,
+and the predictions are stored. Finally, for comparison, a data frame is created that contains the predictions
+and the actual group membership.
 Then there is a data frame built with the predictions and the actual group to use for comparison.
 The accuracy is calculated and saved in the error list.
 Therefor in the end there are 10 testing data files, 10 training data files, 10 comparison files, 10 prediction files and one error list saved.
 
 18) I run this function with my training data frame.
 
-19) For the cross-validation function, I use the same dataset that I created and saved in the bootstrapping section.
-This function takes the data, a number, and an initial seed value as inputs. It cleans the data and then creates Folds based on the number provided. It loops through the given number of times; in each iteration, a portion of the data is used as the test set based on the fold number, and the remainder is used as the training set. It uses repeated cross-validation as a training control and the `gbmFit` function to perform Stochastic Gradient Boosting. The predictions are then saved and used to generate the comparisons; the accuracy is calculated and stored in a list. In the end, this function returns 10 prediction files, 10 comparison files, and an accuracy list.
+19) With the error list containing the accuracy I created a graph to visualize the differences between each run of the model.  
 
+20)For the cross-validation function, I use the same dataset that I created and saved in the bootstrapping section.
+This function takes the data, a number, and an initial seed value as inputs. It cleans the data and then creates Folds based on the number provided.
+It loops through the given number of times; in each iteration, a portion of the data is used as the test set based on the fold number, and the remainder is used as the training set.
+It uses repeated cross-validation as a training control and the `gbmFit` function to perform Stochastic Gradient Boosting.
+The predictions are then saved and used to generate the comparisons; the accuracy is calculated and stored in a list.
+
+In the end, this function returns 10 prediction files, 10 comparison files, and an accuracy list.
+
+21) With the results I created a table of all the accuracies and a graph representing the comparisons of each fold in the same run.
+Those are 10x10 matrices comparing the results of the cross validation point by point.
+Then I created a sea similar matrix comparing the mean accuracy of all the 10 runs.
