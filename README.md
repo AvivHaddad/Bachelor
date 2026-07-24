@@ -109,9 +109,37 @@ Therefor in the end there are 10 testing data files, 10 training data files, 10 
 This function takes the data, a number, and an initial seed value as inputs. It cleans the data and then creates Folds based on the number provided.
 It loops through the given number of times; in each iteration, a portion of the data is used as the test set based on the fold number, and the remainder is used as the training set.
 It uses repeated cross-validation as a training control and the `gbmFit` function to perform Stochastic Gradient Boosting.
-The predictions are then saved and used to generate the comparisons; the accuracy is calculated and stored in a list.
+The predictions are then saved and used to generate the comparisons; the accuracy is calculated and stored in a list. In addition the function automatically saves a gbm list containing all the details of the iteration and it's resualts. For example;
+"Stochastic Gradient Boosting 
 
-In the end, this function returns 10 prediction files, 10 comparison files, and an accuracy list.
+ 708 samples
+4997 predictors
+   4 classes: 'f_0', 'f_2', 'm_0', 'm_2' 
+
+No pre-processing
+Resampling: Cross-Validated (10 fold, repeated 1 times) 
+Summary of sample sizes: 636, 638, 636, 637, 637, 637, ... 
+Resampling results across tuning parameters:
+
+  interaction.depth  n.trees  Accuracy   Kappa    
+  1                   50      0.7289302  0.5674062
+  1                  100      0.7276012  0.5713757
+  1                  150      0.7332154  0.5786596
+  2                   50      0.7330762  0.5746821
+  2                  100      0.7414694  0.5893582
+  2                  150      0.7414493  0.5892700
+  3                   50      0.7275425  0.5680606
+  3                  100      0.7331774  0.5748270
+  3                  150      0.7317086  0.5722130
+
+Tuning parameter 'shrinkage' was held constant at a value of 0.1
+
+Tuning parameter 'n.minobsinnode' was held constant at a value of 10
+Accuracy was used to select the optimal model using the largest value.
+The final values used for the model were n.trees = 100, interaction.depth =
+ 2, shrinkage = 0.1 and n.minobsinnode = 10."
+
+In the end, this function returns 10 prediction files, 10 comparison files, 10 gbm files and an accuracy list.
 
 21) With the results I created a table of all the accuracies and a graph representing the comparisons of each fold in the same run.
 Those are 10x10 matrices comparing the results of the cross validation point by point.
