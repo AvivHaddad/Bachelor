@@ -107,9 +107,164 @@ resualts_table_cv_gbm <- list(gbm_1$results,gbm_2$results,gbm_3$results,gbm_3$re
                                     gbm_7$results,gbm_8$results,gbm_9$results,gbm_10$results)
 saveRDS(resualts_table_cv_gbm,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/resualts_table_cv_gbm")
 
+fold.compare <- function (resualts,x){
+  for (i in 1:x){
+    accuracy_folds <- resualts_table_cv_gbm[[i]]$Accuracy
+    diff_matrix <- outer(accuracy_folds,accuracy_folds, "-")
+    abs_diff_matrix <- abs(diff_matrix)
+    write.csv(abs_diff_matrix,paste0("cv_fold_differences_",i,".csv"), row.names = T)
+    saveRDS(abs_diff_matrix,paste0("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/cv_fold_differences_",i))
+
+    diff_df <- as.data.frame(abs_diff_matrix)
+    diff_df$Fold <- rownames(diff_df)
+    diff_melt <- melt(diff_df, id.vars = "Fold", var.name = "Fold2", value.name = "Difference")
+
+   plot <- ggplot(diff_melt, aes(x = Fold, y = variable, fill = Difference)) +
+      geom_tile() +
+      scale_fill_gradient(low = "white", high = "lightblue", name = "Abs. Diff.") +
+      theme_minimal() +
+      labs(title = paste0("gbm cross validation fold differences run ",i))
+   print(plot)
+  }
+}
+fold.compare(resualts_table_cv_gbm,10)
+
+acc_list <- as.numeric(acc_list)
+diff_matrix_all_acc <- outer(acc_list,acc_list, "-")
+abs_diff_matrix_all_acc <- abs(diff_matrix_all_acc)
+write.csv(diff_matrix_all_acc,paste0("diff_matrix_all_acc_.csv"), row.names = T)
+saveRDS(diff_matrix_all_acc,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/cv_fold_differences_acc_all")
+
+diff_df <- as.data.frame(abs_diff_matrix_all_acc)
+diff_df$Fold <- as.numeric(rownames(diff_df))
+diff_melt <- melt(diff_df,
+                  id.vars = "Fold",
+                  variable.name = "Fold2",
+                  value.name = "Difference")
+diff_melt$Fold2 <- as.numeric(diff_melt$Fold2)
+
+plot <- ggplot(diff_melt, aes(x = Fold, y = Fold2, fill = Difference)) +
+  geom_tile() +
+  scale_fill_gradient(low = "white", high = "lightblue", name = "Abs. Diff.") +
+  theme_minimal() +
+  labs(title = "gbm Cross-Validation Fold Differences (Accuracy mean) of all",
+       x = "Fold i", y = "Fold j") +
+  scale_x_continuous(breaks = 1:10, labels = 1:10) +
+  scale_y_continuous(breaks = 1:10, labels = 1:10)
+print(plot)
 
 
 
+diff_matrix_all_acc <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/cv_fold_differences_acc_all")
+gbm_1
+
+imp_gbm_1 <-varImp(gbm_1) #Random forest: It measures how much prediction accuracy drops when a variable is left out or changed.
+saveRDS(imp_gbm_1,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/imp_gbm_1")
 
 
+# Extract the importance values (as a data frame)
+imp_df <- data.frame(
+  Gene = rownames(imp_gbm_1$importance),
+  Importance = imp_gbm_1$importance$Overall
+)
 
+imp_df <- imp_df %>%
+  arrange(desc(Importance))
+
+top_genes <- head(imp_df, 21)
+
+# Plot
+plot <- ggplot(top_genes, aes(x = Gene, y = Importance, fill = Importance)) +
+  geom_col() +
+  coord_flip() +
+  scale_y_log10() +
+  scale_fill_gradient(low = "lightgray", high = "steelblue") +
+  labs(
+    title = "Top 20 Genes (SGB) - Log Scale",
+    x = "Gene",
+    y = "Importance (log scale)"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+print(plot)
+
+#Results Matrices
+groups <- unique(comparison_cv_1$actual)
+nGroup <- length(groups)
+matrix <- matrix(0,nGroup,nGroup)
+colnames(matrix) <- groups
+rownames(matrix) <- groups
+print(sum((comparison_cv_1$predicted == colnames(matrix)[1]) & comparison_cv_1$predicted == comparison_cv_1$actual(matrix)[1]))
+pred <- comparison_cv_1$predicted
+actual <- comparison_cv_1$actual
+actual <- factor(actual, levels = groups)
+pred <- factor(pred, levels = groups)
+forReal <- table(actual,pred)
+print(forReal)
+matrix.build <- function (comparisons){
+  groups <- sort(unique(comparisons$actual))
+  groups
+  pred <- comparisons$predicted
+  actual <- comparisons$actual
+  actual <- factor(actual, levels = groups)
+  pred <- factor(pred, levels = groups)
+  res_table <- table(actual,pred)
+  var_name <- deparse(substitute(comparisons))
+  path <- paste0("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/",var_name,"sum_pred_table")
+  saveRDS(res_table,path)
+  matrix <- matrix(0,5,5)
+  rownames(matrix) <- c(rownames(res_table),"Total")
+  colnames(matrix) <- c(colnames(res_table),"Correct")
+  matrix[1:4,1:4] <- res_table
+  matrix[1:4,5] <- diag(res_table)
+  matrix[5,5] <- sum(diag(res_table))
+  return(matrix)
+}
+gbm_1_compar_mat <- matrix.build(comparison_cv_1)
+saveRDS(gbm_1_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/gbm_1_compar_mat")
+gbm_2_compar_mat <- matrix.build(comparison_cv_2)
+saveRDS(gbm_2_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/gbm_2_compar_mat")
+gbm_3_compar_mat <- matrix.build(comparison_cv_3)
+saveRDS(gbm_3_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/gbm_3_compar_mat")
+
+gbm_4_compar_mat <- matrix.build(comparison_cv_4)
+saveRDS(gbm_4_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/gbm_4_compar_mat")
+
+gbm_5_compar_mat <- matrix.build(comparison_cv_5)
+saveRDS(gbm_5_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/gbm_5_compar_mat")
+
+gbm_6_compar_mat <- matrix.build(comparison_cv_6)
+saveRDS(gbm_6_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/gbm_6_compar_mat")
+
+gbm_7_compar_mat <- matrix.build(comparison_cv_7)
+saveRDS(gbm_7_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/gbm_7_compar_mat")
+
+gbm_8_compar_mat <- matrix.build(comparison_cv_8)
+saveRDS(gbm_8_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/gbm_8_compar_mat")
+
+gbm_9_compar_mat <- matrix.build(comparison_cv_9)
+saveRDS(gbm_9_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/gbm_9_compar_mat")
+
+gbm_10_compar_mat <- matrix.build(comparison_cv_10)
+saveRDS(gbm_10_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/gbm_10_compar_mat")
+
+print(gbm_10_compar_mat)
+print(gbm_2_compar_mat)
+print(gbm_1_compar_mat)
+
+
+all_mat <- lapply(1:10, function(i) {
+  get(paste0("gbm_", i,"_compar_mat"))
+})
+array_3d <- array(0, dim = c(nrow(all_mat[[1]]), ncol(all_mat[[1]]), length(all_mat)))
+for (i in 1:length(all_mat)) {
+  array_3d[, , i] <- all_mat[[i]]
+}
+
+mean_matrix <- apply(array_3d, c(1, 2), mean)
+mean_matrix <- as.matrix(mean_matrix)
+rownames(mean_matrix) <- rownames(all_mat[[1]])
+colnames(mean_matrix) <- colnames(all_mat[[1]])
+print(mean_matrix)
+saveRDS(mean_matrix,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/gbm_mean_matrix")
