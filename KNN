@@ -1,0 +1,116 @@
+train_df <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/train_df_filtered")
+gene_cols <- names(train_df)[names(train_df) != "group"]
+train_df <- train_df %>%
+  mutate(across(all_of(gene_cols), ~ {
+    x <- trimws(.x)
+    as.numeric(x)
+  }))
+train_df <- train_df[
+  rownames(train_df) != "gene_id" & rownames(train_df) != "gene_name",]
+
+
+cross.validation.KNN <- function (data,x,seed){
+  path <- "C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working//KNN"
+  data$group <- as.factor(data$group)
+
+
+  set.seed(seed = seed)
+
+  folds <- createFolds(data$group,
+                       k = x, list = TRUE,
+                       returnTrain = TRUE)
+
+  for (i in 1:x){
+    train_idx <- folds[[i]]
+    test_idx <- setdiff(seq_len(nrow(data)),train_idx)
+    training <- data[train_idx,]
+    test <- data[test_idx,]
+    fitControl <- trainControl(
+      method = "repeatedcv",
+      number = x
+    )
+
+    test_pred <- train(
+      group ~.,
+      data = training,
+      method = "knn",
+      trControl = fitControl,
+      tuneGrid = data.frame(k = c(3,5,7))
+    )
+
+    predictions <- predict(test_pred,test,type = "raw")
+    mat <- confusionMatrix(predictions, test$group)
+    saving_path <- paste0(path,"/table_KNN_",i)
+    saveRDS(mat,saving_path)
+
+    # Combine into a data frame
+    df <- data.frame(
+      Sensitivity = mat$byClass[,1],
+      Specificity = mat$byClass[,2],
+      B.Accuracy = mat$byClass[,11]
+    )
+
+    saving_path_df <- paste0(path,"/DF_KNN_",i)
+    saveRDS(df,saving_path_df)
+
+  }
+}
+
+
+small_df <- train_df %>%
+  group_by(group) %>%
+  sample_n(25) %>%
+  ungroup()
+
+small_df <- small_df[sample(nrow(small_df)), ]
+small_try <- cross.validation.KNN(small_df,4,232)
+cross.validation.KNN(train_df,10,2334)
+
+DF_KNN_1 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/KNN/DF_KNN_1")
+table_KNN_1 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/KNN/table_KNN_1")
+print(table_KNN_1$table)
+
+DF_KNN_2 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/KNN/DF_KNN_2")
+table_KNN_2 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/KNN/table_KNN_2")
+print(table_KNN_2$table)
+
+DF_KNN_3 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/KNN/DF_KNN_3")
+table_KNN_3 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/KNN/table_KNN_3")
+print(table_KNN_3$table)
+
+DF_KNN_4 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/KNN/DF_KNN_4")
+table_KNN_4 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/KNN/table_KNN_4")
+print(table_KNN_4$table)
+
+DF_KNN_5 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/KNN/DF_KNN_5")
+table_KNN_5 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/KNN/table_KNN_5")
+print(table_KNN_5$table)
+
+DF_KNN_6 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/KNN/DF_KNN_6")
+table_KNN_6 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/KNN/table_KNN_6")
+print(table_KNN_6$table)
+
+DF_KNN_7 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/KNN/DF_KNN_7")
+table_KNN_7 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/KNN/table_KNN_7")
+print(table_KNN_7$table)
+
+DF_KNN_8 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/KNN/DF_KNN_8")
+table_KNN_8 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/KNN/table_KNN_8")
+print(table_KNN_8$table)
+
+DF_KNN_9 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/KNN/DF_KNN_9")
+table_KNN_9 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/KNN/table_KNN_9")
+print(table_KNN_9$table)
+
+DF_KNN_10 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/KNN/DF_KNN_10")
+table_KNN_10 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/KNN/table_KNN_10")
+print(table_KNN_10$table)
+
+
+
+
+
+
+
+
+
