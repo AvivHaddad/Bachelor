@@ -1,5 +1,5 @@
 #Creating the matrix for the 10x10 fold validation
-train_df <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/train_df")
+train_df <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/train_df_filtered")
 gene_cols <- names(train_df)[names(train_df) != "group"]
 train_df <- train_df %>%
   mutate(across(all_of(gene_cols), ~ {
@@ -12,7 +12,7 @@ train_df <- train_df %>%
 
 cross.validation <- function (data,x,seed){
   acc_list <- list()
-  path <- "C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm"
+  path <- "C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y"
   training_data <- data[
     rownames(data) != "gene_id" & rownames(data) != "gene_name",]
   training_data$group <- as.factor(training_data$group)
@@ -53,7 +53,7 @@ cross.validation <- function (data,x,seed){
     acc <- mean(compare$actual == compare$predicted)
     acc_list[[i]] <- acc
   }
-  saveRDS(acc_list, "C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/acc_list")
+  saveRDS(acc_list, "C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/acc_list")
 
 }
 
@@ -68,6 +68,7 @@ cross.validation(train_df,10,123)
 #small_df <- small_df[sample(nrow(small_df)), ]
 
 #try_with_2 <- cross.validation(small_df,4,123)
+
 
 gbm_1 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/gbm_1")
 gbm_2 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/gbm_2")
@@ -103,7 +104,7 @@ predictions_cv_8 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachl
 predictions_cv_9 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/predictions_cv_9")
 predictions_cv_10 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/predictions_cv_10")
 
-resualts_table_cv_gbm <- list(gbm_1$results,gbm_2$results,gbm_3$results,gbm_3$results,gbm_5$results,gbm_5$results,
+resualts_table_cv_gbm <- list(gbm_1$results,gbm_2$results,gbm_3$results,gbm_4$results,gbm_5$results,gbm_6$results,
                                     gbm_7$results,gbm_8$results,gbm_9$results,gbm_10$results)
 saveRDS(resualts_table_cv_gbm,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/resualts_table_cv_gbm")
 
@@ -117,13 +118,21 @@ fold.compare <- function (resualts,x){
 
     diff_df <- as.data.frame(abs_diff_matrix)
     diff_df$Fold <- rownames(diff_df)
-    diff_melt <- melt(diff_df, id.vars = "Fold", var.name = "Fold2", value.name = "Difference")
+    diff_long <- diff_df %>%
+      pivot_longer(
+        cols = -Fold,
+        names_to = "Fold2",
+        values_to = "Difference"
+      )
 
-   plot <- ggplot(diff_melt, aes(x = Fold, y = variable, fill = Difference)) +
+
+    plot <- ggplot(diff_long, aes(x = Fold, y = Fold2, fill = Difference)) +
       geom_tile() +
       scale_fill_gradient(low = "white", high = "lightblue", name = "Abs. Diff.") +
       theme_minimal() +
       labs(title = paste0("gbm cross validation fold differences run ",i))
+    theme_minimal() +
+      theme(axis.text.x = element_text(angle = 45, hjust = 1))
    print(plot)
   }
 }
@@ -135,22 +144,27 @@ abs_diff_matrix_all_acc <- abs(diff_matrix_all_acc)
 write.csv(diff_matrix_all_acc,paste0("diff_matrix_all_acc_.csv"), row.names = T)
 saveRDS(diff_matrix_all_acc,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/cv_fold_differences_acc_all")
 
-diff_df <- as.data.frame(abs_diff_matrix_all_acc)
-diff_df$Fold <- as.numeric(rownames(diff_df))
-diff_melt <- melt(diff_df,
-                  id.vars = "Fold",
-                  variable.name = "Fold2",
-                  value.name = "Difference")
-diff_melt$Fold2 <- as.numeric(diff_melt$Fold2)
 
-plot <- ggplot(diff_melt, aes(x = Fold, y = Fold2, fill = Difference)) +
+
+#Just for the different title
+diff_df <- as.data.frame(abs_diff_matrix_all_acc)
+diff_df$Fold <- rownames(diff_df)
+diff_long <- diff_df %>%
+  pivot_longer(
+    cols = -Fold,
+    names_to = "Fold2",
+    values_to = "Difference"
+  )
+
+
+
+plot <- ggplot(diff_long, aes(x = Fold, y = Fold2, fill = Difference)) +
   geom_tile() +
   scale_fill_gradient(low = "white", high = "lightblue", name = "Abs. Diff.") +
   theme_minimal() +
-  labs(title = "gbm Cross-Validation Fold Differences (Accuracy mean) of all",
-       x = "Fold i", y = "Fold j") +
-  scale_x_continuous(breaks = 1:10, labels = 1:10) +
-  scale_y_continuous(breaks = 1:10, labels = 1:10)
+  labs(title = "gbm cross validation fold differences run ")
+theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 print(plot)
 
 
@@ -190,18 +204,7 @@ plot <- ggplot(top_genes, aes(x = Gene, y = Importance, fill = Importance)) +
 print(plot)
 
 #Results Matrices
-groups <- unique(comparison_cv_1$actual)
-nGroup <- length(groups)
-matrix <- matrix(0,nGroup,nGroup)
-colnames(matrix) <- groups
-rownames(matrix) <- groups
-print(sum((comparison_cv_1$predicted == colnames(matrix)[1]) & comparison_cv_1$predicted == comparison_cv_1$actual(matrix)[1]))
-pred <- comparison_cv_1$predicted
-actual <- comparison_cv_1$actual
-actual <- factor(actual, levels = groups)
-pred <- factor(pred, levels = groups)
-forReal <- table(actual,pred)
-print(forReal)
+
 matrix.build <- function (comparisons){
   groups <- sort(unique(comparisons$actual))
   groups
@@ -268,3 +271,158 @@ rownames(mean_matrix) <- rownames(all_mat[[1]])
 colnames(mean_matrix) <- colnames(all_mat[[1]])
 print(mean_matrix)
 saveRDS(mean_matrix,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/gbm_mean_matrix")
+
+# With filtered data
+gbm_1_filtered <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/gbm_1")
+gbm_2_filtered <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/gbm_2")
+gbm_3_filtered <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/gbm_3")
+gbm_4_filtered <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/gbm_4")
+gbm_5_filtered <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/gbm_5")
+gbm_6_filtered <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/gbm_6")
+gbm_7_filtered <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/gbm_7")
+gbm_8_filtered <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/gbm_8")
+gbm_9_filtered <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/gbm_9")
+gbm_10_filtered <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/gbm_10")
+
+acc_list_filtered <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/acc_list")
+comparison_cv_1_filtered <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/comparison_cv_1")
+comparison_cv_2_filtered <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/comparison_cv_2")
+comparison_cv_3_filtered <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/comparison_cv_3")
+comparison_cv_4_filtered <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/comparison_cv_4")
+comparison_cv_5_filtered <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/comparison_cv_5")
+comparison_cv_6_filtered <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/comparison_cv_6")
+comparison_cv_7_filtered <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/comparison_cv_7")
+comparison_cv_8_filtered <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/comparison_cv_8")
+comparison_cv_9_filtered <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/comparison_cv_9")
+comparison_cv_10_filtered <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/comparison_cv_10")
+
+predictions_cv_1_filtered <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/predictions_cv_1")
+predictions_cv_2_filtered <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/predictions_cv_2")
+predictions_cv_3_filtered <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/predictions_cv_3")
+predictions_cv_4_filtered <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/predictions_cv_4")
+predictions_cv_5_filtered <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/predictions_cv_5")
+predictions_cv_6_filtered <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/predictions_cv_6")
+predictions_cv_7_filtered <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/predictions_cv_7")
+predictions_cv_8_filtered <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/predictions_cv_8")
+predictions_cv_9_filtered <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/predictions_cv_9")
+predictions_cv_10_filtered <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/predictions_cv_10")
+
+resualts_table_cv_gbm_filtered <- list(gbm_1_filtered$results,gbm_2_filtered$results,gbm_3_filtered$results,gbm_4_filtered$results,gbm_5_filtered$results,gbm_6_filtered$results,
+                              gbm_7_filtered$results,gbm_8_filtered$results,gbm_9_filtered$results,gbm_10_filtered$results)
+saveRDS(resualts_table_cv_gbm_filtered,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/resualts_table_cv_gbm")
+fold.compare(resualts_table_cv_gbm_filtered,10)
+
+acc_list_filtered <- as.numeric(acc_list_filtered)
+diff_matrix_all_acc_filtered <- outer(acc_list_filtered,acc_list_filtered, "-")
+abs_diff_matrix_all_acc_filtered <- abs(diff_matrix_all_acc_filtered)
+write.csv(diff_matrix_all_acc_filtered,paste0("diff_matrix_all_acc_filtered.csv"), row.names = T)
+saveRDS(diff_matrix_all_acc_filtered,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/cv_fold_differences_acc_all")
+
+
+
+#Just for the different title
+diff_df_filtered <- as.data.frame(abs_diff_matrix_all_acc_filtered)
+diff_df_filtered$Fold <- rownames(diff_df_filtered)
+diff_long_filtered <- diff_df_filtered %>%
+  pivot_longer(
+    cols = -Fold,
+    names_to = "Fold2",
+    values_to = "Difference"
+  )
+
+
+
+plot_filtered <- ggplot(diff_long_filtered, aes(x = Fold, y = Fold2, fill = Difference)) +
+  geom_tile() +
+  scale_fill_gradient(low = "white", high = "lightblue", name = "Abs. Diff.") +
+  theme_minimal() +
+  labs(title = "gbm cross validation fold differences filtered ")
+theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+print(plot_filtered)
+
+#Results Matrices
+
+gbm_1_compar_mat_filtered <- matrix.build(comparison_cv_1_filtered)
+saveRDS(gbm_1_compar_mat_filtered,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/gbm_1_compar_mat")
+gbm_2_compar_mat_filtered <- matrix.build(comparison_cv_2)
+saveRDS(gbm_2_compar_mat_filtered,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/gbm_2_compar_mat")
+gbm_3_compar_mat_filtered <- matrix.build(comparison_cv_3)
+saveRDS(gbm_3_compar_mat_filtered,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/gbm_3_compar_mat")
+
+gbm_4_compar_mat_filtered <- matrix.build(comparison_cv_4)
+saveRDS(gbm_4_compar_mat_filtered,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/gbm_4_compar_mat")
+
+gbm_5_compar_mat_filtered <- matrix.build(comparison_cv_5)
+saveRDS(gbm_5_compar_mat_filtered,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/gbm_5_compar_mat")
+
+gbm_6_compar_mat_filtered <- matrix.build(comparison_cv_6)
+saveRDS(gbm_6_compar_mat_filtered,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/gbm_6_compar_mat")
+
+gbm_7_compar_mat_filtered <- matrix.build(comparison_cv_7)
+saveRDS(gbm_7_compar_mat_filtered,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/gbm_7_compar_mat")
+
+gbm_8_compar_mat_filtered <- matrix.build(comparison_cv_8)
+saveRDS(gbm_8_compar_mat_filtered,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/gbm_8_compar_mat")
+
+gbm_9_compar_mat_filtered <- matrix.build(comparison_cv_9)
+saveRDS(gbm_9_compar_mat_filtered,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/gbm_9_compar_mat")
+
+gbm_10_compar_mat_filtered <- matrix.build(comparison_cv_10)
+saveRDS(gbm_10_compar_mat_filtered,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/gbm_10_compar_mat")
+
+print(gbm_10_compar_mat_filtered)
+print(gbm_2_compar_mat_filtered)
+print(gbm_1_compar_mat_filtered)
+
+all_mat_filtered <- lapply(1:10, function(i) {
+  get(paste0("gbm_", i,"_compar_mat_filtered"))
+})
+array_3d_filtered <- array(0, dim = c(nrow(all_mat_filtered[[1]]), ncol(all_mat_filtered[[1]]), length(all_mat_filtered)))
+for (i in 1:length(all_mat_filtered)) {
+  array_3d_filtered[, , i] <- all_mat_filtered[[i]]
+}
+
+mean_matrix_filtered <- apply(array_3d_filtered, c(1, 2), mean)
+mean_matrix_filtered <- as.matrix(mean_matrix_filtered)
+rownames(mean_matrix_filtered) <- rownames(all_mat_filtered[[1]])
+colnames(mean_matrix_filtered) <- colnames(all_mat_filtered[[1]])
+print(mean_matrix_filtered)
+saveRDS(mean_matrix_filtered,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/gbm_mean_matrix")
+
+gbm_1_filtered
+gbm_2_filtered
+
+imp_gbm_1_filtered <-varImp(gbm_1_filtered) #Random forest: It measures how much prediction accuracy drops when a variable is left out or changed.
+saveRDS(imp_gbm_1_filtered,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/imp_gbm_1")
+
+
+# Extract the importance values (as a data frame)
+imp_df_filtered <- data.frame(
+  Gene = rownames(imp_gbm_1_filtered$importance),
+  Importance = imp_gbm_1_filtered$importance$Overall
+)
+
+imp_df_filtered <- imp_df_filtered %>%
+  arrange(desc(Importance))
+
+top_genes_filtered <- head(imp_df_filtered, 21)
+
+# Plot
+plot <- ggplot(top_genes_filtered, aes(x = Gene, y = Importance, fill = Importance)) +
+  geom_col() +
+  coord_flip() +
+  scale_y_log10() +
+  scale_fill_gradient(low = "lightgray", high = "steelblue") +
+  labs(
+    title = "Top 20 filtered Genes (SGB) - Log Scale",
+    x = "Gene",
+    y = "Importance (log scale)"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+print(plot)
+
+imp_gbm_1_filtered
+print(length(predictions_cv_1_filtered))
