@@ -1,0 +1,16 @@
+gse <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/gse")
+feature_data <- gse@featureData@data
+saveRDS(feature_data,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/feature_data")
+
+filtered_feature_data  <- feature_data %>%
+  filter(!is.na(feature_data$Chromosome), feature_data$Chromosome != "Y")
+
+ids <- filtered_feature_data$ID
+print(BI_dge_3$genes$prob_IDs)
+
+BI_dge_3 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/BI_dge_3")
+BI_dge_3_filtered <- BI_dge_3[rownames(BI_dge_3) %in% ids,]
+saveRDS(BI_dge_3_filtered,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/BI_dge_3_filtered")
+expr_mat <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/expr_df_genes")
+expr_mat_filtered <- expr_mat[rownames(expr_mat) %in% ids,]
+saveRDS(expr_mat_filtered,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/expr_mat_filtered")
