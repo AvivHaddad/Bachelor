@@ -12,20 +12,20 @@ train_df <- train_df %>%
 cross.validation <- function (data,x,seed){
   acc_list <- list()
   path <- "C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male"
-  training_data$group <- as.factor(training_data$group)
+  data$group <- as.factor(data$group)
 
 
   set.seed(seed = seed)
 
-  folds <- createFolds(training_data$group,
+  folds <- createFolds(data$group,
                        k = x, list = TRUE,
                        returnTrain = TRUE)
 
   for (i in 1:x){
     train_idx <- folds[[i]]
-    test_idx <- setdiff(seq_len(nrow(training_data)),train_idx)
-    training <- training_data[train_idx,]
-    test <- training_data[test_idx,]
+    test_idx <- setdiff(seq_len(nrow(data)),train_idx)
+    training <- data[train_idx,]
+    test <- data[test_idx,]
 
     fitControl <- trainControl(
       method = "repeatedcv",
