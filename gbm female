@@ -7,13 +7,17 @@ train_df <- train_df %>%
     x <- trimws(.x)
     as.numeric(x)
   }))
+BI_meta <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/BI_meta")
+BI_meta_f <- filter(BI_meta,BI_meta$sex=="gender: f")
+index <- rownames(train_df) %in% BI_meta_f$SampleID
+train_df_f <- train_df[index,]
 
 
-cross.validation <- function (data,x,seed){
+cross.validation.gbm.f <- function (data,x,seed){
   acc_list <- list()
   path <- "C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/female"
   data$group <- as.factor(data$group)
-
+  data$group <- droplevels(data$group)
 
   set.seed(seed = seed)
 
@@ -54,7 +58,7 @@ cross.validation <- function (data,x,seed){
 
 }
 
-cross.validation(train_df,10,123)
+cross.validation.gbm.f(train_df_f,10,123)
 
 #df_clean <- train_df %>% filter(!is.na(group))
 #small_df <- df_clean %>%
