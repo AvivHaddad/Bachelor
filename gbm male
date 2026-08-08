@@ -9,11 +9,11 @@ train_df <- train_df %>%
   }))
 
 
-cross.validation <- function (data,x,seed){
+cross.validation.gbm.male <- function (data,x,seed){
   acc_list <- list()
   path <- "C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male"
   data$group <- as.factor(data$group)
-
+  data$group <- droplevels(data$group)
 
   set.seed(seed = seed)
 
@@ -54,7 +54,7 @@ cross.validation <- function (data,x,seed){
 
 }
 
-cross.validation(train_df,10,123)
+cross.validation.gbm.male(train_df,10,123)
 
 #df_clean <- train_df %>% filter(!is.na(group))
 #small_df <- df_clean %>%
