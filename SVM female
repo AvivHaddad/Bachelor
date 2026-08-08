@@ -1,0 +1,188 @@
+train_df <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/train_df_filtered")
+gene_cols <- names(train_df)[names(train_df) != "group"]
+train_df <- train_df %>%
+  mutate(across(all_of(gene_cols), ~ {
+    x <- trimws(.x)
+    as.numeric(x)
+  }))
+train_df <- train_df[
+  rownames(train_df) != "gene_id" & rownames(train_df) != "gene_name",]
+
+cross.validation.SVM <- function (data,x,seed){
+  acc_list <- list()
+  path <- "C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female"
+  data$group <- as.factor(data$group)
+
+
+  set.seed(seed = seed)
+
+  folds <- createFolds(data$group,
+                       k = x, list = TRUE,
+                       returnTrain = TRUE)
+
+  for (i in 1:x){
+    train_idx <- folds[[i]]
+    test_idx <- setdiff(seq_len(nrow(data)),train_idx)
+    training <- data[train_idx,]
+    test <- data[test_idx,]
+    fitControl <- trainControl(
+      method = "repeatedcv",
+      number = x
+    )
+
+    svm_f_pred <- train(
+      group ~.,
+      data = training,
+      method = "svmPoly",
+      trControl = fitControl,
+      tuneLength = 4
+    )
+    svm_f_pred
+    saveRDS(svm_f_pred,file = paste0(path,"/svm_f_",i))
+
+    predictions <- predict(svm_f_pred, newdata = test)
+    pred_path <- paste0(path, "/predictions_svm_f_", i)
+    saveRDS(predictions, file = pred_path)
+
+    compare <- data.frame(actual = test$group, predicted = predictions)
+    comp_path <- paste0(path, "/comparison_svm_f_", i)
+    saveRDS(compare, file = comp_path)
+
+    acc <- mean(compare$actual == compare$predicted)
+    acc_list[[i]] <- acc
+  }
+  saveRDS(acc_list, "C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female/acc_list")
+
+}
+#small_df <- train_df %>%
+#  group_by(group) %>%
+#  sample_n(25) %>%
+#  ungroup()
+
+#small_df <- small_df[sample(nrow(small_df)), ]
+#small_try <- cross.validation.svm(small_df,4,232)
+cross.validation.SVM(train_df,10,134)
+
+
+svm_f_1 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female/svm_f_1")
+svm_f_1
+comparison_svm_f_1_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female/comparison_svm_f_1")
+comparison_svm_f_1_svm
+table_1_f <- table(comparison_svm_f_1_svm)
+table_1_f
+
+svm_f_2 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female/svm_f_2")
+svm_f_2
+comparison_svm_f_2_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female/comparison_svm_f_2")
+comparison_svm_f_2_svm
+table_2_f <- table(comparison_svm_f_2_svm)
+table_2_f
+
+svm_f_3 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female/svm_f_3")
+svm_f_3
+comparison_svm_f_3_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female/comparison_svm_f_3")
+
+table_3_f <- table(comparison_svm_f_3_svm)
+table_3_f
+
+svm_f_4 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female/svm_f_4")
+svm_f_4
+comparison_svm_f_4_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female/comparison_svm_f_4")
+
+table_4_f <- table(comparison_svm_f_4_svm)
+table_4_f
+
+svm_f_5 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female/svm_f_5")
+svm_f_5
+comparison_svm_f_5_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female/comparison_svm_f_5")
+
+table_5_f <- table(comparison_svm_f_5_svm)
+table_5_f
+
+svm_f_6 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female/svm_f_6")
+svm_f_6
+comparison_svm_f_6_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female/comparison_svm_f_6")
+
+table_6_f <- table(comparison_svm_f_6_svm)
+table_6_f
+
+svm_f_7 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female/svm_f_7")
+svm_f_7
+comparison_svm_f_7_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female/comparison_svm_f_7")
+
+table_7_f <- table(comparison_svm_f_7_svm)
+table_7_f
+
+svm_f_8 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female/svm_f_8")
+svm_f_8
+comparison_svm_f_8_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female/comparison_svm_f_8")
+
+table_8_f <- table(comparison_svm_f_8_svm)
+table_8_f
+
+svm_f_9 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female/svm_f_9")
+svm_f_9
+comparison_svm_f_9_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female/comparison_svm_f_9")
+
+table_9_f <- table(comparison_svm_f_9_svm)
+table_9_f
+
+svm_f_10 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female/svm_f_10")
+svm_f_10
+comparison_svm_f_10_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female/comparison_svm_f_10")
+
+table_10_f <- table(comparison_svm_f_10_svm)
+table_10_f
+
+resualts_table_list_svm_f <- list(svm_f_1,svm_f_2,svm_f_3,svm_f_4,svm_f_5,svm_f_6,svm_f_7,svm_f_8,svm_f_9,svm_f_10)
+fold.compare_svm <- function (resualts,x){
+  for (i in 1:x){
+    accuracy_folds <- resualts_table_svm_f_gbm[[i]]$Accuracy
+    diff_matrix <- outer(accuracy_folds,accuracy_folds, "-")
+    abs_diff_matrix <- abs(diff_matrix)
+    write.csv(abs_diff_matrix,paste0("svm_f_fold_differences_",i,".csv"), row.names = T)
+    saveRDS(abs_diff_matrix,paste0("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female/svm_f_fold_differences_",i))
+
+    diff_df <- as.data.frame(abs_diff_matrix)
+    diff_df$Fold <- rownames(diff_df)
+    diff_long <- diff_df %>%
+      pivot_longer(
+        cols = -Fold,
+        names_to = "Fold2",
+        values_to = "Difference"
+      )
+
+
+    plot <- ggplot(diff_long, aes(x = Fold, y = Fold2, fill = Difference)) +
+      geom_tile() +
+      scale_fill_gradient(low = "white", high = "lightblue", name = "Abs. Diff.") +
+      theme_minimal() +
+      labs(title = paste0("svm cross validation fold differences females only run ",i))
+    theme_minimal() +
+      theme(axis.text.x = element_text(angle = 45, hjust = 1))
+    print(plot)
+  }
+}
+fold.compare_svm(resualts_table_list_svm_f,10)
+
+all_mat_svm_f <- lapply(1:10, function(i) {
+  get(paste0("table_f_",i))
+})
+array_3d_svm_f <- array(0, dim = c(nrow(all_mat_svm_f[[1]]), ncol(all_mat_svm_f[[1]]), length(all_mat_svm_f)))
+for (i in 1:length(all_mat_svm_f)) {
+  array_3d_svm_f[, ,i] <- all_mat_svm_f[[i]]
+}
+
+mean_matrix_svm_f <- apply(array_3d_svm_f, c(1, 2), mean)
+mean_matrix_svm_f <- as.matrix(mean_matrix_svm_f)
+rownames(mean_matrix_svm_f) <- rownames(all_mat_svm_f[[1]])
+colnames(mean_matrix_svm_f) <- colnames(all_mat_svm_f[[1]])
+print(mean_matrix_svm_f)
+saveRDS(mean_matrix_svm_f,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female/mean_matrix")
+
+var_svm_f_1 <- varImp(svm_f_1)
+saveRDS(var_svm_f_1,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female/var_svm_f_1" )
+
+var_svm_f_2 <- varImp(svm_f_2)
+saveRDS(var_svm_f_2,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female/var_svm_f_2" )
+var_svm_f_2
