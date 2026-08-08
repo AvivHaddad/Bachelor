@@ -169,15 +169,13 @@ differentiate between male and female in general, which dropped the accuracy.
 27) To test other models and their performance, using the filtered data, I started with K-Nearest Neighbor. Using the same data set as before, I modified the cross
 validation function to use the knn model from the caret package and a tuneGrid of k = c(3,5,7).
 This function resulted in 10 data frames of results produced by the model. This have multiple statistical data from the fold, like accuracy, sensitivity and specificity.
+It also produces from those the comparisons matrices.
 
-28) Using the results I created the comparisons matrices.
+28)  Next I created another cross validation function with the liner supported vector machine model. As I have 4 groups, this model had very low performance.
+    Then I tried the polynomial supported vector machine, which provided better results.
+    This function produces 10 automatic results tables, 10 predictions tables, 10 comparison tables and an accuracy list.
 
-29) Next I created another cross validation function with the liner supported vector machine model. As I have 4 groups, this model had very low performance.
-Then I tried the polynomial supported vector machine, which provided better results.
-This function produces 10 automatic results tables, 10 predictions tables, 10 comparison tables and an accuracy list.
+29)Just like thr first cross validation experiment, I created the comparison matrices and graphical visualisation of those.
 
-30) Just like thr first cross validation experiment, I created the comparison matrices and graphical visualisation of those.
-
-31) I used VarImp to generate the 20 most important genes for the group deviation. The variables are sorted by maximum importance across the classes
-only 20 most important variables shown (out of 4988)
-
+30) I used VarImp to generate the 20 most important genes for the group deviation. The variables are sorted by maximum importance across the classes
+    only 20 most important variables shown (out of 4988)
