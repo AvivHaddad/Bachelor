@@ -7,7 +7,10 @@ train_df <- train_df %>%
     x <- trimws(.x)
     as.numeric(x)
   }))
-
+BI_meta <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/BI_meta")
+BI_meta_m <- filter(BI_meta,BI_meta$sex=="gender: m")
+index <- rownames(train_df) %in% BI_meta_m$SampleID
+train_df_m <- train_df[index,]
 
 cross.validation.gbm.male <- function (data,x,seed){
   acc_list <- list()
@@ -37,14 +40,14 @@ cross.validation.gbm.male <- function (data,x,seed){
                     trControl = fitControl,
                     verbose = FALSE)
     gbmFit
-    saveRDS(gbmFit,file = paste0(path,"/gbm_male",i))
+    saveRDS(gbmFit,file = paste0(path,"/gbm_male_",i))
 
     predictions <- predict(gbmFit, newdata = test)
-    pred_path <- paste0(path, "/predictions_gbm_male", i)
+    pred_path <- paste0(path, "/predictions_gbm_male_", i)
     saveRDS(predictions, file = pred_path)
 
     compare <- data.frame(actual = test$group, predicted = predictions)
-    comp_path <- paste0(path, "/comparison_gbm_male", i)
+    comp_path <- paste0(path, "/comparison_gbm_male_", i)
     saveRDS(compare, file = comp_path)
 
     acc <- mean(compare$actual == compare$predicted)
@@ -54,7 +57,7 @@ cross.validation.gbm.male <- function (data,x,seed){
 
 }
 
-cross.validation.gbm.male(train_df,10,123)
+cross.validation.gbm.male(train_df_m,10,123)
 
 #df_clean <- train_df %>% filter(!is.na(group))
 #small_df <- df_clean %>%
@@ -213,12 +216,12 @@ matrix.build <- function (comparisons){
   var_name <- deparse(substitute(comparisons))
   path <- paste0("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/",var_name,"sum_pred_table")
   saveRDS(res_table,path)
-  matrix <- matrix(0,5,5)
+  matrix <- matrix(0,3,3)
   rownames(matrix) <- c(rownames(res_table),"Total")
   colnames(matrix) <- c(colnames(res_table),"Correct")
-  matrix[1:4,1:4] <- res_table
-  matrix[1:4,5] <- diag(res_table)
-  matrix[5,5] <- sum(diag(res_table))
+  matrix[1:2,1:2] <- res_table
+  matrix[1:2,3] <- diag(res_table)
+  matrix[3,3] <- sum(diag(res_table))
   return(matrix)
 }
 gbm_m_1_compar_mat <- matrix.build(comparison_gbm_male_1)
