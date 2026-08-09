@@ -1,18 +1,22 @@
 train_df <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/train_df_filtered")
 gene_cols <- names(train_df)[names(train_df) != "group"]
+train_df <- train_df[
+  rownames(train_df) != "gene_id" & rownames(train_df) != "gene_name",]
 train_df <- train_df %>%
   mutate(across(all_of(gene_cols), ~ {
     x <- trimws(.x)
     as.numeric(x)
   }))
-train_df <- train_df[
-  rownames(train_df) != "gene_id" & rownames(train_df) != "gene_name",]
+BI_meta <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/BI_meta")
+BI_meta_f <- filter(BI_meta,BI_meta$sex=="gender: f")
+index <- rownames(train_df) %in% BI_meta_f$SampleID
+train_df_f <- train_df[index,]
 
 cross.validation.SVM <- function (data,x,seed){
   acc_list <- list()
   path <- "C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female"
   data$group <- as.factor(data$group)
-
+  data$group <- droplevels(data$group)
 
   set.seed(seed = seed)
 
@@ -61,7 +65,7 @@ cross.validation.SVM <- function (data,x,seed){
 
 #small_df <- small_df[sample(nrow(small_df)), ]
 #small_try <- cross.validation.svm(small_df,4,232)
-cross.validation.SVM(train_df,10,134)
+cross.validation.SVM(train_df_f,10,134)
 
 
 svm_f_1 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female/svm_f_1")
@@ -135,38 +139,10 @@ table_10_f <- table(comparison_svm_f_10_svm)
 table_10_f
 
 resualts_table_list_svm_f <- list(svm_f_1,svm_f_2,svm_f_3,svm_f_4,svm_f_5,svm_f_6,svm_f_7,svm_f_8,svm_f_9,svm_f_10)
-fold.compare_svm <- function (resualts,x){
-  for (i in 1:x){
-    accuracy_folds <- resualts_table_svm_f_gbm[[i]]$Accuracy
-    diff_matrix <- outer(accuracy_folds,accuracy_folds, "-")
-    abs_diff_matrix <- abs(diff_matrix)
-    write.csv(abs_diff_matrix,paste0("svm_f_fold_differences_",i,".csv"), row.names = T)
-    saveRDS(abs_diff_matrix,paste0("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female/svm_f_fold_differences_",i))
 
-    diff_df <- as.data.frame(abs_diff_matrix)
-    diff_df$Fold <- rownames(diff_df)
-    diff_long <- diff_df %>%
-      pivot_longer(
-        cols = -Fold,
-        names_to = "Fold2",
-        values_to = "Difference"
-      )
-
-
-    plot <- ggplot(diff_long, aes(x = Fold, y = Fold2, fill = Difference)) +
-      geom_tile() +
-      scale_fill_gradient(low = "white", high = "lightblue", name = "Abs. Diff.") +
-      theme_minimal() +
-      labs(title = paste0("svm cross validation fold differences females only run ",i))
-    theme_minimal() +
-      theme(axis.text.x = element_text(angle = 45, hjust = 1))
-    print(plot)
-  }
-}
-fold.compare_svm(resualts_table_list_svm_f,10)
 
 all_mat_svm_f <- lapply(1:10, function(i) {
-  get(paste0("table_f_",i))
+  get(paste0("table_",i,"_f"))
 })
 array_3d_svm_f <- array(0, dim = c(nrow(all_mat_svm_f[[1]]), ncol(all_mat_svm_f[[1]]), length(all_mat_svm_f)))
 for (i in 1:length(all_mat_svm_f)) {
@@ -182,7 +158,34 @@ saveRDS(mean_matrix_svm_f,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor
 
 var_svm_f_1 <- varImp(svm_f_1)
 saveRDS(var_svm_f_1,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female/var_svm_f_1" )
-
+var_svm_f_1
 var_svm_f_2 <- varImp(svm_f_2)
 saveRDS(var_svm_f_2,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female/var_svm_f_2" )
 var_svm_f_2
+
+
+imp_df_f_svm <- data.frame(
+  Gene = rownames(var_svm_f_1$importance),
+  Importance_2 = var_svm_f_1$importance$f_2
+)
+
+imp_df_f_svm <- imp_df_f_svm %>%
+  arrange(desc(Importance_2))
+
+top_genes_f_vsm <- head(imp_df_f_svm, 21)
+
+# Plot
+plot <- ggplot(top_genes_f_vsm, aes(x = Gene, y = Importance_2, fill = Importance_2)) +
+  geom_col() +
+  coord_flip() +
+  scale_y_log10() +
+  scale_fill_gradient(low = "lightgray", high = "steelblue") +
+  labs(
+    title = "Top 20 Genes from female experiment (SVM) - according to f_2",
+    x = "Gene",
+    y = "Importance (log scale)"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+print(plot)
