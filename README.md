@@ -175,7 +175,9 @@ It also produces from those the comparisons matrices.
     Then I tried the polynomial supported vector machine, which provided better results.
     This function produces 10 automatic results tables, 10 predictions tables, 10 comparison tables and an accuracy list.
 
-29)Just like thr first cross validation experiment, I created the comparison matrices and graphical visualisation of those.
+29) Just like the first cross validation experiment, I created the comparison matrices and graphical visualisation of those.
 
 30) I used VarImp to generate the 20 most important genes for the group deviation. The variables are sorted by maximum importance across the classes
     only 20 most important variables shown (out of 4988)
+
+31) After finishing this analysis on the full data set I run the cross validation function with gbm and svm on data set filtered according to my 4 groups; female, male, controls and BD patients. This analysis produced the same number of results and methodology as detailed above for each group.
