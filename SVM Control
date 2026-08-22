@@ -1,0 +1,186 @@
+train_df <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/train_df_filtered")
+gene_cols <- names(train_df)[names(train_df) != "group"]
+train_df <- train_df[
+  rownames(train_df) != "gene_id" & rownames(train_df) != "gene_name",]
+train_df <- train_df %>%
+  mutate(across(all_of(gene_cols), ~ {
+    x <- trimws(.x)
+    as.numeric(x)
+  }))
+BI_meta_Diag <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/BI_meta_diag")
+BI_meta_0 <- filter(BI_meta,BI_meta_Diag$Diagnosis=="diagnosisbp1: 0")
+index <- rownames(train_df) %in% BI_meta_0$SampleID
+train_df_0 <- train_df[index,]
+
+cross.validation.SVM <- function (data,x,seed){
+  acc_list <- list()
+  path <- "C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Control"
+  data$group <- as.factor(data$group)
+  data$group <- droplevels(data$group)
+
+  set.seed(seed = seed)
+
+  folds <- createFolds(data$group,
+                       k = x, list = TRUE,
+                       returnTrain = TRUE)
+
+  for (i in 1:x){
+    train_idx <- folds[[i]]
+    test_idx <- setdiff(seq_len(nrow(data)),train_idx)
+    training <- data[train_idx,]
+    test <- data[test_idx,]
+    fitControl <- trainControl(
+      method = "repeatedcv",
+      number = x
+    )
+
+    svm_0_pred <- train(
+      group ~.,
+      data = training,
+      method = "svmPoly",
+      trControl = fitControl,
+      tuneLength = 4
+    )
+    svm_0_pred
+    saveRDS(svm_0_pred,file = paste0(path,"/svm_0_",i))
+
+    predictions <- predict(svm_0_pred, newdata = test)
+    pred_path <- paste0(path, "/predictions_svm_0_", i)
+    saveRDS(predictions, file = pred_path)
+
+    compare <- data.frame(actual = test$group, predicted = predictions)
+    comp_path <- paste0(path, "/comparison_svm_0_", i)
+    saveRDS(compare, file = comp_path)
+
+    acc <- mean(compare$actual == compare$predicted)
+    acc_list[[i]] <- acc
+  }
+  saveRDS(acc_list, "C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Control/acc_list")
+
+}
+
+cross.validation.SVM(train_df_0,10,134)
+
+
+
+svm_0_1 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Control/svm_0_1")
+svm_0_1
+comparison_svm_0_1_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Control/comparison_svm_0_1")
+comparison_svm_0_1_svm
+table_1_0<- table(comparison_svm_0_1_svm)
+table_1_0
+
+svm_0_2 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Control/svm_0_2")
+svm_0_2
+comparison_svm_0_2_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Control/comparison_svm_0_2")
+comparison_svm_0_2_svm
+table_2_0<- table(comparison_svm_0_2_svm)
+table_2_0
+
+svm_0_3 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Control/svm_0_3")
+svm_0_3
+comparison_svm_0_3_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Control/comparison_svm_0_3")
+
+table_3_0<- table(comparison_svm_0_3_svm)
+table_3_0
+
+svm_0_4 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Control/svm_0_4")
+svm_0_4
+comparison_svm_0_4_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Control/comparison_svm_0_4")
+
+table_4_0<- table(comparison_svm_0_4_svm)
+table_4_0
+
+svm_0_5 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Control/svm_0_5")
+svm_0_5
+comparison_svm_0_5_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Control/comparison_svm_0_5")
+
+table_5_0<- table(comparison_svm_0_5_svm)
+table_5_0
+
+svm_0_6 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Control/svm_0_6")
+svm_0_6
+comparison_svm_0_6_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Control/comparison_svm_0_6")
+
+table_6_0<- table(comparison_svm_0_6_svm)
+table_6_0
+
+svm_0_7 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Control/svm_0_7")
+svm_0_7
+comparison_svm_0_7_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Control/comparison_svm_0_7")
+
+table_7_0<- table(comparison_svm_0_7_svm)
+table_7_0
+
+svm_0_8 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Control/svm_0_8")
+svm_0_8
+comparison_svm_0_8_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Control/comparison_svm_0_8")
+
+table_8_0<- table(comparison_svm_0_8_svm)
+table_8_0
+
+svm_0_9 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Control/svm_0_9")
+svm_0_9
+comparison_svm_0_9_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Control/comparison_svm_0_9")
+
+table_9_0<- table(comparison_svm_0_9_svm)
+table_9_0
+
+svm_0_10 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Control/svm_0_10")
+svm_0_10
+comparison_svm_0_10_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Control/comparison_svm_0_10")
+
+table_10_0<- table(comparison_svm_0_10_svm)
+table_10_0
+
+resualts_table_list_svm0<- list(svm_0_1,svm_0_2,svm_0_3,svm_0_4,svm_0_5,svm_0_6,svm_0_7,svm_0_8,svm_0_9,svm_0_10)
+
+
+all_mat_svm_0<- lapply(1:10, function(i) {
+  get(paste0("table_",i,"_0"))
+})
+array_3d_svm_0<- array(0, dim = c(nrow(all_mat_svm_0[[1]]), ncol(all_mat_svm_0[[1]]), length(all_mat_svm_0)))
+for (i in 1:length(all_mat_svm_0)) {
+  array_3d_svm_0[, ,i] <- all_mat_svm_0[[i]]
+}
+
+mean_matrix_svm_0 <- apply(array_3d_svm_0, c(1, 2), mean)
+mean_matrix_svm_0 <- as.matrix(mean_matrix_svm_0)
+rownames(mean_matrix_svm_0) <- rownames(all_mat_svm_0[[1]])
+colnames(mean_matrix_svm_0) <- colnames(all_mat_svm_0[[1]])
+print(mean_matrix_svm_0)
+saveRDS(mean_matrix_svm_0,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Control/mean_matrix")
+
+var_svm_0_1 <- varImp(svm_0_1)
+saveRDS(var_svm_0_1,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Control/var_svm_0_1" )
+var_svm_0_1
+var_svm_0_2 <- varImp(svm_0_2)
+saveRDS(var_svm_0_2,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Control/var_svm_0_2" )
+var_svm_0_2
+
+
+imp_df_0_svm <- data.frame(
+  Gene = rownames(var_svm_0_1$importance),
+  Importance = var_svm_0_1$importance$f_0
+)
+
+imp_df_0_svm <- imp_df_0_svm %>%
+  arrange(desc(Importance))
+
+top_genes_0_vsm <- head(imp_df_0_svm, 21)
+
+# Plot
+plot <- ggplot(top_genes_0_vsm, aes(x = Gene, y = Importance, fill = Importance)) +
+  geom_col() +
+  coord_flip() +
+  scale_y_log10() +
+  scale_fill_gradient(low = "lightgray", high = "steelblue") +
+  labs(
+    title = "Top 20 Genes from Control experiment (SVM)",
+    x = "Gene",
+    y = "Importance (log scale)"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+print(plot)
