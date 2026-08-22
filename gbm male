@@ -59,15 +59,6 @@ cross.validation.gbm.male <- function (data,x,seed){
 
 cross.validation.gbm.male(train_df_m,10,123)
 
-#df_clean <- train_df %>% filter(!is.na(group))
-#small_df <- df_clean %>%
-#  group_by(group) %>%
-# sample_n(25) %>%
-#ungroup()
-
-#small_df <- small_df[sample(nrow(small_df)), ]
-
-#try_with_2 <- cross.validation(small_df,4,123)
 
 
 gbm_m_1 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/gbm_male_1")
@@ -110,7 +101,7 @@ saveRDS(resualts_table_m_gbm,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bach
 
 fold.compare <- function (resualts,x){
   for (i in 1:x){
-    accuracy_folds <- resualts_table_f_gbm[[i]]$Accuracy
+    accuracy_folds <- resualts[[i]]$Accuracy
     diff_matrix <- outer(accuracy_folds,accuracy_folds, "-")
     abs_diff_matrix <- abs(diff_matrix)
     write.csv(abs_diff_matrix,paste0("gbm_m_fold_differences_",i,".csv"), row.names = T)
@@ -158,7 +149,7 @@ diff_long_m<- diff_df_m%>%
 
 
 
-plot <- ggplot(diff_long_f, aes(x = Fold, y = Fold2, fill = Difference)) +
+plot <- ggplot(diff_long_m, aes(x = Fold, y = Fold2, fill = Difference)) +
   geom_tile() +
   scale_fill_gradient(low = "white", high = "lightblue", name = "Abs. Diff.") +
   theme_minimal() +
