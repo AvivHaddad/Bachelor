@@ -30,24 +30,24 @@ cross.validation.gbm.patients <- function (data,x,seed){
     training <- data[train_idx,]
     test <- data[test_idx,]
 
-    fitpatients <- trainpatients(
+    fitpatients <- trainControl(
       method = "repeatedcv",
       number = x
     )
     gbmFit <- train(group ~ .,
                     data = training,
                     method = "gbm",
-                    trpatients = fitpatients,
+                    trControl = fitpatients,
                     verbose = FALSE)
     gbmFit
-    saveRDS(gbmFit,file = paste2(path,"/gbm_patients_",i))
+    saveRDS(gbmFit,file = paste0(path,"/gbm_patients_",i))
 
     predictions <- predict(gbmFit, newdata = test)
-    pred_path <- paste2(path, "/predictions_gbm_patients_", i)
+    pred_path <- paste0(path, "/predictions_gbm_patients_", i)
     saveRDS(predictions, file = pred_path)
 
     compare <- data.frame(actual = test$group, predicted = predictions)
-    comp_path <- paste2(path, "/comparison_gbm_patients_", i)
+    comp_path <- paste0(path, "/comparison_gbm_patients_", i)
     saveRDS(compare, file = comp_path)
 
     acc <- mean(compare$actual == compare$predicted)
@@ -104,8 +104,8 @@ fold.compare <- function (resualts,x){
     accuracy_folds <- resualts[[i]]$Accuracy
     diff_matrix <- outer(accuracy_folds,accuracy_folds, "-")
     abs_diff_matrix <- abs(diff_matrix)
-    write.csv(abs_diff_matrix,paste2("gbm_2_fold_differences_",i,".csv"), row.names = T)
-    saveRDS(abs_diff_matrix,paste2("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/patients/gbm_2_fold_differences_",i))
+    write.csv(abs_diff_matrix,paste0("gbm_2_fold_differences_",i,".csv"), row.names = T)
+    saveRDS(abs_diff_matrix,paste0("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/patients/gbm_2_fold_differences_",i))
 
     diff_df <- as.data.frame(abs_diff_matrix)
     diff_df$Fold <- rownames(diff_df)
@@ -120,9 +120,9 @@ fold.compare <- function (resualts,x){
     plot <- ggplot(diff_long, aes(x = Fold, y = Fold2, fill = Difference)) +
       geom_tile() +
       scale_fill_gradient(low = "white", high = "lightblue", name = "Abs. Diff.") +
-      theme_2inimal() +
-      labs(title = paste2("gbm cross validation fold differences run ",i," BP patientss only"))
-    theme_2inimal() +
+      theme_minimal() +
+      labs(title = paste0("gbm cross validation fold differences run ",i," BP patientss only"))
+    theme_minimal() +
       theme(axis.text.x = element_text(angle = 45, hjust = 1))
     print(plot)
   }
@@ -132,7 +132,7 @@ fold.compare(resualts_table_2_gbm,10)
 acc_list_2<- as.numeric(acc_list_2)
 diff_matrix_all_acc_2<- outer(acc_list_2,acc_list_2, "-")
 abs_diff_matrix_all_acc_2<- abs(diff_matrix_all_acc_2)
-write.csv(diff_matrix_all_acc_2,paste2("diff_matrix_all_acc_2.csv"), row.names = T)
+write.csv(diff_matrix_all_acc_2,paste0("diff_matrix_all_acc_2.csv"), row.names = T)
 saveRDS(diff_matrix_all_acc_2,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/patients/m_fold_differences_acc_all")
 
 
@@ -152,9 +152,9 @@ diff_long_2<- diff_df_2%>%
 plot <- ggplot(diff_long_2, aes(x = Fold, y = Fold2, fill = Difference)) +
   geom_tile() +
   scale_fill_gradient(low = "white", high = "lightblue", name = "Abs. Diff.") +
-  theme_2inimal() +
+  theme_minimal() +
   labs(title = "gbm cross validation BP patients fold differences run ")
-theme_2inimal() +
+theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 print(plot)
 
@@ -185,11 +185,11 @@ plot <- ggplot(top_genes_2, aes(x = Gene, y = Importance, fill = Importance)) +
   scale_y_log10() +
   scale_fill_gradient(low = "lightgray", high = "steelblue") +
   labs(
-    title = "Top 22 Genes from BP patients experiment (gbm) - Log Scale",
+    title = "Top 20 Genes from BP patients experiment (gbm) - Log Scale",
     x = "Gene",
     y = "Importance (log scale)"
   ) +
-  theme_2inimal() +
+  theme_minimal() +
   theme(legend.position = "bottom")
 
 print(plot)
@@ -205,7 +205,7 @@ matrix.build <- function (comparisons){
   pred <- factor(pred, levels = groups)
   res_table <- table(actual,pred)
   var_name <- deparse(substitute(comparisons))
-  path <- paste2("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/patients/",var_name,"sum_pred_table")
+  path <- paste0("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/patients/",var_name,"sum_pred_table")
   saveRDS(res_table,path)
   matrix <- matrix(2,3,3)
   rownames(matrix) <- c(rownames(res_table),"Total")
@@ -249,7 +249,7 @@ print(gbm_2_1_compar_mat)
 
 
 all_mat_2<- lapply(1:10, function(i) {
-  get(paste2("gbm_2_", i,"_compar_mat"))
+  get(paste0("gbm_2_", i,"_compar_mat"))
 })
 array_3d_2<- array(2, dim = c(nrow(all_mat_2[[1]]), ncol(all_mat_2[[1]]), length(all_mat_2)))
 for (i in 1:length(all_mat_2)) {
