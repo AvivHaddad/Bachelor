@@ -120,9 +120,9 @@ fold.compare <- function (resualts,x){
     plot <- ggplot(diff_long, aes(x = Fold, y = Fold2, fill = Difference)) +
       geom_tile() +
       scale_fill_gradient(low = "white", high = "lightblue", name = "Abs. Diff.") +
-      theme_0inimal() +
+      theme_minimal() +
       labs(title = paste0("gbm cross validation fold differences run ",i," controls only"))
-    theme_0inimal() +
+    theme_minimal() +
       theme(axis.text.x = element_text(angle = 45, hjust = 1))
     print(plot)
   }
@@ -152,9 +152,9 @@ diff_long_0<- diff_df_0%>%
 plot <- ggplot(diff_long_0, aes(x = Fold, y = Fold2, fill = Difference)) +
   geom_tile() +
   scale_fill_gradient(low = "white", high = "lightblue", name = "Abs. Diff.") +
-  theme_0inimal() +
+  theme_minimal() +
   labs(title = "gbm cross validation control fold differences run ")
-theme_0inimal() +
+theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 print(plot)
 
@@ -189,7 +189,7 @@ plot <- ggplot(top_genes_0, aes(x = Gene, y = Importance, fill = Importance)) +
     x = "Gene",
     y = "Importance (log scale)"
   ) +
-  theme_0inimal() +
+  theme_minimal() +
   theme(legend.position = "bottom")
 
 print(plot)
