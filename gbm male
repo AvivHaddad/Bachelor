@@ -104,7 +104,6 @@ fold.compare <- function (resualts,x){
     accuracy_folds <- resualts[[i]]$Accuracy
     diff_matrix <- outer(accuracy_folds,accuracy_folds, "-")
     abs_diff_matrix <- abs(diff_matrix)
-    write.csv(abs_diff_matrix,paste0("gbm_m_fold_differences_",i,".csv"), row.names = T)
     saveRDS(abs_diff_matrix,paste0("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/gbm_m_fold_differences_",i))
 
     diff_df <- as.data.frame(abs_diff_matrix)
@@ -132,7 +131,7 @@ fold.compare(resualts_table_m_gbm,10)
 acc_list_m<- as.numeric(acc_list_m)
 diff_matrix_all_acc_m<- outer(acc_list_m,acc_list_m, "-")
 abs_diff_matrix_all_acc_m<- abs(diff_matrix_all_acc_m)
-write.csv(diff_matrix_all_acc_m,paste0("diff_matrix_all_acc_m.csv"), row.names = T)
+write.csv(diff_matrix_all_acc_m,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/diff_matrix_all_acc_m.csv", row.names = T)
 saveRDS(diff_matrix_all_acc_m,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/m_fold_differences_acc_all")
 
 
@@ -176,6 +175,9 @@ imp_df_m<- data.frame(
 imp_df_m<- imp_df_m%>%
   arrange(desc(Importance))
 
+write.csv(imp_df_m,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/imp_df_m.csv", row.names = T)
+
+
 top_genes_m<- head(imp_df_m, 21)
 
 # Plot
@@ -217,31 +219,53 @@ matrix.build <- function (comparisons){
 }
 gbm_m_1_compar_mat <- matrix.build(comparison_gbm_male_1)
 saveRDS(gbm_m_1_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/gbm_m_1_compar_mat")
+gbm_m_1_compar_mat <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/gbm_m_1_compar_mat")
+write.csv2(gbm_m_1_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/gbm_m_1_compar_mat.csv",row.names = T)
+
 gbm_m_2_compar_mat <- matrix.build(comparison_gbm_male_2)
 saveRDS(gbm_m_2_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/gbm_m_2_compar_mat")
+gbm_m_2_compar_mat <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/gbm_m_2_compar_mat")
+write.csv2(gbm_m_2_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/gbm_m_2_compar_mat.csv",row.names = T)
+
 gbm_m_3_compar_mat <- matrix.build(comparison_gbm_male_3)
 saveRDS(gbm_m_3_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/gbm_m_3_compar_mat")
+gbm_m_3_compar_mat <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/gbm_m_3_compar_mat")
+write.csv2(gbm_m_3_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/gbm_m_3_compar_mat.csv",row.names = T)
 
 gbm_m_4_compar_mat <- matrix.build(comparison_gbm_male_4)
 saveRDS(gbm_m_4_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/gbm_m_4_compar_mat")
+gbm_m_4_compar_mat <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/gbm_m_4_compar_mat")
+write.csv2(gbm_m_4_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/gbm_m_4_compar_mat.csv",row.names = T)
 
 gbm_m_5_compar_mat <- matrix.build(comparison_gbm_male_5)
 saveRDS(gbm_m_5_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/gbm_m_5_compar_mat")
+gbm_m_5_compar_mat <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/gbm_m_5_compar_mat")
+write.csv2(gbm_m_5_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/gbm_m_5_compar_mat.csv",row.names = T)
 
 gbm_m_6_compar_mat <- matrix.build(comparison_gbm_male_6)
 saveRDS(gbm_m_6_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/gbm_m_6_compar_mat")
+gbm_m_6_compar_mat <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/gbm_m_6_compar_mat")
+write.csv2(gbm_m_6_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/gbm_m_6_compar_mat.csv",row.names = T)
 
 gbm_m_7_compar_mat <- matrix.build(comparison_gbm_male_7)
 saveRDS(gbm_m_7_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/gbm_m_7_compar_mat")
+gbm_m_7_compar_mat <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/gbm_m_7_compar_mat")
+write.csv2(gbm_m_7_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/gbm_m_7_compar_mat.csv",row.names = T)
 
 gbm_m_8_compar_mat <- matrix.build(comparison_gbm_male_8)
 saveRDS(gbm_m_8_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/gbm_m_8_compar_mat")
+gbm_m_8_compar_mat <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/gbm_m_8_compar_mat")
+write.csv2(gbm_m_8_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/gbm_m_8_compar_mat.csv",row.names = T)
 
 gbm_m_9_compar_mat <- matrix.build(comparison_gbm_male_9)
 saveRDS(gbm_m_9_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/gbm_m_9_compar_mat")
+gbm_m_9_compar_mat <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/gbm_m_9_compar_mat")
+write.csv2(gbm_m_9_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/gbm_m_9_compar_mat.csv",row.names = T)
 
 gbm_m_10_compar_mat <- matrix.build(comparison_gbm_male_10)
 saveRDS(gbm_m_10_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/gbm_m_10_compar_mat")
+gbm_m_10_compar_mat <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/gbm_m_10_compar_mat")
+write.csv2(gbm_m_10_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/gbm_m_10_compar_mat.csv",row.names = T)
 
 print(gbm_m_10_compar_mat)
 print(gbm_m_2_compar_mat)
@@ -262,3 +286,4 @@ rownames(mean_matrix_m) <- rownames(all_mat_m[[1]])
 colnames(mean_matrix_m) <- colnames(all_mat_m[[1]])
 print(mean_matrix_m)
 saveRDS(mean_matrix_m,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/gbm_m_mean_matrix")
+write.csv2(mean_matrix_m,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/mean_matrix_m.csv",row.names = T)
