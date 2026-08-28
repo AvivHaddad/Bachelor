@@ -69,6 +69,8 @@ comparison_svm_0_1_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis
 comparison_svm_0_1_svm
 table_1_0<- table(comparison_svm_0_1_svm)
 table_1_0
+write.csv2(table_1_0,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Control/table_1_0.csv", row.names = T)
+
 
 svm_0_2 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Control/svm_0_2")
 svm_0_2
@@ -76,6 +78,7 @@ comparison_svm_0_2_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis
 comparison_svm_0_2_svm
 table_2_0<- table(comparison_svm_0_2_svm)
 table_2_0
+write.csv2(table_2_0,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Control/table_2_0.csv", row.names = T)
 
 svm_0_3 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Control/svm_0_3")
 svm_0_3
@@ -83,6 +86,7 @@ comparison_svm_0_3_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis
 
 table_3_0<- table(comparison_svm_0_3_svm)
 table_3_0
+write.csv2(table_3_0,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Control/table_3_0.csv", row.names = T)
 
 svm_0_4 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Control/svm_0_4")
 svm_0_4
@@ -90,6 +94,7 @@ comparison_svm_0_4_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis
 
 table_4_0<- table(comparison_svm_0_4_svm)
 table_4_0
+write.csv2(table_4_0,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Control/table_4_0.csv", row.names = T)
 
 svm_0_5 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Control/svm_0_5")
 svm_0_5
@@ -97,6 +102,7 @@ comparison_svm_0_5_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis
 
 table_5_0<- table(comparison_svm_0_5_svm)
 table_5_0
+write.csv2(table_5_0,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Control/table_5_0.csv", row.names = T)
 
 svm_0_6 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Control/svm_0_6")
 svm_0_6
@@ -104,6 +110,7 @@ comparison_svm_0_6_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis
 
 table_6_0<- table(comparison_svm_0_6_svm)
 table_6_0
+write.csv2(table_6_0,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Control/table_6_0.csv", row.names = T)
 
 svm_0_7 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Control/svm_0_7")
 svm_0_7
@@ -111,6 +118,7 @@ comparison_svm_0_7_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis
 
 table_7_0<- table(comparison_svm_0_7_svm)
 table_7_0
+write.csv2(table_7_0,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Control/table_7_0.csv", row.names = T)
 
 svm_0_8 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Control/svm_0_8")
 svm_0_8
@@ -118,6 +126,7 @@ comparison_svm_0_8_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis
 
 table_8_0<- table(comparison_svm_0_8_svm)
 table_8_0
+write.csv2(table_8_0,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Control/table_8_0.csv", row.names = T)
 
 svm_0_9 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Control/svm_0_9")
 svm_0_9
@@ -125,6 +134,7 @@ comparison_svm_0_9_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis
 
 table_9_0<- table(comparison_svm_0_9_svm)
 table_9_0
+write.csv2(table_9_0,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Control/table_9_0.csv", row.names = T)
 
 svm_0_10 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Control/svm_0_10")
 svm_0_10
@@ -132,6 +142,7 @@ comparison_svm_0_10_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesi
 
 table_10_0<- table(comparison_svm_0_10_svm)
 table_10_0
+write.csv2(table_10_0,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Control/table_10_0.csv", row.names = T)
 
 resualts_table_list_svm0<- list(svm_0_1,svm_0_2,svm_0_3,svm_0_4,svm_0_5,svm_0_6,svm_0_7,svm_0_8,svm_0_9,svm_0_10)
 
@@ -150,6 +161,8 @@ rownames(mean_matrix_svm_0) <- rownames(all_mat_svm_0[[1]])
 colnames(mean_matrix_svm_0) <- colnames(all_mat_svm_0[[1]])
 print(mean_matrix_svm_0)
 saveRDS(mean_matrix_svm_0,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Control/mean_matrix")
+write.csv2(mean_matrix_svm_0,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Control/mean_matrix_svm_0.csv", row.names = T)
+
 
 var_svm_0_1 <- varImp(svm_0_1)
 saveRDS(var_svm_0_1,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Control/var_svm_0_1" )
@@ -166,6 +179,8 @@ imp_df_0_svm <- data.frame(
 
 imp_df_0_svm <- imp_df_0_svm %>%
   arrange(desc(Importance))
+write.csv2(imp_df_0_svm,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Control/imp_df_0_svm.csv", row.names = T)
+
 
 top_genes_0_vsm <- head(imp_df_0_svm, 21)
 
