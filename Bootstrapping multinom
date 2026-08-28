@@ -1,6 +1,6 @@
 #Creating the matrix for the 10x10 fold validation
-BI_dge_3 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/BI_dge_3")
-expr_mat <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/expr_df_genes")
+BI_dge_3 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/BI_dge_3_filtered")
+expr_mat <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/expr_mat_filtered")
 mat_goups <- BI_dge_3$samples
 expr_mat_t <- t(expr_mat)
 group_vec <- mat_goups$group[match(rownames(expr_mat_t), mat_goups$SampleID)]
@@ -22,8 +22,8 @@ train_df$group <- factor(train_df$group,
                                     "gender: m diagnosisbp1: 2"),
                          labels = c("f_0", "f_2", "m_0", "m_2"))
 
-saveRDS(train_df,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/train_df")
-train_df <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/train_df")
+saveRDS(train_df,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/train_df_filtered")
+train_df <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/train_df_filtered")
 
 
 #A function that receives a data matrix, number of folds and an original seed. It will run in a loop for the number of folds.
@@ -41,7 +41,7 @@ clean_numeric <- function(x) {
   suppressWarnings(as.numeric(x))
 }
 Bootsrapping <- function(data, x=10, seed = 123) {
-  dir <- "C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Multinom"
+  dir <- "C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Multinom/Filtered Y"
   gene_cols <- names(data)[!names(data) %in% "group"]
   error_list <- list()
 
@@ -89,36 +89,77 @@ Bootsrapping <- function(data, x=10, seed = 123) {
     error_list[[i]] <- acc
   }
 
-  saveRDS(error_list, file = paste0(dir, "/error_list"))
+  saveRDS(error_list, file = paste0(dir, "/acc_list"))
 }
 
 
 Bootsrapping(train_df,10)
 
+prediction_1 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/predictions_1")
+comparison_1 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/comparison_1")
+training_data_1 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/training_data_1")
+test_data_1 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/test_data_1")
+
+prediction_2 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/predictions_2")
+comparison_2 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/comparison_2")
+training_data_2 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/training_data_2")
+test_data_2 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/test_data_2")
+
+prediction_3 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/predictions_3")
+comparison_3 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/comparison_3")
+training_data_3 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/training_data_3")
+test_data_3 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/test_data_3")
+
+prediction_4 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/predictions_4")
+comparison_4 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/comparison_4")
+training_data_4 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/training_data_4")
+test_data_4 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/test_data_4")
+
+prediction_5 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/predictions_5")
+comparison_5 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/comparison_5")
+training_data_5 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/training_data_5")
+test_data_5 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/test_data_5")
+
+prediction_6 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/predictions_6")
+comparison_6 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/comparison_6")
+training_data_6 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/training_data_6")
+test_data_6 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/test_data_6")
+
+prediction_7 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/predictions_7")
+comparison_7 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/comparison_7")
+training_data_7 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/training_data_7")
+test_data_7 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/test_data_7")
+
+prediction_8 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/predictions_8")
+comparison_8 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/comparison_8")
+training_data_8 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/training_data_8")
+test_data_8 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/test_data_8")
+
+prediction_9 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/predictions_9")
+comparison_9 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/comparison_9")
+training_data_9 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/training_data_9")
+test_data_9 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/test_data_9")
+
 prediction_10 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/predictions_10")
-error_list <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/error_list")
 comparison_10 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/comparison_10")
 training_data_10 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/training_data_10")
 test_data_10 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/test_data_10")
 
+error_list <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/error_list")
 error_list <- as.numeric(error_list)
 diff_matrix_all_error <- outer(error_list,error_list, "-")
 abs_diff_matrix_all_error <- abs(diff_matrix_all_error)
-write.csv(diff_matrix_all_error,paste0("diff_matrix_all_acc_.csv"), row.names = T)
+write.csv2(diff_matrix_all_error,paste0("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Multinom/diff_matrix_all_acc_.csv"), row.names = T)
 saveRDS(diff_matrix_all_error,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/cv_fold_differences_error_all")
+
 
 diff_matrix_boot <- outer(error_list,error_list, "-")
 abs_diff_matrix_boot <- abs(diff_matrix_boot)
-write.csv(abs_diff_matrix_boot,paste0("bootstrapping_acc_compare"), row.names = T)
+
+write.csv2(abs_diff_matrix_boot,paste0("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Multinom/bootstrapping_acc_compare.csv"), row.names = T)
 saveRDS(abs_diff_matrix_boot,paste0("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Multinom/acc_compare"))
 
-diff_df_boot <- as.data.frame(abs_diff_matrix_boot)
-diff_df_boot$Fold <- as.numeric(rownames(diff_df_boot))
-diff_melt_boot <- melt(diff_df_boot,
-                                   id.vars = "Fold",
-                                   variable.name = "Fold2",
-                                   value.name = "Difference")
-diff_melt_boot$Fold2 <- as.numeric(diff_melt_boot$Fold2)
+
 
 plot <- ggplot(diff_melt_boot, aes(x = Fold, y = Fold2, fill = Difference)) +
   geom_tile() +
