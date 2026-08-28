@@ -30,17 +30,17 @@ cross.validation.SVM <- function (data,x,seed){
       number = x
     )
 
-    lsvm_pred <- train(
+    svm_pred <- train(
       group ~.,
       data = training,
       method = "svmPoly",
       trControl = fitControl,
       tuneLength = 4
     )
-    lsvm_pred
-    saveRDS(lsvm_pred,file = paste0(path,"/lsvm_",i))
+    svm_pred
+    saveRDS(svm_pred,file = paste0(path,"/svm_",i))
 
-    predictions <- predict(lsvm_pred, newdata = test)
+    predictions <- predict(svm_pred, newdata = test)
     pred_path <- paste0(path, "/predictions_cv_", i)
     saveRDS(predictions, file = pred_path)
 
@@ -60,7 +60,7 @@ cross.validation.SVM <- function (data,x,seed){
 #  ungroup()
 
 #small_df <- small_df[sample(nrow(small_df)), ]
-#small_try <- cross.validation.LSVM(small_df,4,232)
+#small_try <- cross.validation.svm(small_df,4,232)
 cross.validation.SVM(train_df,10,134)
 
 
@@ -70,6 +70,7 @@ comparison_cv_1_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Ba
 comparison_cv_1_svm
 table_1 <- table(comparison_cv_1_svm)
 table_1
+write.csv2(table_1,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/table_1.csv", row.names = T)
 
 svm_2 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/lsvm_2")
 svm_2
@@ -77,6 +78,7 @@ comparison_cv_2_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Ba
 comparison_cv_2_svm
 table_2 <- table(comparison_cv_2_svm)
 table_2
+write.csv2(table_2,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/table_2.csv", row.names = T)
 
 svm_3 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/lsvm_3")
 svm_3
@@ -84,6 +86,7 @@ comparison_cv_3_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Ba
 
 table_3 <- table(comparison_cv_3_svm)
 table_3
+write.csv2(table_3,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/table_3.csv", row.names = T)
 
 svm_4 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/lsvm_4")
 svm_4
@@ -91,6 +94,7 @@ comparison_cv_4_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Ba
 
 table_4 <- table(comparison_cv_4_svm)
 table_4
+write.csv2(table_4,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/table_4.csv", row.names = T)
 
 svm_5 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/lsvm_5")
 svm_5
@@ -98,6 +102,7 @@ comparison_cv_5_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Ba
 
 table_5 <- table(comparison_cv_5_svm)
 table_5
+write.csv2(table_5,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/table_5.csv", row.names = T)
 
 svm_6 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/lsvm_6")
 svm_6
@@ -105,6 +110,7 @@ comparison_cv_6_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Ba
 
 table_6 <- table(comparison_cv_6_svm)
 table_6
+write.csv2(table_6,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/table_6.csv", row.names = T)
 
 svm_7 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/lsvm_7")
 svm_7
@@ -112,6 +118,7 @@ comparison_cv_7_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Ba
 
 table_7 <- table(comparison_cv_7_svm)
 table_7
+write.csv2(table_7,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/table_7.csv", row.names = T)
 
 svm_8 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/lsvm_8")
 svm_8
@@ -119,6 +126,7 @@ comparison_cv_8_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Ba
 
 table_8 <- table(comparison_cv_8_svm)
 table_8
+write.csv2(table_8,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/table_8.csv", row.names = T)
 
 svm_9 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/lsvm_9")
 svm_9
@@ -126,6 +134,7 @@ comparison_cv_9_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Ba
 
 table_9 <- table(comparison_cv_9_svm)
 table_9
+write.csv2(table_9,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/table_9.csv", row.names = T)
 
 svm_10 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/lsvm_10")
 svm_10
@@ -133,11 +142,12 @@ comparison_cv_10_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/B
 
 table_10 <- table(comparison_cv_10_svm)
 table_10
+write.csv2(table_10,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/table_10.csv", row.names = T)
 
 resualts_table_list_svm <- list(svm_1,svm_2,svm_3,svm_4,svm_5,svm_6,svm_7,svm_8,svm_9,svm_10)
-fold.compare_svm <- function (resualts,x){
+fold.compare_svm <- function (results,x){
   for (i in 1:x){
-    accuracy_folds <- resualts_table_cv_gbm[[i]]$Accuracy
+    accuracy_folds <- results[[i]]$Accuracy
     diff_matrix <- outer(accuracy_folds,accuracy_folds, "-")
     abs_diff_matrix <- abs(diff_matrix)
     write.csv(abs_diff_matrix,paste0("cv_fold_differences_",i,".csv"), row.names = T)
@@ -179,10 +189,48 @@ rownames(mean_matrix_svm) <- rownames(all_mat_svm[[1]])
 colnames(mean_matrix_svm) <- colnames(all_mat_svm[[1]])
 print(mean_matrix_svm)
 saveRDS(mean_matrix_svm,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/mean_matrix")
+write.csv2(mean_matrix_svm,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/mean_matrix.csv", row.names = T)
 
 var_svm_1 <- varImp(svm_1)
+imp_df_1 <- data.frame(
+  Gene = rownames(var_svm_1$importance),
+  Importance = var_svm_1$importance
+)
+imp_df_1 <- imp_df_1 %>%
+  arrange(desc(imp_df_1$Importance.f_2))
+
 saveRDS(var_svm_1,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/var_svm_1" )
+write.csv2(imp_df_1,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/imp_df_1.csv", row.names = T)
+
 
 var_svm_2 <- varImp(svm_2)
 saveRDS(var_svm_2,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/var_svm_2" )
 var_svm_2
+
+
+
+
+accuracy_folds <- resualts_table_list_svm[[1]]$Accuracy
+diff_matrix <- outer(accuracy_folds,accuracy_folds, "-")
+abs_diff_matrix <- abs(diff_matrix)
+write.csv(abs_diff_matrix,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/acc_list.csv", row.names = T)
+saveRDS(abs_diff_matrix,paste0("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/cv_fold_differences_",i))
+
+diff_df <- as.data.frame(abs_diff_matrix)
+diff_df$Fold <- rownames(diff_df)
+diff_long <- diff_df %>%
+  pivot_longer(
+    cols = -Fold,
+    names_to = "Fold2",
+    values_to = "Difference"
+  )
+
+
+plot <- ggplot(diff_long, aes(x = Fold, y = Fold2, fill = Difference)) +
+  geom_tile() +
+  scale_fill_gradient(low = "white", high = "lightblue", name = "Abs. Diff.") +
+  theme_minimal() +
+  labs(title = paste0("svm cross validation fold differences run ",i))
+theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+print(plot)
