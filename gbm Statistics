@@ -1,0 +1,397 @@
+# gbm all filtered
+comparison_cv_1_filtered <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/comparison_cv_1")
+comparison_cv_1_filtered
+comp_1 <- confusionMatrix(comparison_cv_1_filtered$predicted,comparison_cv_1_filtered$actual)
+resualts_table_cv_gbm_filtered <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/resualts_table_cv_gbm")
+resualts_table_cv_gbm_filtered
+comp_1
+saveRDS(comp_1,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/confusion_matrix_1")
+
+comparison_cv_2_filtered <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/comparison_cv_2")
+comparison_cv_2_filtered
+comp_2 <- confusionMatrix(comparison_cv_2_filtered$predicted,comparison_cv_2_filtered$actual)
+comp_2
+saveRDS(comp_2,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/confusion_matrix_2")
+
+comparison_cv_3_filtered <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/comparison_cv_3")
+comparison_cv_3_filtered
+comp_3 <- confusionMatrix(comparison_cv_3_filtered$predicted,comparison_cv_3_filtered$actual)
+comp_3
+saveRDS(comp_3,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/confusion_matrix_3")
+
+comparison_cv_4_filtered <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/comparison_cv_4")
+comparison_cv_4_filtered
+comp_4 <- confusionMatrix(comparison_cv_4_filtered$predicted,comparison_cv_4_filtered$actual)
+comp_4
+saveRDS(comp_4,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/confusion_matrix_5")
+
+comparison_cv_5_filtered <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/comparison_cv_5")
+comparison_cv_5_filtered
+comp_5 <- confusionMatrix(comparison_cv_4_filtered$predicted,comparison_cv_4_filtered$actual)
+comp_5
+saveRDS(comp_5,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/confusion_matrix_6")
+
+comparison_cv_6_filtered <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/comparison_cv_6")
+comparison_cv_6_filtered
+comp_6 <- confusionMatrix(comparison_cv_6_filtered$predicted,comparison_cv_6_filtered$actual)
+comp_6
+saveRDS(comp_6,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/confusion_matrix_6")
+
+comparison_cv_7_filtered <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/comparison_cv_7")
+comparison_cv_7_filtered
+comp_7 <- confusionMatrix(comparison_cv_7_filtered$predicted,comparison_cv_7_filtered$actual)
+comp_7
+saveRDS(comp_7,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/confusion_matrix_7")
+
+comparison_cv_8_filtered <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/comparison_cv_8")
+comparison_cv_8_filtered
+comp_8 <- confusionMatrix(comparison_cv_8_filtered$predicted,comparison_cv_8_filtered$actual)
+comp_8
+saveRDS(comp_8,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/confusion_matrix_8")
+
+comparison_cv_9_filtered <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/comparison_cv_9")
+comparison_cv_9_filtered
+comp_9 <- confusionMatrix(comparison_cv_9_filtered$predicted,comparison_cv_9_filtered$actual)
+comp_9
+saveRDS(comp_9,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/confusion_matrix_9")
+
+comparison_cv_10_filtered <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/comparison_cv_10")
+comparison_cv_10_filtered
+comp_10 <- confusionMatrix(comparison_cv_10_filtered$predicted,comparison_cv_10_filtered$actual)
+comp_10
+saveRDS(comp_10,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/confusion_matrix_10")
+
+tables <- list(
+  comp_1$table,
+  comp_2$table,
+  comp_3$table,
+  comp_4$table,
+  comp_5$table,
+  comp_6$table,
+  comp_7$table,
+  comp_8$table,
+  comp_9$table,
+  comp_10$table
+)
+
+total <- Reduce(`+`, tables)
+total
+saveRDS(total,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/confusion_matrix_sum")
+
+
+#----------------------------------------------------------------------------------------------------------------------------
+#female
+comparison_cv_1_f <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/female/comparison_gbm_female1")
+comparison_cv_1_f
+comp_1_f <- confusionMatrix(comparison_cv_1_f$predicted,comparison_cv_1_f$actual)
+comp_1_f
+saveRDS(comp_1_f,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/female/confusion_matrix_1")
+
+comparison_cv_2_f <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/female/comparison_gbm_female2")
+comparison_cv_2_f
+comp_2_f <- confusionMatrix(comparison_cv_2_f$predicted,comparison_cv_2_f$actual)
+comp_2_f
+saveRDS(comp_2_f,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/female/confusion_matrix_2")
+
+comparison_cv_3_f <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/female/comparison_gbm_female3")
+comparison_cv_3_f
+comp_3_f <- confusionMatrix(comparison_cv_3_f$predicted,comparison_cv_3_f$actual)
+comp_3_f
+saveRDS(comp_3_f,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/female/confusion_matrix_3")
+
+comparison_cv_4_f <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/female/comparison_gbm_female4")
+comparison_cv_4_f
+comp_4_f <- confusionMatrix(comparison_cv_4_f$predicted,comparison_cv_4_f$actual)
+comp_4_f
+saveRDS(comp_4_f,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/female/confusion_matrix_4")
+
+comparison_cv_5_f <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/female/comparison_gbm_female5")
+comparison_cv_5_f
+comp_5_f <- confusionMatrix(comparison_cv_5_f$predicted,comparison_cv_5_f$actual)
+comp_5_f
+saveRDS(comp_5_f,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/female/confusion_matrix_5")
+
+comparison_cv_6_f <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/female/comparison_gbm_female6")
+comparison_cv_6_f
+comp_6_f <- confusionMatrix(comparison_cv_6_f$predicted,comparison_cv_6_f$actual)
+comp_6_f
+saveRDS(comp_6_f,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/female/confusion_matrix_6")
+
+comparison_cv_7_f <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/female/comparison_gbm_female7")
+comparison_cv_7_f
+comp_7_f <- confusionMatrix(comparison_cv_7_f$predicted,comparison_cv_7_f$actual)
+comp_7_f
+saveRDS(comp_7_f,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/female/confusion_matrix_7")
+
+comparison_cv_8_f <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/female/comparison_gbm_female8")
+comparison_cv_8_f
+comp_8_f <- confusionMatrix(comparison_cv_8_f$predicted,comparison_cv_8_f$actual)
+comp_8_f
+saveRDS(comp_8_f,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/female/confusion_matrix_8")
+
+comparison_cv_9_f <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/female/comparison_gbm_female9")
+comparison_cv_9_f
+comp_9_f <- confusionMatrix(comparison_cv_9_f$predicted,comparison_cv_9_f$actual)
+comp_9_f
+saveRDS(comp_9_f,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/female/confusion_matrix_9")
+
+comparison_cv_10_f <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/female/comparison_gbm_female10")
+comparison_cv_10_f
+comp_10_f <- confusionMatrix(comparison_cv_10_f$predicted,comparison_cv_10_f$actual)
+comp_10_f
+saveRDS(comp_10_f,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/female/confusion_matrix_10")
+
+tables_f <- list(
+  comp_1_f$table,
+  comp_2_f$table,
+  comp_3_f$table,
+  comp_4_f$table,
+  comp_5_f$table,
+  comp_6_f$table,
+  comp_7_f$table,
+  comp_8_f$table,
+  comp_9_f$table,
+  comp_10_f$table
+)
+
+total_f <- Reduce(`+`, tables_f)
+total_f
+saveRDS(total_f,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/female/confusion_matrix_sum")
+
+#male
+comparison_cv_1_m <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/comparison_gbm_male_1")
+comparison_cv_1_m
+comp_1_m <- confusionMatrix(comparison_cv_1_m$predicted,comparison_cv_1_m$actual)
+comp_1_m
+saveRDS(comp_1_m,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/confusion_matrix_1")
+
+comparison_cv_2_m <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/comparison_gbm_male_2")
+comparison_cv_2_m
+comp_2_m <- confusionMatrix(comparison_cv_2_m$predicted,comparison_cv_2_m$actual)
+comp_2_m
+saveRDS(comp_2_m,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/confusion_matrix_2")
+
+comparison_cv_3_m <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/comparison_gbm_male_3")
+comparison_cv_3_m
+comp_3_m <- confusionMatrix(comparison_cv_3_m$predicted,comparison_cv_3_m$actual)
+comp_3_m
+saveRDS(comp_3_m,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/confusion_matrix_3")
+
+comparison_cv_4_m <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/comparison_gbm_male_4")
+comparison_cv_4_m
+comp_4_m <- confusionMatrix(comparison_cv_4_m$predicted,comparison_cv_4_m$actual)
+comp_4_m
+saveRDS(comp_4_m,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/confusion_matrix_4")
+
+comparison_cv_5_m <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/comparison_gbm_male_5")
+comparison_cv_5_m
+comp_5_m <- confusionMatrix(comparison_cv_5_m$predicted,comparison_cv_5_m$actual)
+comp_5_m
+saveRDS(comp_5_m,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/confusion_matrix_5")
+
+comparison_cv_6_m <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/comparison_gbm_male_6")
+comparison_cv_6_m
+comp_6_m <- confusionMatrix(comparison_cv_6_m$predicted,comparison_cv_6_m$actual)
+comp_6_m
+saveRDS(comp_6_m,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/confusion_matrix_6")
+
+comparison_cv_7_m <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/comparison_gbm_male_7")
+comparison_cv_7_m
+comp_7_m <- confusionMatrix(comparison_cv_7_m$predicted,comparison_cv_7_m$actual)
+comp_7_m
+saveRDS(comp_7_m,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/confusion_matrix_7")
+
+comparison_cv_8_m <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/comparison_gbm_male_8")
+comparison_cv_8_m
+comp_8_m <- confusionMatrix(comparison_cv_8_m$predicted,comparison_cv_8_m$actual)
+comp_8_m
+saveRDS(comp_8_m,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/confusion_matrix_8")
+
+comparison_cv_9_m <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/comparison_gbm_male_9")
+comparison_cv_9_m
+comp_9_m <- confusionMatrix(comparison_cv_9_m$predicted,comparison_cv_9_m$actual)
+comp_9_m
+saveRDS(comp_9_m,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/confusion_matrix_9")
+
+comparison_cv_10_m <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/comparison_gbm_male_10")
+comparison_cv_10_m
+comp_10_m <- confusionMatrix(comparison_cv_10_m$predicted,comparison_cv_10_m$actual)
+comp_10_m
+saveRDS(comp_10_m,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/confusion_matrix_10")
+
+
+tables_m <- list(
+  comp_1_m$table,
+  comp_2_m$table,
+  comp_3_m$table,
+  comp_4_m$table,
+  comp_5_m$table,
+  comp_6_m$table,
+  comp_7_m$table,
+  comp_8_m$table,
+  comp_9_m$table,
+  comp_10_m$table
+)
+
+total_m <- Reduce(`+`, tables_m)
+total_m
+saveRDS(total_m,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/confusion_matrix_sum")
+
+
+
+#Patients
+comparison_cv_1_2 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/patients/comparison_gbm_patients_1")
+comparison_cv_1_2
+comp_1_2 <- confusionMatrix(comparison_cv_1_2$predicted,comparison_cv_1_2$actual)
+comp_1_2
+saveRDS(comp_1_2,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/patients/confusion_matrix_1")
+
+comparison_cv_2_2 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/patients/comparison_gbm_patients_2")
+comparison_cv_2_2
+comp_2_2 <- confusionMatrix(comparison_cv_2_2$predicted,comparison_cv_2_2$actual)
+comp_2_2
+saveRDS(comp_2_2,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/patients/confusion_matrix_2")
+
+comparison_cv_3_2 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/patients/comparison_gbm_patients_3")
+comparison_cv_3_2
+comp_3_2 <- confusionMatrix(comparison_cv_3_2$predicted,comparison_cv_3_2$actual)
+comp_3_2
+saveRDS(comp_3_2,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/patients/confusion_matrix_3")
+
+comparison_cv_4_2 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/patients/comparison_gbm_patients_4")
+comparison_cv_4_2
+comp_4_2 <- confusionMatrix(comparison_cv_4_2$predicted,comparison_cv_4_2$actual)
+comp_4_2
+saveRDS(comp_4_2,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/patients/confusion_matrix_4")
+
+comparison_cv_5_2 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/patients/comparison_gbm_patients_5")
+comparison_cv_5_2
+comp_5_2 <- confusionMatrix(comparison_cv_5_2$predicted,comparison_cv_5_2$actual)
+comp_5_2
+saveRDS(comp_5_2,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/patients/confusion_matrix_5")
+
+comparison_cv_6_2 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/patients/comparison_gbm_patients_6")
+comparison_cv_6_2
+comp_6_2 <- confusionMatrix(comparison_cv_6_2$predicted,comparison_cv_6_2$actual)
+comp_6_2
+saveRDS(comp_6_2,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/patients/confusion_matrix_6")
+
+comparison_cv_7_2 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/patients/comparison_gbm_patients_7")
+comparison_cv_7_2
+comp_7_2 <- confusionMatrix(comparison_cv_7_2$predicted,comparison_cv_7_2$actual)
+comp_7_2
+saveRDS(comp_7_2,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/patients/confusion_matrix_7")
+
+comparison_cv_8_2 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/patients/comparison_gbm_patients_8")
+comparison_cv_8_2
+comp_8_2 <- confusionMatrix(comparison_cv_8_2$predicted,comparison_cv_8_2$actual)
+comp_8_2
+saveRDS(comp_8_2,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/patients/confusion_matrix_8")
+
+comparison_cv_9_2 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/patients/comparison_gbm_patients_9")
+comparison_cv_9_2
+comp_9_2 <- confusionMatrix(comparison_cv_9_2$predicted,comparison_cv_9_2$actual)
+comp_9_2
+saveRDS(comp_9_2,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/patients/confusion_matrix_9")
+
+comparison_cv_10_2 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/patients/comparison_gbm_patients_10")
+comparison_cv_10_2
+comp_10_2 <- confusionMatrix(comparison_cv_10_2$predicted,comparison_cv_10_2$actual)
+comp_10_2
+saveRDS(comp_10_2,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/patients/confusion_matrix_10")
+
+tables_2<- list(
+  comp_1_2$table,
+  comp_2_2$table,
+  comp_3_2$table,
+  comp_4_2$table,
+  comp_5_2$table,
+  comp_6_2$table,
+  comp_7_2$table,
+  comp_8_2$table,
+  comp_9_2$table,
+  comp_10_2$table
+)
+
+total_2 <- Reduce(`+`, tables_2)
+total_2
+saveRDS(total_2,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Patients/confusion_matrix_sum")
+
+#Control
+comparison_cv_1_0 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/control/comparison_gbm_control_1")
+comparison_cv_1_0
+comp_1_0 <- confusionMatrix(comparison_cv_1_0$predicted,comparison_cv_1_0$actual)
+comp_1_0
+saveRDS(comp_1_0,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/control/confusion_matrix_1")
+
+comparison_cv_2_0 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/control/comparison_gbm_control_2")
+comparison_cv_2_0
+comp_2_0 <- confusionMatrix(comparison_cv_2_0$predicted,comparison_cv_2_0$actual)
+comp_2_0
+saveRDS(comp_2_0,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/control/confusion_matrix_2")
+
+comparison_cv_3_0 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/control/comparison_gbm_control_3")
+comparison_cv_3_0
+comp_3_0 <- confusionMatrix(comparison_cv_3_0$predicted,comparison_cv_3_0$actual)
+comp_3_0
+saveRDS(comp_3_0,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/control/confusion_matrix_3")
+
+comparison_cv_4_0 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/control/comparison_gbm_control_4")
+comparison_cv_4_0
+comp_4_0 <- confusionMatrix(comparison_cv_4_0$predicted,comparison_cv_4_0$actual)
+comp_4_0
+saveRDS(comp_4_0,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/control/confusion_matrix_4")
+
+comparison_cv_5_0 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/control/comparison_gbm_control_5")
+comparison_cv_5_0
+comp_5_0 <- confusionMatrix(comparison_cv_5_0$predicted,comparison_cv_5_0$actual)
+comp_5_0
+saveRDS(comp_5_0,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/control/confusion_matrix_5")
+
+comparison_cv_6_0 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/control/comparison_gbm_control_6")
+comparison_cv_6_0
+comp_6_0 <- confusionMatrix(comparison_cv_6_0$predicted,comparison_cv_6_0$actual)
+comp_6_0
+saveRDS(comp_6_0,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/control/confusion_matrix_6")
+
+comparison_cv_7_0 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/control/comparison_gbm_control_7")
+comparison_cv_7_0
+comp_7_0 <- confusionMatrix(comparison_cv_7_0$predicted,comparison_cv_7_0$actual)
+comp_7_0
+saveRDS(comp_7_0,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/control/confusion_matrix_7")
+
+comparison_cv_8_0 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/control/comparison_gbm_control_8")
+comparison_cv_8_0
+comp_8_0 <- confusionMatrix(comparison_cv_8_0$predicted,comparison_cv_8_0$actual)
+comp_8_0
+saveRDS(comp_8_0,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/control/confusion_matrix_8")
+
+comparison_cv_9_0 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/control/comparison_gbm_control_9")
+comparison_cv_9_0
+comp_9_0 <- confusionMatrix(comparison_cv_9_0$predicted,comparison_cv_9_0$actual)
+comp_9_0
+saveRDS(comp_9_0,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/control/confusion_matrix_9")
+
+comparison_cv_10_0 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/control/comparison_gbm_control_10")
+comparison_cv_10_0
+comp_10_0 <- confusionMatrix(comparison_cv_10_0$predicted,comparison_cv_10_0$actual)
+comp_10_0
+saveRDS(comp_10_0,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/control/confusion_matrix_10")
+
+
+tables_0<- list(
+  comp_1_0$table,
+  comp_2_0$table,
+  comp_3_0$table,
+  comp_4_0$table,
+  comp_5_0$table,
+  comp_6_0$table,
+  comp_7_0$table,
+  comp_8_0$table,
+  comp_9_0$table,
+  comp_10_0$table
+)
+
+total_0 <- Reduce(`+`, tables_0)
+total_0
+saveRDS(total_0,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Control/confusion_matrix_sum")
