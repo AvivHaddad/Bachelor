@@ -181,3 +181,11 @@ It also produces from those the comparisons matrices.
     only 20 most important variables shown (out of 4988)
 
 31) After finishing this analysis on the full data set I run the cross validation function with gbm and svm on data set filtered according to my 4 groups; female, male, controls and BD patients. This analysis produced the same number of results and methodology as detailed above for each group.
+
+32) In the last experiment I trained the models (gbm and SVM) on the male data and tested it on the female data.
+Then I trained the models on the female data and tested them on the male data.
+
+33) I used all of my experiments data to create pooled confusion matrices of the sum from each run, and their visualisation.
+
+34) To collect the statistical information I used the function confusionMatrix, which provides a confusions matrix, Accuracy, Sensitivity, 
+Specificity, Prevalence, PPV, NPV, Detection Rate, Balanced Accuracy, Precision, Recall and F1 results.
