@@ -1,0 +1,298 @@
+train_df <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/train_df_filtered")
+gene_cols <- names(train_df)[names(train_df) != "group"]
+train_df <- train_df[
+  rownames(train_df) != "gene_id" & rownames(train_df) != "gene_name",]
+train_df <- train_df %>%
+  mutate(across(all_of(gene_cols), ~ {
+    x <- trimws(.x)
+    as.numeric(x)
+  }))
+train_df$group <- factor(train_df$group,
+                         levels = c("f_0",
+                                    "f_2",
+                                    "m_0",
+                                    "m_2"),
+                         labels = c("0", "2", "0", "2"))
+BI_meta <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/BI_meta")
+BI_meta_f <- filter(BI_meta,BI_meta$sex=="gender: f")
+index_f <- rownames(train_df) %in% BI_meta_f$SampleID
+test_df_f <- train_df[index_f,]
+
+BI_meta_m <- filter(BI_meta,BI_meta$sex=="gender: m")
+index_m <- rownames(train_df) %in% BI_meta_m$SampleID
+train_df_m <- train_df[index_m,]
+
+cross.validation.gbm.train_m.trest_f <- function (training,test,x,seed){
+  acc_list <- list()
+  path <- "C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test"
+  training$group <- as.factor(training$group)
+  training$group <- droplevels(training$group)
+
+  set.seed(seed = seed)
+
+  folds <- createFolds(training$group,
+                       k = x, list = TRUE,
+                       returnTrain = TRUE)
+
+  for (i in 1:x){
+    train_idx <- folds[[i]]
+    train_data <- training[train_idx,]
+    test_data <- test
+
+    fitControl <- trainControl(
+      method = "repeatedcv",
+      number = x
+    )
+    gbmFit <- caret::train(group ~ .,
+                    data = train_data,
+                    method = "gbm",
+                    trControl = fitControl,
+                    verbose = FALSE)
+    gbmFit
+    saveRDS(gbmFit,file = paste0(path,"/gbm_train_m_test_f",i))
+
+    predictions <- predict(gbmFit, newdata = test)
+    pred_path <- paste0(path, "/predictions_gbm_train_m_test_f", i)
+    saveRDS(predictions, file = pred_path)
+
+    compare <- data.frame(actual = test$group, predicted = predictions)
+    comp_path <- paste0(path, "/comparison_gbm_train_m_test_f", i)
+    saveRDS(compare, file = comp_path)
+
+    acc <- mean(as.character(compare$actual) == as.character(compare$predicted))
+    acc_list[[i]] <- acc
+  }
+  saveRDS(acc_list, "C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/acc_list")
+
+}
+
+cross.validation.gbm.train_m.trest_f(train_df_m,test_df_f,10,123)
+
+
+gbm_mtft_1 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/gbm_train_m_test_f1")
+gbm_mtft_2 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/gbm_train_m_test_f2")
+gbm_mtft_3 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/gbm_train_m_test_f3")
+gbm_mtft_4 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/gbm_train_m_test_f4")
+gbm_mtft_5 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/gbm_train_m_test_f5")
+gbm_mtft_6 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/gbm_train_m_test_f6")
+gbm_mtft_7 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/gbm_train_m_test_f7")
+gbm_mtft_8 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/gbm_train_m_test_f8")
+gbm_mtft_9 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/gbm_train_m_test_f9")
+gbm_mtft_10 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/gbm_train_m_test_f10")
+
+acc_list_mtft <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/acc_list")
+comparison_gbm_mtft_1 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/comparison_gbm_train_m_test_f1")
+comparison_gbm_mtft_2 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/comparison_gbm_train_m_test_f2")
+comparison_gbm_mtft_3 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/comparison_gbm_train_m_test_f3")
+comparison_gbm_mtft_4 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/comparison_gbm_train_m_test_f4")
+comparison_gbm_mtft_5 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/comparison_gbm_train_m_test_f5")
+comparison_gbm_mtft_6 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/comparison_gbm_train_m_test_f6")
+comparison_gbm_mtft_7 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/comparison_gbm_train_m_test_f7")
+comparison_gbm_mtft_8 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/comparison_gbm_train_m_test_f8")
+comparison_gbm_mtft_9 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/comparison_gbm_train_m_test_f9")
+comparison_gbm_mtft_10 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/comparison_gbm_train_m_test_f10")
+
+predictions_gbm_mtft_1 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/predictions_gbm_train_m_test_f1")
+predictions_gbm_mtft_2 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/predictions_gbm_train_m_test_f2")
+predictions_gbm_mtft_3 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/predictions_gbm_train_m_test_f3")
+predictions_gbm_mtft_4 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/predictions_gbm_train_m_test_f4")
+predictions_gbm_mtft_5 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/predictions_gbm_train_m_test_f5")
+predictions_gbm_mtft_6 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/predictions_gbm_train_m_test_f6")
+predictions_gbm_mtft_7 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/predictions_gbm_train_m_test_f7")
+predictions_gbm_mtft_8 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/predictions_gbm_train_m_test_f8")
+predictions_gbm_mtft_9 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/predictions_gbm_train_m_test_f9")
+predictions_gbm_mtft_10 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/predictions_gbm_train_m_test_f10")
+
+resualts_table_mtft_gbm <- list(gbm_mtft_1$results,gbm_mtft_2$results,gbm_mtft_3$results,gbm_mtft_4$results,gbm_mtft_5$results,gbm_mtft_6$results,
+                             gbm_mtft_7$results,gbm_mtft_8$results,gbm_mtft_9$results,gbm_mtft_10$results)
+saveRDS(resualts_table_mtft_gbm,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/resualts_table_mtft_gbm")
+
+fold.compare <- function (resualts,x){
+  for (i in 1:x){
+    accuracy_folds <- resualts[[i]]$Accuracy
+    diff_matrix <- outer(accuracy_folds,accuracy_folds, "-")
+    abs_diff_matrix <- abs(diff_matrix)
+    saveRDS(abs_diff_matrix,paste0("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/gbm_mtft_fold_differences_",i))
+
+    diff_df <- as.data.frame(abs_diff_matrix)
+    diff_df$Fold <- rownames(diff_df)
+    diff_long <- diff_df %>%
+      pivot_longer(
+        cols = -Fold,
+        names_to = "Fold2",
+        values_to = "Difference"
+      )
+
+
+    plot <- ggplot(diff_long, aes(x = Fold, y = Fold2, fill = Difference)) +
+      geom_tile() +
+      scale_fill_gradient(low = "white", high = "lightblue", name = "Abs. Diff.") +
+      theme_minimal() +
+      labs(title = paste0("gbm cross validation fold differences run ",i," male trained female tested"))
+    theme_minimal() +
+      theme(axis.text.x = element_text(angle = 45, hjust = 1))
+    print(plot)
+  }
+}
+fold.compare(resualts_table_mtft_gbm,10)
+
+acc_list_mtft <- as.numeric(acc_list_mtft)
+diff_matrix_all_acc_mtft <- outer(acc_list_mtft,acc_list_mtft, "-")
+abs_diff_matrix_all_acc_mtft <- abs(diff_matrix_all_acc_mtft)
+write.csv(diff_matrix_all_acc_mtft,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/mtft_fold_differences_acc_all.csv", row.names = T)
+saveRDS(diff_matrix_all_acc_mtft,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/mtft_fold_differences_acc_all")
+
+
+
+#Just for the different title
+diff_df_mtft <- as.data.frame(abs_diff_matrix_all_acc_mtft)
+diff_df_mtft$Fold <- rownames(diff_df_mtft)
+diff_long_mtft <- diff_df_mtft %>%
+  pivot_longer(
+    cols = -Fold,
+    names_to = "Fold2",
+    values_to = "Difference"
+  )
+
+
+
+plot <- ggplot(diff_long_mtft, aes(x = Fold, y = Fold2, fill = Difference)) +
+  geom_tile() +
+  scale_fill_gradient(low = "white", high = "lightblue", name = "Abs. Diff.") +
+  theme_minimal() +
+  labs(title = "gbm cross validation male trained female tested fold differences run ")
+theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+print(plot)
+
+
+
+diff_matrix_all_acc_mtft <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/mtft_fold_differences_acc_all")
+gbm_mtft_1
+
+imp_gbm_mtft_1 <-varImp(gbm_mtft_1) #Random forest: It measures how much prediction accuracy drops when a variable is left out or changed.
+saveRDS(imp_gbm_mtft_1,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/imp_gbm_mtft_1")
+
+imp_gbm_mtft_1
+# Extract the importance values (as a data frame)
+imp_df_mtft <- data.frame(
+  Gene = rownames(imp_gbm_mtft_1$importance),
+  Importance = imp_gbm_mtft_1$importance$Overall
+)
+
+imp_df_mtft <- imp_df_mtft %>%
+  arrange(desc(Importance))
+
+write.csv(imp_df_mtft,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/imp_df_mtft.csv", row.names = T)
+
+
+top_genes_mtft <- head(imp_df_mtft, 21)
+
+# Plot
+plot <- ggplot(top_genes_mtft, aes(x = Gene, y = Importance, fill = Importance)) +
+  geom_col() +
+  coord_flip() +
+  scale_y_log10() +
+  scale_fill_gradient(low = "lightgray", high = "steelblue") +
+  labs(
+    title = "Top 20 Genes from male trained female tested experiment (gbm) - Log Scale",
+    x = "Gene",
+    y = "Importance (log scale)"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+print(plot)
+
+#Results Matrices
+
+matrix.build <- function (comparisons){
+  groups <- sort(unique(comparisons$actual))
+  groups
+  pred <- comparisons$predicted
+  actual <- comparisons$actual
+  actual <- factor(actual, levels = groups)
+  pred <- factor(pred, levels = groups)
+  res_table <- table(actual,pred)
+  var_name <- deparse(substitute(comparisons))
+  path <- paste0("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/",var_name,"sum_pred_table")
+  saveRDS(res_table,path)
+  matrix <- matrix(0,3,3)
+  rownames(matrix) <- c(rownames(res_table),"Total")
+  colnames(matrix) <- c(colnames(res_table),"Correct")
+  matrix[1:2,1:2] <- res_table
+  matrix[1:2,3] <- diag(res_table)
+  matrix[3,3] <- sum(diag(res_table))
+  return(matrix)
+}
+gbm_mtft_1_compar_mat <- matrix.build(comparison_gbm_mtft_1)
+saveRDS(gbm_mtft_1_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/gbm_mtft_1_compar_mat")
+gbm_mtft_1_compar_mat <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/gbm_mtft_1_compar_mat")
+write.csv2(gbm_mtft_1_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/gbm_mtft_1_compar_mat.csv",row.names = T)
+
+gbm_mtft_2_compar_mat <- matrix.build(comparison_gbm_mtft_2)
+saveRDS(gbm_mtft_2_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/gbm_mtft_2_compar_mat")
+gbm_mtft_2_compar_mat <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/gbm_mtft_2_compar_mat")
+write.csv2(gbm_mtft_2_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/gbm_mtft_2_compar_mat.csv",row.names = T)
+
+gbm_mtft_3_compar_mat <- matrix.build(comparison_gbm_mtft_3)
+saveRDS(gbm_mtft_3_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/gbm_mtft_3_compar_mat")
+gbm_mtft_3_compar_mat <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/gbm_mtft_3_compar_mat")
+write.csv2(gbm_mtft_3_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/gbm_mtft_3_compar_mat.csv",row.names = T)
+
+gbm_mtft_4_compar_mat <- matrix.build(comparison_gbm_mtft_4)
+saveRDS(gbm_mtft_4_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/gbm_mtft_4_compar_mat")
+gbm_mtft_4_compar_mat <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/gbm_mtft_4_compar_mat")
+write.csv2(gbm_mtft_4_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/gbm_mtft_4_compar_mat.csv",row.names = T)
+
+gbm_mtft_5_compar_mat <- matrix.build(comparison_gbm_mtft_5)
+saveRDS(gbm_mtft_5_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/gbm_mtft_5_compar_mat")
+gbm_mtft_5_compar_mat <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/gbm_mtft_5_compar_mat")
+write.csv2(gbm_mtft_5_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/gbm_mtft_5_compar_mat.csv",row.names = T)
+
+gbm_mtft_6_compar_mat <- matrix.build(comparison_gbm_mtft_6)
+saveRDS(gbm_mtft_6_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/gbm_mtft_6_compar_mat")
+gbm_mtft_6_compar_mat <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/gbm_mtft_6_compar_mat")
+write.csv2(gbm_mtft_6_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/gbm_mtft_6_compar_mat.csv",row.names = T)
+
+gbm_mtft_7_compar_mat <- matrix.build(comparison_gbm_mtft_7)
+saveRDS(gbm_mtft_7_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/gbm_mtft_7_compar_mat")
+gbm_mtft_7_compar_mat <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/gbm_mtft_7_compar_mat")
+write.csv2(gbm_mtft_7_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/gbm_mtft_7_compar_mat.csv",row.names = T)
+
+gbm_mtft_8_compar_mat <- matrix.build(comparison_gbm_mtft_8)
+saveRDS(gbm_mtft_8_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/gbm_mtft_8_compar_mat")
+gbm_mtft_8_compar_mat <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/gbm_mtft_8_compar_mat")
+write.csv2(gbm_mtft_8_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/gbm_mtft_8_compar_mat.csv",row.names = T)
+
+gbm_mtft_9_compar_mat <- matrix.build(comparison_gbm_mtft_9)
+saveRDS(gbm_mtft_9_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/gbm_mtft_9_compar_mat")
+gbm_mtft_9_compar_mat <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/gbm_mtft_9_compar_mat")
+write.csv2(gbm_mtft_9_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/gbm_mtft_9_compar_mat.csv",row.names = T)
+
+gbm_mtft_10_compar_mat <- matrix.build(comparison_gbm_mtft_10)
+saveRDS(gbm_mtft_10_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/gbm_mtft_10_compar_mat")
+gbm_mtft_10_compar_mat <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/gbm_mtft_10_compar_mat")
+write.csv2(gbm_mtft_10_compar_mat,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/gbm_mtft_10_compar_mat.csv",row.names = T)
+
+print(gbm_mtft_10_compar_mat)
+print(gbm_mtft_2_compar_mat)
+print(gbm_mtft_1_compar_mat)
+
+
+all_mat_mtft <- lapply(1:10, function(i) {
+  get(paste0("gbm_mtft_", i,"_compar_mat"))
+})
+array_3d_mtft <- array(0, dim = c(nrow(all_mat_mtft[[1]]), ncol(all_mat_mtft[[1]]), length(all_mat_mtft)))
+for (i in 1:length(all_mat_mtft)) {
+  array_3d_mtft[, , i] <- all_mat_mtft[[i]]
+}
+
+mean_matrix_mtft <- apply(array_3d_mtft, c(1, 2), mean)
+mean_matrix_mtft <- as.matrix(mean_matrix_mtft)
+rownames(mean_matrix_mtft) <- rownames(all_mat_mtft[[1]])
+colnames(mean_matrix_mtft) <- colnames(all_mat_mtft[[1]])
+print(mean_matrix_mtft)
+saveRDS(mean_matrix_mtft,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/gbm_mtft_mean_matrix")
+write.csv2(mean_matrix_mtft,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male Train female Test/mean_matrix_mtft.csv",row.names = T)
+
