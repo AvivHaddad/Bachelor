@@ -322,6 +322,23 @@ gbm_plot_mtft <- ggplot(gbm_sum_mat_mtft, aes(x = Reference, y = Prediction, fil
 
 gbm_plot_mtft
 
+
+#female trained male tedsted
+gbm_sum_mat_ftmt <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/female Train male Test/confusion_matrix_sum")
+
+gbm_sum_mat_ftmt <- as.data.frame(gbm_sum_mat_ftmt)
+
+gbm_plot_ftmt <- ggplot(gbm_sum_mat_ftmt, aes(x = Reference, y = Prediction, fill = Freq)) +
+  geom_tile() +
+  geom_text(aes(label = Freq), size = 6) +
+  labs(
+    title = "Summed Confusion Matrix gbm female trained male tested",
+    x = "Actual",
+    y = "Predicted"
+  ) +
+  theme_minimal()
+
+gbm_plot_ftmt
 #----------------------------------------------------------------------------------------------------------------------#
 #SVM
 svm_sum_mat <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/confusion_matrix_sum")
