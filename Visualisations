@@ -215,3 +215,178 @@ gsea_chosen_path <- ggplot(visual_GSEA_table, aes(reorder(pathway,NES), NES)) +
 
 gsea_chosen_path
 ggsave("C:/Users/avive/Documents/Thesis/THI-LaTeX-thesis-template-main/Bachelor/images/gsea_chosen_path.pdf", gsea_chosen_path, width = 10, height = 8)
+
+
+#Pooled confusion matrix - sum
+#gbm
+gbm_sum_mat <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Filtered Y/confusion_matrix_sum")
+
+gbm_sum_mat <- as.data.frame(gbm_sum_mat)
+
+gbm_plot <- ggplot(gbm_sum_mat, aes(x = Reference, y = Prediction, fill = Freq)) +
+  geom_tile() +
+  geom_text(aes(label = Freq), size = 6) +
+  labs(
+    title = "Summed Confusion Matrix gbm total",
+    x = "Actual",
+    y = "Predicted"
+  ) +
+  theme_minimal()
+
+gbm_plot
+
+#female
+gbm_sum_mat_f <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/female/confusion_matrix_sum")
+
+gbm_sum_mat_f <- as.data.frame(gbm_sum_mat_f)
+
+gbm_plot_f <- ggplot(gbm_sum_mat_f, aes(x = Reference, y = Prediction, fill = Freq)) +
+  geom_tile() +
+  geom_text(aes(label = Freq), size = 6) +
+  labs(
+    title = "Summed Confusion Matrix gbm female",
+    x = "Actual",
+    y = "Predicted"
+  ) +
+  theme_minimal()
+
+gbm_plot_f
+
+#male
+gbm_sum_mat_m <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/male/confusion_matrix_sum")
+
+gbm_sum_mat_m <- as.data.frame(gbm_sum_mat_m)
+
+gbm_plot_m <- ggplot(gbm_sum_mat_m, aes(x = Reference, y = Prediction, fill = Freq)) +
+  geom_tile() +
+  geom_text(aes(label = Freq), size = 6) +
+  labs(
+    title = "Summed Confusion Matrix gbm male",
+    x = "Actual",
+    y = "Predicted"
+  ) +
+  theme_minimal()
+
+
+gbm_plot_m
+
+
+#Patients
+gbm_sum_mat_2 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Patients/confusion_matrix_sum")
+
+gbm_sum_mat_2 <- as.data.frame(gbm_sum_mat_2)
+
+gbm_plot_2 <- ggplot(gbm_sum_mat_2, aes(x = Reference, y = Prediction, fill = Freq)) +
+  geom_tile() +
+  geom_text(aes(label = Freq), size = 6) +
+  labs(
+    title = "Summed Confusion Matrix gbm BD Patients",
+    x = "Actual",
+    y = "Predicted"
+  ) +
+  theme_minimal()
+
+gbm_plot_2
+
+#Control
+gbm_sum_mat_0 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/Cross Validation gbm/Control/confusion_matrix_sum")
+
+gbm_sum_mat_0 <- as.data.frame(gbm_sum_mat_0)
+
+gbm_plot_0 <- ggplot(gbm_sum_mat_0, aes(x = Reference, y = Prediction, fill = Freq)) +
+  geom_tile() +
+  geom_text(aes(label = Freq), size = 6) +
+  labs(
+    title = "Summed Confusion Matrix gbm Control",
+    x = "Actual",
+    y = "Predicted"
+  ) +
+  theme_minimal()
+
+gbm_plot_0
+
+#----------------------------------------------------------------------------------------------------------------------#
+#SVM
+svm_sum_mat <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/confusion_matrix_sum")
+
+svm_sum_mat <- as.data.frame(svm_sum_mat)
+
+svm_plot <- ggplot(svm_sum_mat, aes(x = Reference, y = Prediction, fill = Freq)) +
+  geom_tile() +
+  geom_text(aes(label = Freq), size = 6) +
+  labs(
+    title = "Summed Confusion Matrix SVM total",
+    x = "Actual",
+    y = "Predicted"
+  ) +
+  theme_minimal()
+
+svm_plot
+
+#female
+svm_sum_mat_f <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female/confusion_matrix_sum")
+
+svm_sum_mat_f <- as.data.frame(svm_sum_mat_f)
+
+svm_plot_f <- ggplot(svm_sum_mat_f, aes(x = Reference, y = Prediction, fill = Freq)) +
+  geom_tile() +
+  geom_text(aes(label = Freq), size = 6) +
+  labs(
+    title = "Summed Confusion Matrix SVM female",
+    x = "Actual",
+    y = "Predicted"
+  ) +
+  theme_minimal()
+
+svm_plot_f
+
+#male
+svm_sum_mat_m <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/male/confusion_matrix_sum")
+
+svm_sum_mat_m <- as.data.frame(svm_sum_mat_m)
+
+svm_plot_m <- ggplot(svm_sum_mat_m, aes(x = Reference, y = Prediction, fill = Freq)) +
+  geom_tile() +
+  geom_text(aes(label = Freq), size = 6) +
+  labs(
+    title = "Summed Confusion Matrix SVM male",
+    x = "Actual",
+    y = "Predicted"
+  ) +
+  theme_minimal()
+
+svm_plot_m
+
+#Patients
+svm_sum_mat_2 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Patients/confusion_matrix_sum")
+
+svm_sum_mat_2 <- as.data.frame(svm_sum_mat_2)
+
+svm_plot_2 <- ggplot(svm_sum_mat_2, aes(x = Reference, y = Prediction, fill = Freq)) +
+  geom_tile() +
+  geom_text(aes(label = Freq), size = 6) +
+  labs(
+    title = "Summed Confusion Matrix SVM Patients",
+    x = "Actual",
+    y = "Predicted"
+  ) +
+  theme_minimal()
+
+svm_plot_2
+
+#Control
+svm_sum_mat_0 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Control/confusion_matrix_sum")
+
+svm_sum_mat_0 <- as.data.frame(svm_sum_mat_0)
+
+svm_plot_0 <- ggplot(svm_sum_mat_0, aes(x = Reference, y = Prediction, fill = Freq)) +
+  geom_tile() +
+  geom_text(aes(label = Freq), size = 6) +
+  labs(
+    title = "Summed Confusion Matrix SVM Control",
+    x = "Actual",
+    y = "Predicted"
+  ) +
+  theme_minimal()
+
+svm_plot_0
