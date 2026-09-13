@@ -1,0 +1,220 @@
+train_df <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/train_df_filtered")
+gene_cols <- names(train_df)[names(train_df) != "group"]
+train_df <- train_df[
+  rownames(train_df) != "gene_id" & rownames(train_df) != "gene_name",]
+train_df <- train_df %>%
+  mutate(across(all_of(gene_cols), ~ {
+    x <- trimws(.x)
+    as.numeric(x)
+  }))
+train_df$group <- factor(train_df$group,
+                         levels = c("f_0",
+                                    "f_2",
+                                    "m_0",
+                                    "m_2"),
+                         labels = c("0", "2", "0", "2"))
+BI_meta <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/Reusable Files/BI_meta")
+BI_meta_f <- filter(BI_meta,BI_meta$sex=="gender: f")
+index_f <- rownames(train_df) %in% BI_meta_f$SampleID
+test_df_f <- train_df[index_f,]
+
+BI_meta_m <- filter(BI_meta,BI_meta$sex=="gender: m")
+index_m <- rownames(train_df) %in% BI_meta_m$SampleID
+train_df_m <- train_df[index_m,]
+
+cross.validation.SVM.ftmt <- function(training, testing, x, seed){
+
+  acc_list <- list()
+
+  path <- "C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test"
+
+  training$group <- as.factor(training$group)
+  training$group <- droplevels(training$group)
+
+  set.seed(seed = seed)
+
+  folds <- createFolds(
+    training$group,
+    k = x,
+    list = TRUE,
+    returnTrain = TRUE
+  )
+
+  for (i in 1:x){
+
+    train_idx <- folds[[i]]
+
+    train_data <- training[train_idx,]
+    test_data <- testing
+
+    fitControl <- trainControl(
+      method = "repeatedcv",
+      number = x
+    )
+
+    svm_ftmt_pred <- caret::train(
+      group ~ .,
+      data = train_data,
+      method = "svmPoly",
+      trControl = fitControl,
+      tuneLength = 4
+    )
+
+    svm_ftmt_pred
+
+    saveRDS(
+      svm_ftmt_pred,
+      file = paste0(path, "/svm_ftmt_", i)
+    )
+
+    predictions <- predict(
+      svm_ftmt_pred,
+      newdata = test_data
+    )
+
+    pred_path <- paste0(
+      path,
+      "/predictions_svm_ftmt_",
+      i
+    )
+
+    saveRDS(predictions, file = pred_path)
+
+    compare <- data.frame(
+      actual = test_data$group,
+      predicted = predictions
+    )
+
+    comp_path <- paste0(
+      path,
+      "/comparison_svm_ftmt_",
+      i
+    )
+
+    saveRDS(compare, file = comp_path)
+
+    acc <- mean(
+      as.character(compare$actual) ==
+        as.character(compare$predicted)
+    )
+
+    acc_list[[i]] <- acc
+  }
+
+  saveRDS(
+    acc_list,
+    "C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/acc_list"
+  )
+}
+
+cross.validation.SVM.ftmt(train_df_m,test_df_f,10,134)
+
+
+svm_ftmt_1 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/svm_ftmt_1")
+svm_ftmt_1
+comparison_svm_ftmt_1_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/comparison_svm_ftmt_1")
+comparison_svm_ftmt_1_svm
+table_1_ftmt <- table(comparison_svm_ftmt_1_svm)
+table_1_ftmt
+write.csv2(table_1_ftmt,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/table_1.csv", row.names = T)
+
+
+svm_2_ftmt <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/svm_ftmt_2")
+svm_2_ftmt
+comparison_svm_ftmt_2_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/comparison_svm_ftmt_2")
+comparison_svm_ftmt_2_svm
+table_2_ftmt <- table(comparison_svm_ftmt_2_svm)
+table_2_ftmt
+write.csv2(table_2_ftmt,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/table_2.csv", row.names = T)
+
+svm_ftmt_3 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/svm_ftmt_3")
+svm_ftmt_3
+comparison_svm_ftmt_3_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/comparison_svm_ftmt_3")
+
+table_3_ftmt <- table(comparison_svm_ftmt_3_svm)
+table_3_ftmt
+write.csv2(table_3_ftmt,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/table_3.csv", row.names = T)
+
+svm_ftmt_4 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/svm_ftmt_4")
+svm_ftmt_4
+comparison_svm_ftmt_4_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/comparison_svm_ftmt_4")
+
+table_4_ftmt <- table(comparison_svm_ftmt_4_svm)
+table_4_ftmt
+write.csv2(table_4_ftmt,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/table_4.csv", row.names = T)
+
+svm_ftmt_5 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/svm_ftmt_5")
+svm_ftmt_5
+comparison_svm_ftmt_5_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/comparison_svm_ftmt_5")
+
+table_5_ftmt <- table(comparison_svm_ftmt_5_svm)
+table_5_ftmt
+write.csv2(table_5_ftmt,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/table_5.csv", row.names = T)
+
+svm_ftmt_6 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/svm_ftmt_6")
+svm_ftmt_6
+comparison_svm_ftmt_6_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/comparison_svm_ftmt_6")
+
+table_6_ftmt <- table(comparison_svm_ftmt_6_svm)
+table_6_ftmt
+write.csv2(table_6_ftmt,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/table_6.csv", row.names = T)
+
+svm_ftmt_7 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/svm_ftmt_7")
+svm_ftmt_7
+comparison_svm_ftmt_7_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/comparison_svm_ftmt_7")
+
+table_7_ftmt <- table(comparison_svm_ftmt_7_svm)
+table_7_ftmt
+write.csv2(table_7_ftmt,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/table_7.csv", row.names = T)
+
+svm_ftmt_8 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/svm_ftmt_8")
+svm_ftmt_8
+comparison_svm_ftmt_8_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/comparison_svm_ftmt_8")
+
+table_8_ftmt <- table(comparison_svm_ftmt_8_svm)
+table_8_ftmt
+write.csv2(table_8_ftmt,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/table_8.csv", row.names = T)
+
+svm_ftmt_9 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/svm_ftmt_9")
+svm_ftmt_9
+comparison_svm_ftmt_9_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/comparison_svm_ftmt_9")
+
+table_9_ftmt <- table(comparison_svm_ftmt_9_svm)
+table_9_ftmt
+write.csv2(table_9_ftmt,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/table_9.csv", row.names = T)
+
+svm_ftmt_10 <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/svm_ftmt_10")
+svm_ftmt_10
+comparison_svm_ftmt_10_svm <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/comparison_svm_ftmt_10")
+
+table_10_ftmt <- table(comparison_svm_ftmt_10_svm)
+table_10_ftmt
+write.csv2(table_10_ftmt,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/table_10.csv", row.names = T)
+
+
+all_mat_svm_ftmt <- lapply(1:10, function(i) {
+  get(paste0("table_",i,"_ftmt"))
+})
+array_3d_svm_ftmt <- array(0, dim = c(nrow(all_mat_svm_ftmt[[1]]), ncol(all_mat_svm_ftmt[[1]]), length(all_mat_svm_ftmt)))
+for (i in 1:length(all_mat_svm_ftmt)) {
+  array_3d_svm_ftmt[, ,i] <- all_mat_svm_ftmt[[i]]
+}
+
+mean_matrix_svm_ftmt <- apply(array_3d_svm_ftmt, c(1, 2), mean)
+mean_matrix_svm_ftmt <- as.matrix(mean_matrix_svm_ftmt)
+rownames(mean_matrix_svm_ftmt) <- rownames(all_mat_svm_ftmt[[1]])
+colnames(mean_matrix_svm_ftmt) <- colnames(all_mat_svm_ftmt[[1]])
+print(mean_matrix_svm_ftmt)
+saveRDS(mean_matrix_svm_ftmt,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/mean_matrix")
+write.csv2(mean_matrix_svm_ftmt,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/mean_matrix_svm_ftmt.csv", row.names = T)
+
+
+var_svm_ftmt_1 <- varImp(svm_ftmt_1)
+saveRDS(var_svm_ftmt_1,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/var_svm_ftmt_1" )
+imp_df_1_ftmt <- data.frame(
+  Gene = rownames(var_svm_ftmt_1$importance),
+  Importance = var_svm_ftmt_1$importance
+)
+imp_df_1_ftmt <- imp_df_1_ftmt %>%
+  arrange(desc(imp_df_1_ftmt$Importance))
+write.csv2(imp_df_1_ftmt,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/imp_df_1_ftmt.csv", row.names = T)
