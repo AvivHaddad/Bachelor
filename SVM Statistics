@@ -395,3 +395,160 @@ tables_2 <- list(
 total_2 <- Reduce(`+`, tables_2)
 total_2
 saveRDS(total_2,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/Patients/confusion_matrix_sum")
+
+#male trained femal tested
+comparison_cv_1_mtft <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/male Train female Test/comparison_svm_mtft_1")
+comparison_cv_1_mtft
+comp_1_mtft <- confusionMatrix(comparison_cv_1_mtft$predicted,comparison_cv_1_mtft$actual)
+comp_1_mtft
+saveRDS(comp_1_mtft,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/male Train female Test/confusion_matrix_1")
+
+comparison_cv_2_mtft <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/male Train female Test/comparison_svm_mtft_2")
+comparison_cv_2_mtft
+comp_2_mtft <- confusionMatrix(comparison_cv_2_mtft$predicted,comparison_cv_2_mtft$actual)
+comp_2_mtft
+saveRDS(comp_2_mtft,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/male Train female Test/confusion_matrix_2")
+
+comparison_cv_3_mtft <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/male Train female Test/comparison_svm_mtft_3")
+comparison_cv_3_mtft
+comp_3_mtft <- confusionMatrix(comparison_cv_3_mtft$predicted,comparison_cv_3_mtft$actual)
+comp_3_mtft
+saveRDS(comp_3_mtft,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/male Train female Test/confusion_matrix_3")
+
+comparison_cv_4_mtft <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/male Train female Test/comparison_svm_mtft_4")
+comparison_cv_4_mtft
+comp_4_mtft <- confusionMatrix(comparison_cv_4_mtft$predicted,comparison_cv_4_mtft$actual)
+comp_4_mtft
+saveRDS(comp_4_mtft,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/male Train female Test/confusion_matrix_4")
+
+comparison_cv_5_mtft <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/male Train female Test/comparison_svm_mtft_5")
+comparison_cv_5_mtft
+comp_5_mtft <- confusionMatrix(comparison_cv_5_mtft$predicted,comparison_cv_5_mtft$actual)
+comp_5_mtft
+saveRDS(comp_5_mtft,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/male Train female Test/confusion_matrix_5")
+
+comparison_cv_6_mtft <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/male Train female Test/comparison_svm_mtft_6")
+comparison_cv_6_mtft
+comp_6_mtft <- confusionMatrix(comparison_cv_6_mtft$predicted,comparison_cv_6_mtft$actual)
+comp_6_mtft
+saveRDS(comp_6_mtft,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/male Train female Test/confusion_matrix_6")
+
+comparison_cv_7_mtft <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/male Train female Test/comparison_svm_mtft_7")
+comparison_cv_7_mtft
+comp_7_mtft <- confusionMatrix(comparison_cv_7_mtft$predicted,comparison_cv_7_mtft$actual)
+comp_7_mtft
+saveRDS(comp_7_mtft,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/male Train female Test/confusion_matrix_7")
+
+comparison_cv_8_mtft <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/male Train female Test/comparison_svm_mtft_8")
+comparison_cv_8_mtft
+comp_8_mtft <- confusionMatrix(comparison_cv_8_mtft$predicted,comparison_cv_8_mtft$actual)
+comp_8_mtft
+saveRDS(comp_8_mtft,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/male Train female Test/confusion_matrix_8")
+
+comparison_cv_9_mtft <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/male Train female Test/comparison_svm_mtft_9")
+comparison_cv_9_mtft
+comp_9_mtft <- confusionMatrix(comparison_cv_9_mtft$predicted,comparison_cv_9_mtft$actual)
+comp_9_mtft
+saveRDS(comp_9_mtft,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/male Train female Test/confusion_matrix_9")
+
+comparison_cv_10_mtft <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/male Train female Test/comparison_svm_mtft_10")
+comparison_cv_10_mtft
+comp_10_mtft <- confusionMatrix(comparison_cv_10_mtft$predicted,comparison_cv_10_mtft$actual)
+comp_10_mtft
+saveRDS(comp_10_mtft,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/male Train female Test/confusion_matrix_10")
+
+tables_mtft <- list(
+  comp_1_mtft$table,
+  comp_2_mtft$table,
+  comp_3_mtft$table,
+  comp_4_mtft$table,
+  comp_5_mtft$table,
+  comp_6_mtft$table,
+  comp_7_mtft$table,
+  comp_8_mtft$table,
+  comp_9_mtft$table,
+  comp_10_mtft$table
+)
+
+total_mtft <- Reduce(`+`, tables_mtft)
+total_mtft
+saveRDS(total_mtft,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/male Train female Test/confusion_matrix_sum")
+
+#female trained male tested
+comparison_cv_1_ftmt <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/comparison_svm_ftmt_1")
+comparison_cv_1_ftmt
+comp_1_ftmt <- confusionMatrix(comparison_cv_1_ftmt$predicted,comparison_cv_1_ftmt$actual)
+comp_1_ftmt
+saveRDS(comp_1_ftmt,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/confusion_matrix_1")
+
+comparison_cv_2_ftmt <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/comparison_svm_ftmt_2")
+comparison_cv_2_ftmt
+comp_2_ftmt <- confusionMatrix(comparison_cv_2_ftmt$predicted,comparison_cv_2_ftmt$actual)
+comp_2_ftmt
+saveRDS(comp_2_ftmt,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/confusion_matrix_2")
+
+comparison_cv_3_ftmt <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/comparison_svm_ftmt_3")
+comparison_cv_3_ftmt
+comp_3_ftmt <- confusionMatrix(comparison_cv_3_ftmt$predicted,comparison_cv_3_ftmt$actual)
+comp_3_ftmt
+saveRDS(comp_3_ftmt,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/confusion_matrix_3")
+
+comparison_cv_4_ftmt <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/comparison_svm_ftmt_4")
+comparison_cv_4_ftmt
+comp_4_ftmt <- confusionMatrix(comparison_cv_4_ftmt$predicted,comparison_cv_4_ftmt$actual)
+comp_4_ftmt
+saveRDS(comp_4_ftmt,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/confusion_matrix_4")
+
+comparison_cv_5_ftmt <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/comparison_svm_ftmt_5")
+comparison_cv_5_ftmt
+comp_5_ftmt <- confusionMatrix(comparison_cv_5_ftmt$predicted,comparison_cv_5_ftmt$actual)
+comp_5_ftmt
+saveRDS(comp_5_ftmt,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/confusion_matrix_5")
+
+comparison_cv_6_ftmt <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/comparison_svm_ftmt_6")
+comparison_cv_6_ftmt
+comp_6_ftmt <- confusionMatrix(comparison_cv_6_ftmt$predicted,comparison_cv_6_ftmt$actual)
+comp_6_ftmt
+saveRDS(comp_6_ftmt,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/confusion_matrix_6")
+
+comparison_cv_7_ftmt <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/comparison_svm_ftmt_7")
+comparison_cv_7_ftmt
+comp_7_ftmt <- confusionMatrix(comparison_cv_7_ftmt$predicted,comparison_cv_7_ftmt$actual)
+comp_7_ftmt
+saveRDS(comp_7_ftmt,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/confusion_matrix_7")
+
+comparison_cv_8_ftmt <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/comparison_svm_ftmt_8")
+comparison_cv_8_ftmt
+comp_8_ftmt <- confusionMatrix(comparison_cv_8_ftmt$predicted,comparison_cv_8_ftmt$actual)
+comp_8_ftmt
+saveRDS(comp_8_ftmt,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/confusion_matrix_8")
+
+comparison_cv_9_ftmt <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/comparison_svm_ftmt_9")
+comparison_cv_9_ftmt
+comp_9_ftmt <- confusionMatrix(comparison_cv_9_ftmt$predicted,comparison_cv_9_ftmt$actual)
+comp_9_ftmt
+saveRDS(comp_9_ftmt,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/confusion_matrix_9")
+
+comparison_cv_10_ftmt <- readRDS("C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/comparison_svm_ftmt_10")
+comparison_cv_10_ftmt
+comp_10_ftmt <- confusionMatrix(comparison_cv_10_ftmt$predicted,comparison_cv_10_ftmt$actual)
+comp_10_ftmt
+saveRDS(comp_10_ftmt,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/confusion_matrix_10")
+
+tables_ftmt <- list(
+  comp_1_ftmt$table,
+  comp_2_ftmt$table,
+  comp_3_ftmt$table,
+  comp_4_ftmt$table,
+  comp_5_ftmt$table,
+  comp_6_ftmt$table,
+  comp_7_ftmt$table,
+  comp_8_ftmt$table,
+  comp_9_ftmt$table,
+  comp_10_ftmt$table
+)
+
+total_ftmt <- Reduce(`+`, tables_ftmt)
+total_ftmt
+saveRDS(total_ftmt,"C:/Users/avive/Documents/Thesis/R code/Thesis/Bachlor/Working/SVM/female Train male Test/confusion_matrix_sum")
+
